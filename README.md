@@ -4,11 +4,11 @@
 
 **My personal Claude Code stack for shipping software with AI**
 
-[![Skills](https://img.shields.io/badge/skills-84-blue?style=for-the-badge)](./skills)
+[![Skills](https://img.shields.io/badge/skills-89-blue?style=for-the-badge)](./skills)
 [![Commands](https://img.shields.io/badge/commands-24-green?style=for-the-badge)](./commands)
 [![License](https://img.shields.io/badge/license-MIT-orange?style=for-the-badge)](./LICENSE)
 
-*84 skills • 24 commands • BRAIN network config • Ready to clone*
+*89 skills • 24 commands • iOS bundle + Apple's hidden docs • Ready to clone*
 
 [Quick Start](#-quick-install) • [The Stack](#-the-stack) • [Skills](#-skill-categories) • [Philosophy](#-philosophy-nanobot-healing-swarm) • [Support](#-support-the-stack)
 
@@ -32,11 +32,13 @@ Now I want to share it with friends and anyone else who's curious about this way
 
 ```
 wsigstack/
-├── 🧠 skills/      84 specialized skills for Claude Code
-├── ⚡ commands/    24 slash commands (/test, /deploy, /build, etc.)
-├── 📏 rules/       LSP mastery, context engineering, iOS patterns
-├── 🔮 brain/       CLAUDE.md + BRAIN network multi-device sync
-└── 📚 examples/    Starter templates (skill, MCP config, CLAUDE.md)
+├── 🧠 skills/           89 specialized skills for Claude Code
+│   └── ios-bundle/      iOS auto-invoked skills (Sosumi + Ralph Wiggum)
+├── ⚡ commands/         24 slash commands (/test, /deploy, /build, etc.)
+├── 📏 rules/            LSP mastery, context engineering, iOS patterns
+│   └── xcode-intelligence-docs/   20 Apple internal AI docs (extracted)
+├── 🔮 brain/            CLAUDE.md + BRAIN network multi-device sync
+└── 📚 examples/         Starter templates (skill, MCP config, CLAUDE.md)
 ```
 
 ---
@@ -74,6 +76,50 @@ cp brain/CLAUDE.md ~/.claude/CLAUDE.md
 ```
 
 </details>
+
+---
+
+## 🍎 iOS Bundle (New!)
+
+**Auto-invoked skills + Apple's hidden AI docs** for iOS/Swift/SwiftUI development.
+
+### What's Included
+
+| Component | Description |
+|:----------|:------------|
+| `skills/ios-bundle/` | 5 auto-invoked skills (Sosumi + Ralph Wiggum protocol) |
+| `rules/xcode-intelligence-docs/` | 20 internal Apple AI docs extracted from Xcode |
+
+### Key Features
+
+- **Auto-activates** on any `.swift` file
+- **Combines** Sosumi MCP + local Apple docs for zero-hallucination iOS dev
+- **Ralph Wiggum loop**: Iterate until success (max 5 loops per error)
+
+### Quick Commands
+
+```bash
+/ios-intel liquid-glass      # Load Liquid Glass patterns
+/ios-intel foundation-models # On-device LLM (Apple Intelligence)
+/ios-intel app-intents       # AppIntents + Siri
+/ios-intel all               # All 20 Apple docs
+```
+
+### Extract Apple's Docs (Required for iOS)
+
+```bash
+# Run this after installing wsigstack to get Apple's internal AI docs
+cp "/Applications/Xcode.app/Contents/PlugIns/IDEIntelligenceChat.framework/Versions/A/Resources/AdditionalDocumentation/"*.md ~/.claude/rules/xcode-intelligence-docs/
+```
+
+### iOS 26 Patterns Included
+
+| Topic | APIs |
+|:------|:-----|
+| Liquid Glass | `.glassEffect()`, `GlassEffectContainer`, `.buttonStyle(.glass)` |
+| On-Device LLM | `SystemLanguageModel`, `LanguageModelSession`, `@Generable` |
+| App Intents | Visual intelligence, intent modes, `@ComputedProperty` |
+| Swift 6.2 | `@concurrent`, actor isolation updates |
 
 ---
 

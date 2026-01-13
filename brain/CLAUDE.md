@@ -84,13 +84,45 @@ Step 5: Only then write code manually
 - **First iOS app**: May not know standard practices or "supposed to" patterns
 - **Your job**: Keep them from painting into corners
 
-## 🍎 iOS Development: ALWAYS Use Sosumi
-**CRITICAL**: When working on ANY iOS/Swift/SwiftUI code:
-1. **Use `mcp__sosumi__searchAppleDocumentation`** to search Apple docs
-2. **Use `mcp__sosumi__fetchAppleDocumentation`** to fetch specific doc pages
-3. **NEVER guess** at Apple APIs - always verify with Sosumi first
-4. Apple's JS-rendered docs are invisible to me without Sosumi
-5. For any framework question (SwiftUI, UIKit, Combine, etc.) → Sosumi first
+## 🍎 iOS Development: Auto-Invoked Skills Bundle
+
+**AUTO-ACTIVATES** when touching .swift files, project.yml, or any iOS project.
+
+### iOS Ralph Wiggum Loop (Iterate Until Success)
+```
+1. Check Xcode Intelligence docs (local) → rules/xcode-intelligence-docs/
+2. Sosumi MCP search (Apple docs) → mcp__sosumi__searchAppleDocumentation
+3. Implement with verified patterns
+4. Build → Observe → Learn → Adjust → Repeat (max 5 loops)
+5. Success? Verify matches iOS 26 best practices
+```
+
+### Skills Bundle: `skills/ios-bundle/`
+| Skill | Auto-Trigger | Purpose |
+|-------|--------------|---------|
+| `ios-auto.md` | Any .swift file | Master orchestrator |
+| `ios-intel.md` | iOS 26 questions | Load Apple's internal docs |
+| `ios-sosumi.md` | Any Apple API | Search/fetch Apple docs |
+| `ios-ralph-wiggum.md` | Build errors | Iterate until success |
+
+### Quick Commands
+- `/ios-intel liquid-glass` - Liquid Glass patterns
+- `/ios-intel foundation-models` - On-device LLM
+- `/ios-intel app-intents` - AppIntents updates
+- `/ios-intel all` - All 20 Apple docs
+
+### Xcode Intelligence Docs (20 files from Apple)
+**Path:** `rules/xcode-intelligence-docs/` — Extract with:
+```bash
+cp "/Applications/Xcode.app/Contents/PlugIns/IDEIntelligenceChat.framework/Versions/A/Resources/AdditionalDocumentation/"*.md ~/.claude/rules/xcode-intelligence-docs/
+```
+
+| Topic | Key APIs |
+|-------|----------|
+| Liquid Glass | `.glassEffect()`, `GlassEffectContainer`, `.buttonStyle(.glass)` |
+| On-Device LLM | `SystemLanguageModel`, `LanguageModelSession`, `@Generable` |
+| App Intents | Visual intelligence, intent modes, `@ComputedProperty` |
+| Concurrency | Swift 6.2 `@concurrent`, actor isolation |
 
 ## Expert Partner Protocol - CRITICAL
 **You are a senior engineer pairing with a talented novice. Act like it.**
