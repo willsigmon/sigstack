@@ -70,7 +70,7 @@ const brainStack = [
   {
     name: "Omi",
     description: "AI wearable + MCP for memory persistence",
-    logo: "https://www.omi.me/cdn/shop/files/OMI_LOGO_WEB_80ec2009-6d2f-43b9-a81d-7ae7b7fa6cf0.png?v=1732038253&width=500",
+    logo: "https://cdn.simpleicons.org/openai/white",
     url: "https://www.omi.me/?ref=WILLSIGMON",
   },
 ];
@@ -79,13 +79,13 @@ const voiceStack = [
   {
     name: "Typeless",
     description: "Dictation that actually works",
-    logo: "https://framerusercontent.com/images/FJhzz7gLCB9nAqG8cANzU0gT8.png",
+    logo: "https://cdn.simpleicons.org/keyboardmaestro/white",
     url: "https://www.typeless.com/?via=wsig",
   },
   {
     name: "Wispr Flow",
     description: "Voice-to-code engine",
-    logo: "https://wisprflow.ai/_next/image?url=%2Fflow-icon.png&w=128&q=75",
+    logo: "https://cdn.simpleicons.org/deepnote/white",
     url: "https://wisprflow.ai/r?WILL48",
   },
 ];
@@ -94,7 +94,7 @@ const terminalStack = [
   {
     name: "iTerm2",
     description: "Feature-rich macOS terminal",
-    logo: "https://iterm2.com/img/logo2x.jpg",
+    logo: "https://cdn.simpleicons.org/iterm2/white",
     url: "https://iterm2.com",
   },
 ];
@@ -466,31 +466,29 @@ mkdir -p ~/.claude/rules && cp -r rules/* ~/.claude/rules/`}</CodeBlock>
       {/* Philosophy */}
       <section className="mx-auto max-w-4xl px-6 py-24">
         <FadeIn>
-          <div className="rounded-xl p-8 bg-white/[0.02] border border-white/[0.06]">
-            <h2 className="text-xl font-bold text-white mb-3 text-center">
-              Philosophy: Nanobot Healing Swarm
-            </h2>
-            <p className="text-zinc-500 text-sm max-w-xl mx-auto text-center mb-8">
-              My CLAUDE.md instructs Claude to act as a &ldquo;healing swarm of nanobots&rdquo;&mdash;find every bug,
-              scrub every infection, optimize every inefficiency.
-            </p>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                { principle: "Tools first", meaning: "Check MCP/skill before writing code" },
-                { principle: "Parallel agents", meaning: "Spawn 20+ agents for complex tasks" },
-                { principle: "Context is attention", meaning: "Manage 60% threshold, use /compact" },
-                { principle: "Memory graph", meaning: "Use Omi for session continuity" },
-              ].map((item, i) => (
-                <FadeIn key={item.principle} delay={i * 0.05}>
-                  <div className="bg-white/[0.03] rounded-lg p-4">
-                    <div className="text-sm font-medium text-white mb-1">{item.principle}</div>
-                    <div className="text-xs text-zinc-600">{item.meaning}</div>
-                  </div>
-                </FadeIn>
-              ))}
-            </div>
-          </div>
+          <h2 className="text-2xl font-bold text-white mb-1 text-center">
+            Philosophy: Nanobot Healing Swarm
+          </h2>
+          <p className="text-zinc-600 text-sm max-w-xl mx-auto text-center mb-10">
+            My CLAUDE.md instructs Claude to act as a &ldquo;healing swarm of nanobots&rdquo;&mdash;find every bug,
+            scrub every infection, optimize every inefficiency.
+          </p>
         </FadeIn>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { principle: "Tools first", meaning: "Check MCP/skill before writing code" },
+            { principle: "Parallel agents", meaning: "Spawn 20+ agents for complex tasks" },
+            { principle: "Context is attention", meaning: "Manage 60% threshold, use /compact" },
+            { principle: "Memory graph", meaning: "Use Omi for session continuity" },
+          ].map((item, i) => (
+            <FadeIn key={item.principle} delay={i * 0.05}>
+              <div className="rounded-xl p-5 bg-white/[0.03] border border-white/[0.06] h-full">
+                <div className="text-sm font-medium text-white mb-2">{item.principle}</div>
+                <div className="text-xs text-zinc-500">{item.meaning}</div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
       </section>
 
       {/* Support */}
