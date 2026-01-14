@@ -34,10 +34,10 @@ const voiceStack = [
 
 const terminalStack = [
   {
-    name: "Ghostty",
-    description: "GPU-accelerated terminal",
-    logo: "https://ghostty.org/apple-touch-icon.png",
-    url: "https://ghostty.org",
+    name: "iTerm2",
+    description: "Feature-rich macOS terminal",
+    logo: "https://iterm2.com/img/logo2x.jpg",
+    url: "https://iterm2.com",
   },
 ];
 

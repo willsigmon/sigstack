@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "www.omi.me" },
       { protocol: "https", hostname: "framerusercontent.com" },
       { protocol: "https", hostname: "wisprflow.ai" },
-      { protocol: "https", hostname: "ghostty.org" },
+      { protocol: "https", hostname: "iterm2.com" },
     ],
   },
 };
