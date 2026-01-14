@@ -63,14 +63,14 @@ const brainStack = [
   {
     name: "Claude Code",
     description: "CLI-first AI coding with Opus 4.5",
-    logo: "https://cdn.simpleicons.org/anthropic/white",
+    color: "bg-gradient-to-br from-orange-500 to-orange-600",
     url: "https://claude.ai/code",
     highlight: true,
   },
   {
     name: "Omi",
     description: "AI wearable + MCP for memory persistence",
-    logo: "https://cdn.simpleicons.org/openai/white",
+    color: "bg-gradient-to-br from-emerald-500 to-emerald-600",
     url: "https://www.omi.me/?ref=WILLSIGMON",
   },
 ];
@@ -79,13 +79,13 @@ const voiceStack = [
   {
     name: "Typeless",
     description: "Dictation that actually works",
-    logo: "https://cdn.simpleicons.org/keyboardmaestro/white",
+    color: "bg-gradient-to-br from-blue-500 to-blue-600",
     url: "https://www.typeless.com/?via=wsig",
   },
   {
     name: "Wispr Flow",
     description: "Voice-to-code engine",
-    logo: "https://cdn.simpleicons.org/deepnote/white",
+    color: "bg-gradient-to-br from-violet-500 to-violet-600",
     url: "https://wisprflow.ai/r?WILL48",
   },
 ];
@@ -94,7 +94,7 @@ const terminalStack = [
   {
     name: "iTerm2",
     description: "Feature-rich macOS terminal",
-    logo: "https://cdn.simpleicons.org/iterm2/white",
+    color: "bg-gradient-to-br from-green-500 to-green-600",
     url: "https://iterm2.com",
   },
 ];
@@ -103,19 +103,19 @@ const infraStack = [
   {
     name: "GitHub",
     description: "Code, PRs, Actions",
-    logo: "https://cdn.simpleicons.org/github/white",
+    color: "bg-gradient-to-br from-zinc-600 to-zinc-700",
     url: "https://github.com",
   },
   {
     name: "Vercel",
     description: "Deploy frontend + serverless",
-    logo: "https://cdn.simpleicons.org/vercel/white",
+    color: "bg-gradient-to-br from-zinc-800 to-black",
     url: "https://vercel.com",
   },
   {
     name: "Supabase",
     description: "Postgres + Auth + Realtime",
-    logo: "https://cdn.simpleicons.org/supabase/white",
+    color: "bg-gradient-to-br from-emerald-600 to-emerald-700",
     url: "https://supabase.com",
   },
 ];
@@ -131,14 +131,14 @@ const mcpServers = [
 function StackCard({
   name,
   description,
-  logo,
+  color,
   url,
   highlight,
   index,
 }: {
   name: string;
   description: string;
-  logo: string;
+  color: string;
   url: string;
   highlight?: boolean;
   index: number;
@@ -154,8 +154,8 @@ function StackCard({
         }`}
       >
         <div className="flex items-center gap-4">
-          <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-white/10 p-2">
-            <img src={logo} alt={name} className="h-full w-full object-contain" />
+          <div className={`h-10 w-10 flex-shrink-0 rounded-lg ${color} flex items-center justify-center`}>
+            <span className="text-white font-semibold text-sm">{name.charAt(0)}</span>
           </div>
           <div>
             <h3 className="font-medium text-white group-hover:text-purple-300 transition-colors">
