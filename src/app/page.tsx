@@ -135,7 +135,7 @@ const brainStack = [
   {
     name: "Omi + Fieldy",
     description: "AI wearable memory",
-    logo: "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/e6/55/35/e65535de-583d-0a0e-88ac-de4394e10ddf/prodAppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/460x0w.webp",
+    logo: "/icons/omi.png",
     bgColor: "bg-gradient-to-br from-emerald-500/30 to-teal-500/40",
     glowColor: "#10B981",
     url: "https://www.omi.me/?ref=WILLSIGMON",
@@ -785,7 +785,7 @@ export default function Home() {
             {[
               { label: "Skills", value: "89", gradient: "from-blue-400 to-cyan-300" },
               { label: "Commands", value: "24", gradient: "from-green-400 to-emerald-300" },
-              { label: "MCP Servers", value: "15+", gradient: "from-purple-400 to-pink-300" },
+              { label: "MCP Servers", value: "26", gradient: "from-purple-400 to-pink-300" },
             ].map((stat) => (
               <motion.div
                 key={stat.label}

@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "framerusercontent.com" },
       { protocol: "https", hostname: "wisprflow.ai" },
       { protocol: "https", hostname: "iterm2.com" },
+      { protocol: "https", hostname: "is1-ssl.mzstatic.com" },
     ],
   },
 };

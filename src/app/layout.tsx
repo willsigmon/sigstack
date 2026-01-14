@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://sigstack.dev"),
   title: "sigstack - Claude Code Stack for AI-Powered Development",
   description: "89 skills, 24 commands, iOS bundle + Apple's hidden docs. My personal Claude Code stack for shipping software with AI. Ready to clone.",
   keywords: ["Claude Code", "AI coding", "developer tools", "MCP servers", "Claude AI", "Opus 4.5"],
