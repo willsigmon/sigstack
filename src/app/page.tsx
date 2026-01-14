@@ -70,8 +70,8 @@ const brainStack = [
     highlight: true,
   },
   {
-    name: "Omi",
-    description: "AI wearable + MCP for memory persistence",
+    name: "Omi + Fieldy",
+    description: "AI wearable for memory capture + note organization",
     fallbackLetter: "O",
     bgColor: "bg-gradient-to-br from-emerald-400/20 to-teal-600/20",
     url: "https://www.omi.me/?ref=WILLSIGMON",
@@ -81,14 +81,14 @@ const brainStack = [
 const voiceStack = [
   {
     name: "Typeless",
-    description: "Dictation that actually works",
+    description: "Auto-formats natural speech into structured prompts",
     fallbackLetter: "T",
     bgColor: "bg-gradient-to-br from-blue-400/20 to-indigo-600/20",
     url: "https://www.typeless.com/?via=wsig",
   },
   {
     name: "Wispr Flow",
-    description: "Voice-to-code engine",
+    description: "Voice-to-code with context awareness",
     logo: "https://cdn.prod.website-files.com/682f84b3838c89f8ff7667db/68d427f5e3a837706e390bde_logo-symbol-light.png",
     bgColor: "bg-gradient-to-br from-violet-400/20 to-purple-600/20",
     url: "https://wisprflow.ai/r?WILL48",
@@ -102,6 +102,13 @@ const terminalStack = [
     logo: "https://cdn.simpleicons.org/iterm2/10B981",
     bgColor: "bg-gradient-to-br from-green-400/20 to-emerald-600/20",
     url: "https://iterm2.com",
+  },
+  {
+    name: "CleanShot X",
+    description: "Screenshot & recording for documentation",
+    fallbackLetter: "C",
+    bgColor: "bg-gradient-to-br from-sky-400/20 to-blue-600/20",
+    url: "https://cleanshot.com",
   },
 ];
 
@@ -135,6 +142,7 @@ const mcpServers = [
   { name: "GitHub", purpose: "PR reviews, issues" },
   { name: "SQLite", purpose: "Local database" },
   { name: "Puppeteer", purpose: "Browser automation" },
+  { name: "n8n", purpose: "Workflow automation" },
 ];
 
 function StackCard({
@@ -215,7 +223,7 @@ function CodeBlock({ children }: { children: string }) {
 }
 
 // Section header icons as SVGs
-const SectionIcon = ({ type }: { type: "brain" | "voice" | "terminal" | "cloud" | "plug" }) => {
+const SectionIcon = ({ type }: { type: "brain" | "voice" | "terminal" | "cloud" | "plug" | "server" }) => {
   const icons = {
     brain: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -242,9 +250,42 @@ const SectionIcon = ({ type }: { type: "brain" | "voice" | "terminal" | "cloud" 
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
       </svg>
     ),
+    server: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+      </svg>
+    ),
   };
   return <span className="text-purple-300">{icons[type]}</span>;
 };
+
+// Floating particles component
+function FloatingParticles() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(20)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 bg-white/20 rounded-full"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+          }}
+          animate={{
+            y: [0, -30, 0],
+            opacity: [0.2, 0.5, 0.2],
+          }}
+          transition={{
+            duration: 3 + Math.random() * 2,
+            repeat: Infinity,
+            delay: Math.random() * 2,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -260,20 +301,36 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-[#0f0a1f] to-slate-900 overflow-hidden">
       {/* Breathing background wallpaper */}
       <div className="fixed inset-0 -z-10">
+        {/* Main breathing gradient */}
+        <motion.div
+          className="absolute inset-0"
+          animate={{
+            background: [
+              `radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.25), transparent),
+               radial-gradient(ellipse 60% 40% at 100% 50%, rgba(59, 130, 246, 0.15), transparent),
+               radial-gradient(ellipse 50% 30% at 0% 80%, rgba(236, 72, 153, 0.1), transparent)`,
+              `radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.35), transparent),
+               radial-gradient(ellipse 60% 40% at 100% 50%, rgba(59, 130, 246, 0.25), transparent),
+               radial-gradient(ellipse 50% 30% at 0% 80%, rgba(236, 72, 153, 0.2), transparent)`,
+              `radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.25), transparent),
+               radial-gradient(ellipse 60% 40% at 100% 50%, rgba(59, 130, 246, 0.15), transparent),
+               radial-gradient(ellipse 50% 30% at 0% 80%, rgba(236, 72, 153, 0.1), transparent)`,
+            ],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+        {/* Secondary breathing layer */}
         <motion.div
           className="absolute inset-0"
           style={{
-            background: `
-              radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.3), transparent),
-              radial-gradient(ellipse 60% 40% at 100% 50%, rgba(59, 130, 246, 0.2), transparent),
-              radial-gradient(ellipse 50% 30% at 0% 80%, rgba(236, 72, 153, 0.15), transparent)
-            `,
+            background: `radial-gradient(circle at 30% 70%, rgba(168, 85, 247, 0.1), transparent 50%),
+                         radial-gradient(circle at 70% 30%, rgba(34, 211, 238, 0.08), transparent 50%)`,
           }}
           animate={{
-            scale: [1, 1.05, 1],
-            opacity: [0.8, 1, 0.8],
+            scale: [1, 1.1, 1],
+            opacity: [0.5, 0.8, 0.5],
           }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         />
         {/* Mesh grid overlay */}
         <motion.div
@@ -297,44 +354,55 @@ export default function Home() {
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
           }}
         />
+        <FloatingParticles />
       </div>
 
       {/* Hero */}
       <section ref={heroRef} className="relative min-h-screen flex items-center justify-center">
-        {/* Animated background orbs - brighter */}
+        {/* Animated background orbs - brighter with more breathing */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
             className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-purple-500/30 rounded-full filter blur-[150px]"
             animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.4, 0.6, 0.4],
-              x: [0, 30, 0],
-              y: [0, -20, 0],
+              scale: [1, 1.3, 1],
+              opacity: [0.3, 0.5, 0.3],
+              x: [0, 50, 0],
+              y: [0, -30, 0],
             }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.div
             className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] bg-blue-500/25 rounded-full filter blur-[120px]"
             animate={{
               scale: [1.2, 1, 1.2],
-              opacity: [0.3, 0.5, 0.3],
-              x: [0, -20, 0],
-              y: [0, 30, 0],
+              opacity: [0.2, 0.4, 0.2],
+              x: [0, -30, 0],
+              y: [0, 40, 0],
             }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.div
             className="absolute top-1/2 right-1/3 w-[400px] h-[400px] bg-pink-500/20 rounded-full filter blur-[100px]"
             animate={{
-              scale: [1, 1.3, 1],
-              opacity: [0.3, 0.4, 0.3],
+              scale: [1, 1.4, 1],
+              opacity: [0.2, 0.35, 0.2],
             }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+          />
+          {/* Extra subtle cyan orb */}
+          <motion.div
+            className="absolute top-1/3 left-1/2 w-[300px] h-[300px] bg-cyan-500/15 rounded-full filter blur-[80px]"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.1, 0.25, 0.1],
+              x: [0, -20, 0],
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           />
         </div>
 
         {/* Gradient overlay - lighter */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/30 to-slate-900/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/20 to-slate-900/70" />
 
         {/* Hero content */}
         <motion.div
@@ -467,11 +535,11 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Terminal */}
+        {/* Terminal & Tools */}
         <div className="mb-14">
           <FadeIn>
             <h3 className="text-sm font-semibold text-zinc-200 mb-5 flex items-center gap-2">
-              <SectionIcon type="terminal" /> Terminal
+              <SectionIcon type="terminal" /> Terminal & Tools
             </h3>
           </FadeIn>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -518,6 +586,58 @@ export default function Home() {
                   <span className="text-zinc-400 text-sm">{server.purpose}</span>
                 </motion.div>
               ))}
+            </div>
+          </div>
+        </FadeIn>
+      </section>
+
+      {/* Hardware Network */}
+      <section className="relative mx-auto max-w-5xl px-6 py-32">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-[500px] h-[300px] bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-full filter blur-[100px]" />
+        </div>
+
+        <FadeIn>
+          <h2 className="text-3xl sm:text-4xl font-black text-white mb-2 text-center flex items-center justify-center gap-3">
+            <SectionIcon type="server" /> The Network
+          </h2>
+          <p className="text-zinc-400 text-center mb-12">How everything syncs together</p>
+        </FadeIn>
+
+        <FadeIn delay={0.1}>
+          <div className="rounded-2xl p-8 bg-white/[0.04] backdrop-blur-md border border-white/[0.1]">
+            <div className="grid gap-8 md:grid-cols-2">
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-3">Local Server (BRAIN)</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  A home server running Unraid handles persistent services: n8n for workflow automation,
+                  PostgreSQL for life logging, and Home Assistant for smart home integration. All accessible
+                  via Tailscale VPN from any device.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-3">Multi-Device Sync</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  Code lives on GitHub. Config and memory persist on BRAIN. Syncthing keeps dotfiles
+                  synchronized across machines. Claude Code sessions can continue across any terminal
+                  with full context.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-3">Voice-First Workflow</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  Omi captures conversations and sends them to Fieldy for organization. Typeless converts
+                  natural speech directly into formatted prompts. Wispr Flow handles voice-to-code with
+                  context awareness.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-3">Memory Persistence</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  The Omi MCP server gives Claude access to conversation history and memories. Combined
+                  with the memory graph, sessions maintain continuity even after context resets.
+                </p>
+              </div>
             </div>
           </div>
         </FadeIn>
@@ -634,6 +754,29 @@ mkdir -p ~/.claude/rules && cp -r rules/* ~/.claude/rules/`}</CodeBlock>
               ))}
             </div>
           </motion.div>
+        </FadeIn>
+      </section>
+
+      {/* Showcase - Leavn */}
+      <section className="mx-auto max-w-5xl px-6 py-20">
+        <FadeIn>
+          <div className="rounded-2xl p-8 bg-white/[0.04] backdrop-blur-md border border-white/[0.1] text-center">
+            <p className="text-zinc-400 text-sm mb-3">Built with this stack</p>
+            <h3 className="text-xl font-bold text-white mb-2">Leavn.app</h3>
+            <p className="text-zinc-400 text-sm max-w-lg mx-auto mb-4">
+              A full-featured app built ~90% with Claude Code using this stack. As the workflow has iterated,
+              shipping has gotten faster and more reliable.
+            </p>
+            <MagneticButton
+              href="https://leavn.app"
+              className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 bg-white/[0.1] border border-white/[0.15] text-white text-sm font-medium hover:bg-white/[0.15] transition-colors"
+            >
+              View Leavn.app
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </MagneticButton>
+          </div>
         </FadeIn>
       </section>
 
