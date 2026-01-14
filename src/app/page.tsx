@@ -507,7 +507,7 @@ function StackingTitle({ onComplete }: { onComplete: () => void }) {
               animate={
                 phase === "falling"
                   ? {
-                      y: 40, // Fall to landing zone
+                      y: 0, // Fall to center (not below, to avoid clipping g)
                       x: 0, // Converge to center
                       opacity: 1,
                       rotate: (Math.random() - 0.5) * 30,
@@ -515,7 +515,7 @@ function StackingTitle({ onComplete }: { onComplete: () => void }) {
                     }
                   : phase === "stacking"
                   ? {
-                      y: stackedPositions[letters.length - 1 - i].y, // Stack from bottom up
+                      y: stackedPositions[letters.length - 1 - i].y - 20, // Stack upward from center
                       x: stackedPositions[letters.length - 1 - i].x, // Slight wobble
                       opacity: 1,
                       rotate: stackedPositions[letters.length - 1 - i].rotate,
