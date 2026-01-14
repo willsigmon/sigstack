@@ -481,8 +481,8 @@ function StackingTitle({ onComplete }: { onComplete: () => void }) {
   }, [onComplete]);
 
   return (
-    <div className="relative h-[160px] sm:h-[200px] flex items-end justify-center overflow-visible pb-4">
-      <div className="relative flex items-end justify-center overflow-visible">
+    <div className="relative h-[160px] sm:h-[200px] flex items-center justify-center overflow-visible">
+      <div className="relative flex items-center justify-center overflow-visible h-full w-full">
         {letters.map((letter, i) => {
           // Calculate horizontal offset for final position
           const letterWidth = 48; // Approximate width per letter
@@ -522,7 +522,7 @@ function StackingTitle({ onComplete }: { onComplete: () => void }) {
                       scale: 1,
                     }
                   : {
-                      y: -24, // Final position - raised to show descenders
+                      y: 0, // Final position - centered
                       x: finalX,
                       opacity: 1,
                       rotate: 0,
@@ -743,7 +743,7 @@ export default function Home() {
           style={{ opacity: heroOpacity, scale: heroScale }}
         >
           {/* Title with stacking animation - click to replay */}
-          <div className="mb-6 h-[160px] sm:h-[200px] flex items-end justify-center">
+          <div className="mb-6 h-[160px] sm:h-[200px] flex items-center justify-center">
             {isClient && isAnimating ? (
               <StackingTitle key={animationKey} onComplete={handleAnimationComplete} />
             ) : (
@@ -751,7 +751,6 @@ export default function Home() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
-                className="pb-4"
               >
                 <StaticTitle onClick={replayAnimation} />
               </motion.div>
