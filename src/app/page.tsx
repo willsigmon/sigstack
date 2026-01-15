@@ -176,7 +176,7 @@ const terminalStack = [
     logo: "/icons/cleanshot.png",
     bgColor: "bg-gradient-to-br from-[#5B9BD5]/30 to-[#2B6CB0]/40",
     glowColor: "#5B9BD5",
-    url: "https://cleanshot.com",
+    url: "https://cleanshot.sjv.io/5520D3",
   },
 ];
 
