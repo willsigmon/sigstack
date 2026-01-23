@@ -196,18 +196,20 @@ Models: `claude-3-opus`, `claude-3-sonnet`, `claude-3-haiku`
 }
 ```
 
-### Ollama (Local)
+### Ollama (Distributed Cluster)
 ```json
 {
-  "baseUrl": "http://localhost:11434",
-  "model": "llama2",
+  "baseUrl": "http://100.124.63.99:11434",
+  "model": "qwen2.5:32b",
   "options": {
     "temperature": 0.8
   }
 }
 ```
-- Self-hosted, no API costs
-- Models: llama2, mistral, codellama, etc.
+- **Primary**: Gaming PC (`100.124.63.99`) - RTX 4070 GPU
+- **Fallback**: Studio (`localhost:11434`) - M2 Max
+- **Always-on**: Tower (`tower.local:11434`) - CPU
+- Models: qwen2.5, raz, deepseek-r1, llava, etc.
 
 ### Groq
 ```json
@@ -343,10 +345,10 @@ Models:
 }
 ```
 
-### Ollama Embeddings (Local)
+### Ollama Embeddings (Gaming PC)
 ```json
 {
-  "baseUrl": "http://localhost:11434",
+  "baseUrl": "http://100.124.63.99:11434",
   "model": "nomic-embed-text"
 }
 ```

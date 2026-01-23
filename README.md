@@ -4,7 +4,7 @@
 >
 > Last Updated: January 2026
 
-Welcome to Sigstack — my complete Claude Code configuration for shipping software with AI. This repo contains everything you need to replicate my vibe coding setup across macOS, Linux, and Windows.
+Welcome to **Sigstack** — my complete Claude Code configuration for shipping software with AI. This repo contains everything you need to replicate my vibe coding setup across macOS, Linux, and Windows.
 
 ## Quick Start
 
@@ -140,6 +140,37 @@ These hooks automatically prevent wasteful operations:
 | **Glob Validator** | Warns on `**/*` patterns |
 
 See [`claude/settings.json`](./claude/settings.json) for the full hook configuration.
+
+### Tasks (NEW in Claude Code 2.1.17+)
+
+Tasks are the evolution of Todos - a new primitive for tracking complex projects across multiple sessions and subagents.
+
+**Key Features:**
+- **Dependencies**: Tasks can block/unblock each other
+- **File-system persistence**: Stored in `~/.claude/tasks/`
+- **Cross-session coordination**: Multiple Claude instances can collaborate on the same task list
+- **Subagent aware**: Perfect for spawning parallel agent swarms
+
+**Usage:**
+```bash
+# Start Claude with a shared task list
+CLAUDE_CODE_TASK_LIST_ID=my-project claude
+
+# Works with headless mode too
+CLAUDE_CODE_TASK_LIST_ID=my-project claude -p "implement auth feature"
+```
+
+**Task Tools:**
+- `TaskCreate` - Create new tasks with subject, description, activeForm
+- `TaskGet` - Get full task details by ID
+- `TaskUpdate` - Update status (pending → in_progress → completed), add dependencies
+- `TaskList` - List all tasks, see what's available to work on
+
+**Why Tasks > Todos:**
+- Opus 4.5 doesn't need todos for simple tasks
+- Tasks handle complex multi-session projects
+- Dependencies prevent race conditions in agent swarms
+- File-based = buildable utilities on top
 
 ### Post-Tool Hooks
 
