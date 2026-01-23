@@ -337,19 +337,12 @@ MCP servers are configured in `~/.claude.json`:
 
 ### Voice & Transcription
 
-#### Wispr Flow
+#### Typeless
 AI-powered voice-to-text that actually works. Speak naturally, get perfect transcription.
 
-- **What**: Dictation app with AI post-processing
-- **Why**: 10x faster than typing for documentation, messages, code comments
-- **Get it**: [wispr.flow](https://wispr.flow) <!-- TODO: Add referral link -->
-
-#### Typeless
-Another excellent voice transcription option.
-
 - **What**: Voice input for any app
-- **Why**: Works system-wide, low latency
-- **Get it**: [typeless.ai](https://typeless.ai) <!-- TODO: Add referral link -->
+- **Why**: 10x faster than typing, works system-wide, low latency
+- **Get it**: [typeless.ai](https://typeless.ai)
 
 ### Memory & Context
 
@@ -474,7 +467,7 @@ claude --thinking
 - [ ] Symlink configs: `./setup.sh`
 - [ ] Install MCP servers
 - [ ] Set up Tailscale (optional, for multi-device)
-- [ ] Install Wispr Flow / Typeless (optional)
+- [ ] Install Typeless (optional)
 - [ ] Install Omi (optional)
 
 ---
