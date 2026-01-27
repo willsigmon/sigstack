@@ -198,6 +198,14 @@ const agentStack = [
     url: "https://github.com/preset-io/agor",
   },
   {
+    name: "FLORA",
+    description: "AI creative canvas",
+    logo: "https://cdn.simpleicons.org/openai/10B981",
+    bgColor: "bg-gradient-to-br from-emerald-500/30 to-green-500/40",
+    glowColor: "#10B981",
+    url: "https://flora.ai",
+  },
+  {
     name: "Sled",
     description: "Mobile voice",
     logo: "https://cdn.simpleicons.org/airplayaudio/white",
