@@ -143,7 +143,7 @@ const coreStack = [
   {
     name: "Letta",
     description: "Cross-session memory",
-    logo: "https://cdn.simpleicons.org/openai/10B981",
+    logo: "/icons/letta.png",
     bgColor: "bg-gradient-to-br from-teal-500/30 to-cyan-500/40",
     glowColor: "#14B8A6",
     url: "https://letta.com",
