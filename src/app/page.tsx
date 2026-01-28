@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useScroll, useTransform, useSpring, useMotionValue, AnimatePresence } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 
 // Magnetic button component - juicy and playful
 function MagneticButton({ children, href, className, variant = "default" }: { children: React.ReactNode; href: string; className?: string; variant?: "default" | "primary" | "secondary" }) {
@@ -476,20 +476,68 @@ function FloatingParticles() {
 }
 
 // Stacking animation for "sigstack" - letters fall and stack like blocks, then fan out
-function StackingTitle({ onComplete }: { onComplete: () => void }) {
+function StackingTitle({ onComplete, onReplay, skipAnimation = false }: { onComplete: () => void; onReplay?: () => void; skipAnimation?: boolean }) {
   const letters = "sigstack".split("");
-  const [phase, setPhase] = useState<"falling" | "stacking" | "shuffling" | "done">("falling");
+  const [phase, setPhase] = useState<"falling" | "stacking" | "shuffling" | "done">(skipAnimation ? "done" : "falling");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [letterOffsets, setLetterOffsets] = useState<number[]>([]);
 
   // Stacked positions - letters pile up vertically like building blocks
-  const stackedPositions = letters.map((_, i) => ({
-    x: (Math.random() - 0.5) * 20, // Slight horizontal wobble
-    y: -i * 18, // Stack upward with more visible spacing
-    rotate: (Math.random() - 0.5) * 25, // More rotation for messier stack
+  // Using useMemo to keep these stable across renders
+  const stackedPositions = useMemo(() => letters.map((_, i) => ({
+    x: (Math.random() - 0.5) * 20,
+    y: -i * 18,
+    rotate: (Math.random() - 0.5) * 25,
     scale: 1,
-  }));
+  })), []);
+
+  // Store initial random values to avoid recalculating during animation
+  const initialPositions = useMemo(() => letters.map(() => ({
+    y: -300 - (Math.random() * 60),
+    x: (Math.random() - 0.5) * 200,
+    rotate: Math.random() * 180 - 90,
+  })), []);
+
+  // Calculate actual letter widths for precise final positioning
+  useEffect(() => {
+    // Measure actual letter widths using a hidden span
+    const measureLetters = () => {
+      const measurements: number[] = [];
+      const tempSpan = document.createElement('span');
+      tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:clamp(3.75rem,8vw,6rem);font-weight:900;letter-spacing:-0.025em;';
+      document.body.appendChild(tempSpan);
+
+      letters.forEach(letter => {
+        tempSpan.textContent = letter;
+        measurements.push(tempSpan.getBoundingClientRect().width);
+      });
+
+      document.body.removeChild(tempSpan);
+
+      // Calculate cumulative offsets
+      const offsets: number[] = [];
+      const totalWidth = measurements.reduce((a, b) => a + b, 0);
+      let cumulative = -totalWidth / 2;
+
+      measurements.forEach((width, i) => {
+        offsets.push(cumulative + width / 2);
+        cumulative += width;
+      });
+
+      setLetterOffsets(offsets);
+    };
+
+    measureLetters();
+    window.addEventListener('resize', measureLetters);
+    return () => window.removeEventListener('resize', measureLetters);
+  }, [letters]);
 
   useEffect(() => {
-    // Phase timing - give stacking more time to be visible
+    if (skipAnimation) {
+      onComplete();
+      return;
+    }
+
     const fallingDuration = 600;
     const stackingDuration = 800;
     const shufflingDuration = 900;
@@ -506,16 +554,41 @@ function StackingTitle({ onComplete }: { onComplete: () => void }) {
       clearTimeout(timer2);
       clearTimeout(timer3);
     };
-  }, [onComplete]);
+  }, [onComplete, skipAnimation]);
+
+  const handleClick = () => {
+    if (phase === "done" && onReplay) {
+      onReplay();
+    }
+  };
+
+  // Fallback offsets if measurements aren't ready
+  const getOffset = (i: number) => {
+    if (letterOffsets.length > 0) {
+      return letterOffsets[i];
+    }
+    // Fallback: approximate based on average letter width
+    const avgWidth = 48;
+    const totalWidth = letters.length * avgWidth;
+    return (i * avgWidth) - (totalWidth / 2) + (avgWidth / 2);
+  };
 
   return (
-    <div className="relative h-[200px] sm:h-[280px] flex items-center justify-center" style={{ overflow: 'visible' }}>
-      <div className="relative flex items-center justify-center" style={{ overflow: 'visible' }}>
+    <motion.div
+      ref={containerRef}
+      className="relative h-[200px] sm:h-[280px] flex items-center justify-center"
+      style={{ overflow: 'visible' }}
+      onClick={handleClick}
+      whileHover={phase === "done" ? { scale: 1.02 } : undefined}
+      whileTap={phase === "done" ? { scale: 0.98 } : undefined}
+      title={phase === "done" ? "Click to replay animation" : undefined}
+    >
+      <div
+        className={`relative flex items-center justify-center ${phase === "done" ? "cursor-pointer" : ""}`}
+        style={{ overflow: 'visible' }}
+      >
         {letters.map((letter, i) => {
-          // Calculate horizontal offset for final position
-          const letterWidth = 48; // Approximate width per letter
-          const totalWidth = letters.length * letterWidth;
-          const finalX = (i * letterWidth) - (totalWidth / 2) + (letterWidth / 2);
+          const finalX = getOffset(i);
 
           return (
             <motion.span
@@ -523,34 +596,44 @@ function StackingTitle({ onComplete }: { onComplete: () => void }) {
               className="text-6xl sm:text-8xl font-black bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent absolute"
               style={{
                 textShadow: "0 4px 30px rgba(139, 92, 246, 0.5), 0 8px 60px rgba(59, 130, 246, 0.3)",
-                filter: "drop-shadow(0 4px 20px rgba(139, 92, 246, 0.4))",
+                filter: "drop-shadow(0 4px 20px rgba(139, 92, 246, 0.4)) drop-shadow(0 8px 40px rgba(59, 130, 246, 0.2))",
               }}
-              initial={{
-                y: -300 - (i * 60), // Start above viewport, staggered
-                x: (Math.random() - 0.5) * 200, // Random horizontal start
-                opacity: 0,
-                rotate: Math.random() * 180 - 90,
-                scale: 0.8,
-              }}
+              initial={
+                skipAnimation
+                  ? {
+                      y: 0,
+                      x: finalX,
+                      opacity: 1,
+                      rotate: 0,
+                      scale: 1,
+                    }
+                  : {
+                      y: initialPositions[i].y,
+                      x: initialPositions[i].x,
+                      opacity: 0,
+                      rotate: initialPositions[i].rotate,
+                      scale: 0.8,
+                    }
+              }
               animate={
                 phase === "falling"
                   ? {
-                      y: 0, // Fall to center (not below, to avoid clipping g)
-                      x: 0, // Converge to center
+                      y: 0,
+                      x: 0,
                       opacity: 1,
                       rotate: (Math.random() - 0.5) * 30,
                       scale: 1,
                     }
                   : phase === "stacking"
                   ? {
-                      y: stackedPositions[letters.length - 1 - i].y - 20, // Stack upward from center
-                      x: stackedPositions[letters.length - 1 - i].x, // Slight wobble
+                      y: stackedPositions[letters.length - 1 - i].y - 20,
+                      x: stackedPositions[letters.length - 1 - i].x,
                       opacity: 1,
                       rotate: stackedPositions[letters.length - 1 - i].rotate,
                       scale: 1,
                     }
                   : {
-                      y: 0, // Final position - centered
+                      y: 0,
                       x: finalX,
                       opacity: 1,
                       rotate: 0,
@@ -558,7 +641,9 @@ function StackingTitle({ onComplete }: { onComplete: () => void }) {
                     }
               }
               transition={
-                phase === "falling"
+                skipAnimation
+                  ? { duration: 0 }
+                  : phase === "falling"
                   ? {
                       type: "spring",
                       stiffness: 50,
@@ -573,10 +658,11 @@ function StackingTitle({ onComplete }: { onComplete: () => void }) {
                       delay: i * 0.02,
                     }
                   : {
-                      type: "tween",
-                      duration: 0.7,
-                      ease: [0.16, 1, 0.3, 1], // easeOutExpo - very smooth deceleration
-                      delay: i * 0.025,
+                      type: "spring",
+                      stiffness: 80,
+                      damping: 20,
+                      mass: 0.8,
+                      delay: i * 0.02,
                     }
               }
             >
@@ -585,7 +671,7 @@ function StackingTitle({ onComplete }: { onComplete: () => void }) {
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -623,27 +709,27 @@ export default function Home() {
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
 
   // Animation state
-  const [isAnimating, setIsAnimating] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
   const [isClient, setIsClient] = useState(false);
+  const [shouldSkipAnimation, setShouldSkipAnimation] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
-    // Check if this is first visit
+    // Check if this is first visit - show animation only on first visit
     const hasVisited = localStorage.getItem("sigstack-visited");
     if (!hasVisited) {
-      setIsAnimating(true);
+      setShouldSkipAnimation(false);
       localStorage.setItem("sigstack-visited", "true");
     }
   }, []);
 
   const handleAnimationComplete = () => {
-    setIsAnimating(false);
+    // Animation complete - letters stay in final position
   };
 
   const replayAnimation = () => {
     setAnimationKey(prev => prev + 1);
-    setIsAnimating(true);
+    setShouldSkipAnimation(false);
   };
 
   return (
@@ -772,16 +858,15 @@ export default function Home() {
         >
           {/* Title with stacking animation - click to replay */}
           <div className="mb-6 h-[200px] sm:h-[280px] flex items-center justify-center" style={{ overflow: 'visible' }}>
-            {isClient && isAnimating ? (
-              <StackingTitle key={animationKey} onComplete={handleAnimationComplete} />
+            {isClient ? (
+              <StackingTitle
+                key={animationKey}
+                onComplete={handleAnimationComplete}
+                onReplay={replayAnimation}
+                skipAnimation={shouldSkipAnimation && animationKey === 0}
+              />
             ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <StaticTitle onClick={replayAnimation} />
-              </motion.div>
+              <StaticTitle />
             )}
           </div>
 
