@@ -27,7 +27,10 @@ case "$1" in
         # Create symlinks (macOS)
         ln -sf "$DOTFILES_DIR/claude/skills" ~/.claude/skills
         ln -sf "$DOTFILES_DIR/claude/commands" ~/.claude/commands
+        ln -sf "$DOTFILES_DIR/claude/scripts" ~/.claude/scripts
         ln -sf "$DOTFILES_DIR/mcp/.mcp-fixed-servers" ~/.mcp-fixed-servers
+        # Ensure scripts are executable
+        chmod +x ~/.claude/scripts/*.sh 2>/dev/null
         echo "✓ Symlinks created"
         ;;
     *)

@@ -1,4 +1,8 @@
 {
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/scripts/statusline-command.sh"
+  },
   "env": {
     "CLAUDE_PREFER_AGENTS": "1",
     "CLAUDE_PARALLEL_EXECUTION": "1"
