@@ -1,82 +1,3277 @@
 {
-  "env": {
-    "CLAUDE_PREFER_AGENTS": "1",
-    "CLAUDE_PARALLEL_EXECUTION": "1"
-  },
-  "permissions": {
-    "allow": [
-      "*"
-    ],
-    "deny": []
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Read",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 - <<'HOOK'\nimport json, sys, os\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    path = tool_input.get('file_path', '') if isinstance(tool_input, dict) else ''\n    if not path:\n        sys.exit(0)\n    # Block token-heavy files\n    blocked = ['package-lock.json', 'yarn.lock', '.min.js', '.min.css', '.bundle.js', '.bundle.css', '.map', '.xcodeproj/project.pbxproj']\n    if any(b in path for b in blocked) or '/Pods/' in path or '/DerivedData/' in path or '/.build/' in path:\n        print(f'❌ BLOCKED: {path} is a token-heavy file', file=sys.stderr)\n        sys.exit(2)\n    # Warn on large files (>100KB)\n    if os.path.exists(path):\n        size = os.path.getsize(path)\n        if size > 102400:\n            print(f'⚠️ WARNING: {path} is {size//1024}KB (>100KB)', file=sys.stderr)\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 - <<'HOOK'\nimport json, sys, os, re\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    cmd = tool_input.get('command', '') if isinstance(tool_input, dict) else ''\n    if not cmd:\n        sys.exit(0)\n    # Block commands touching token-wasteful directories\n    blocked = ['node_modules', '__pycache__', r'\\.git/', '/dist/', '/build/', 'DerivedData', '/Pods/', '/venv/', 'target/debug', 'target/release', r'\\.next/', r'\\.nuxt/']\n    if any(re.search(b, cmd) for b in blocked):\n        print('❌ BLOCKED: Command touches token-wasteful directory', file=sys.stderr)\n        sys.exit(2)\n    # Log command\n    os.makedirs(os.path.expanduser('~/.claude/logs'), exist_ok=True)\n    with open(os.path.expanduser('~/.claude/logs/bash-history.log'), 'a') as f:\n        from datetime import datetime\n        f.write(f\"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {cmd}\\n\")\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
-          }
-        ]
-      },
-      {
-        "matcher": "Task",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 - <<'HOOK'\nimport json, sys\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    model = tool_input.get('model', '') if isinstance(tool_input, dict) else ''\n    if model and 'opus' in model.lower():\n        print('❌ BLOCKED: Opus usage prohibited (cost optimization). Use haiku or sonnet.', file=sys.stderr)\n        sys.exit(2)\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
-          }
-        ]
-      },
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 - <<'HOOK'\nimport json, sys\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    content = tool_input.get('content', '') if isinstance(tool_input, dict) else ''\n    if content and len(content) > 51200:\n        print(f'⚠️ WARNING: Writing {len(content)//1024}KB file. Consider smaller chunks.', file=sys.stderr)\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
-          }
-        ]
-      },
-      {
-        "matcher": "Glob",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 - <<'HOOK'\nimport json, sys\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    pattern = tool_input.get('pattern', '') if isinstance(tool_input, dict) else ''\n    if pattern in ['**/*', '*', '**']:\n        print(f'⚠️ WARNING: Very broad glob pattern may return thousands of files', file=sys.stderr)\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 - <<'HOOK'\nimport json, sys, os, subprocess\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    cmd = tool_input.get('command', '') if isinstance(tool_input, dict) else ''\n    if not cmd:\n        sys.exit(0)\n    # Notify on git operations\n    if cmd.startswith('git '):\n        parts = cmd.split()\n        op = parts[1] if len(parts) > 1 else 'operation'\n        if op in ['add', 'commit', 'push', 'pull', 'merge', 'rebase']:\n            subprocess.run(['osascript', '-e', f'display notification \"Git {op} completed\" with title \"Claude Code\"'], capture_output=True)\n    # Notify on xcodebuild\n    if 'xcodebuild' in cmd:\n        subprocess.run(['osascript', '-e', 'display notification \"Build completed\" with title \"Xcode\"'], capture_output=True)\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
-          }
-        ]
-      },
-      {
-        "matcher": "Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 - <<'HOOK'\nimport json, sys, os, subprocess\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    path = tool_input.get('file_path', '') if isinstance(tool_input, dict) else ''\n    if not path:\n        sys.exit(0)\n    # Log edit\n    os.makedirs(os.path.expanduser('~/.claude/logs'), exist_ok=True)\n    with open(os.path.expanduser('~/.claude/logs/file-edits.log'), 'a') as f:\n        from datetime import datetime\n        f.write(f\"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Edited: {path}\\n\")\n    # Auto-format Swift files\n    if path.endswith('.swift'):\n        subprocess.run(['swift-format', '-i', path], capture_output=True)\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
-          }
-        ]
-      }
+  "numStartups": 604,
+  "installMethod": "native",
+  "autoUpdates": false,
+  "hasSeenTasksHint": true,
+  "customApiKeyResponses": {
+    "approved": [],
+    "rejected": [
+      "18KRwXKHwPQ-sSpqJgAA",
+      "NYvgzcYsTPQ-OBbDtQAA",
+      "NYvgzcYsTPQ-OBbDtQAA"
     ]
   },
-  "alwaysThinkingEnabled": true
+  "tipsHistory": {
+    "new-user-warmup": 4,
+    "plan-mode-for-complex-tasks": 230,
+    "shift-enter": 596,
+    "memory-command": 596,
+    "theme-command": 586,
+    "status-line": 580,
+    "default-permission-mode-config": 603,
+    "git-worktrees": 596,
+    "stickers-command": 489,
+    "enter-to-steer-in-relatime": 591,
+    "todo-list": 591,
+    "install-github-app": 600,
+    "install-slack-app": 596,
+    "permissions": 600,
+    "drag-and-drop-images": 603,
+    "paste-images-mac": 603,
+    "double-esc-code-restore": 596,
+    "continue": 596,
+    "rename-conversation": 602,
+    "custom-commands": 602,
+    "shift-tab": 596,
+    "image-paste": 591,
+    "config-thinking-mode": 235,
+    "ultrathink-keyword": 434,
+    "btw-side-question": 245,
+    "custom-agents": 602,
+    "desktop-app": 603,
+    "web-app": 603,
+    "mobile-app": 594,
+    "guest-passes": 356,
+    "ide-upsell-external-terminal": 604,
+    "frontend-design-plugin": 603,
+    "terminal-setup": 501,
+    "shift-enter-setup": 501,
+    "agent-flag": 603
+  },
+  "promptQueueUseCount": 3499,
+  "showExpandedTodos": true,
+  "cachedStatsigGates": {
+    "tengu_log_1p_events": true,
+    "tengu_disable_bypass_permissions_mode": false,
+    "code_slack_app_install_banner": false,
+    "tengu_tool_pear": false,
+    "tengu_sumi": true,
+    "tengu_react_vulnerability_warning": false,
+    "tengu_web_tasks": true,
+    "tengu_tool_result_persistence": true,
+    "tengu_c4w_usage_limit_notifications_enabled": true,
+    "tengu_thinkback": false,
+    "tengu_clawd_openfire": false,
+    "tengu_ant_attribution_header_new": true,
+    "tengu_prompt_suggestion": true,
+    "tengu_vscode_review_upsell": false,
+    "tengu_year_end_2025_campaign_promo": false,
+    "tengu_streaming_tool_execution2": false,
+    "tengu_vscode_onboarding": false,
+    "tengu_session_memory": false
+  },
+  "cachedDynamicConfigs": {
+    "tengu_1p_event_batch_config": {
+      "scheduledDelayMillis": 5000,
+      "maxExportBatchSize": 200,
+      "maxQueueSize": 8192
+    },
+    "tengu-top-of-feed-tip": {
+      "tip": "",
+      "color": ""
+    }
+  },
+  "cachedGrowthBookFeatures": {
+    "strawberry_granite_flag": "N/A",
+    "persimmon_marble_flag": "N/A",
+    "doorbell_bottle": "inherit",
+    "tengu_mcp_tool_search": true,
+    "tengu_disable_bypass_permissions_mode": false,
+    "tengu_tool_pear": false,
+    "tengu_c4w_usage_limit_notifications_enabled": true,
+    "tengu_thinkback": false,
+    "tengu_ant_attribution_header_new": true,
+    "tengu_sumi": true,
+    "tengu_react_vulnerability_warning": false,
+    "tengu_tool_result_persistence": false,
+    "tengu_pid_based_version_locking": true,
+    "tengu_accept_with_feedback": true,
+    "tengu_prompt_suggestion": true,
+    "tengu_tool_search_unsupported_models": [
+      "haiku"
+    ],
+    "tengu_1p_event_batch_config": {
+      "scheduledDelayMillis": 5000,
+      "maxExportBatchSize": 200,
+      "maxQueueSize": 8192
+    },
+    "tengu_event_sampling_config": {},
+    "tengu-top-of-feed-tip": {
+      "tip": "",
+      "color": ""
+    },
+    "tengu_scratch": false,
+    "tengu_log_segment_events": false,
+    "tengu_log_datadog_events": true,
+    "tengu_streaming_tool_execution2": false,
+    "tengu_post_compact_survey": false,
+    "tengu_permission_explainer": true,
+    "tengu_code_diff_cli": true,
+    "enhanced_telemetry_beta": false,
+    "tengu_chrome_auto_enable": false,
+    "tengu_compact_streaming_retry": false,
+    "tengu_session_memory": false,
+    "tengu_bash_haiku_prefetch": true,
+    "tengu_sm_compact": false,
+    "tengu_plan_mode_interview_phase": false,
+    "tengu_keybinding_customization": false,
+    "tengu_claudeai_mcp_connectors": false,
+    "tengu_plank_river_frost": "user_intent",
+    "tengu_attribution_header": true,
+    "tengu_vscode_review_upsell": false,
+    "tengu_vscode_onboarding": false,
+    "tengu_brass_pebble": false,
+    "tengu_cache_plum_violet": false,
+    "tengu_file_write_optimization": false,
+    "tengu_scarf_coffee": false,
+    "tengu_keybinding_customization_release": false,
+    "tengu_pr_status_cli": false,
+    "tengu_marble_kite": false,
+    "tengu_kv7_prompt_sort": false,
+    "tengu_plum_vx3": false,
+    "tengu_cork_m4q": false,
+    "tengu_compact_cache_prefix": false
+  },
+  "respectGitignore": false,
+  "hasSeenStashHint": true,
+  "userID": "9c5d8dd1a9587e701c4cb4a66c052b147c8e497069e4e19e296f90f35724007d",
+  "firstStartTime": "2025-12-11T02:04:13.113Z",
+  "sonnet45MigrationComplete": true,
+  "opus45MigrationComplete": true,
+  "changelogLastFetched": 1769530674001,
+  "claudeCodeFirstTokenDate": "2025-03-14T16:23:58.569192Z",
+  "shiftEnterKeyBindingInstalled": true,
+  "hasCompletedOnboarding": true,
+  "lastOnboardingVersion": "2.1.5",
+  "bypassPermissionsModeAccepted": true,
+  "hasShownOpus45Notice": {
+    "07f7f8d4-766b-44c5-9db9-36f0628cced4": true,
+    "98534aa9-de86-4b5a-9e2a-d539b490155e": true
+  },
+  "projects": {
+    "/Users/wsig": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "clay": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@clayhq/clay-mcp@latest"
+          ],
+          "env": {
+            "CLAY_API_KEY": "973cf2b219de950f4ece5e07b80291f9ead19706821eb92235508522f07279e6"
+          }
+        },
+        "craft": {
+          "type": "http",
+          "url": "https://mcp.craft.do/links/FjHBYsF0hlr/mcp"
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 4,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [],
+      "lastCost": 0,
+      "lastAPIDuration": 0,
+      "lastToolDuration": 0,
+      "lastDuration": 11933,
+      "lastLinesAdded": 0,
+      "lastLinesRemoved": 0,
+      "lastTotalInputTokens": 0,
+      "lastTotalOutputTokens": 0,
+      "lastTotalCacheCreationInputTokens": 0,
+      "lastTotalCacheReadInputTokens": 0,
+      "lastTotalWebSearchRequests": 0,
+      "lastSessionId": "9df970a1-25f0-4cae-863f-ed50a3581ae7",
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "lastAPIDurationWithoutRetries": 0,
+      "lastModelUsage": {},
+      "hasCompletedProjectOnboarding": true,
+      "lastFpsAverage": 4.86,
+      "lastFpsLow1Pct": 175.08
+    },
+    "/Volumes/Ext-code/GitHub Repos/carterhelms": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "ChatWidget.tsx",
+        "App.tsx",
+        "geminiService.ts",
+        "IntakeForm.tsx",
+        "submit.ts"
+      ],
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "exampleFilesGeneratedAt": 1765418775470
+    },
+    "/Volumes/Ext-code/GitHub Repos/LeavnAndroid": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "MainActivity.kt",
+        "ChapterViewModel.kt",
+        "PrayerEntryViewModel.kt",
+        "HomeScreen.kt",
+        "LeavnNavHost.kt"
+      ],
+      "exampleFilesGeneratedAt": 1767900801953,
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "hasCompletedProjectOnboarding": true
+    },
+    "/Volumes/Ext-code/GitHub Repos": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "repomix": {
+          "type": "stdio",
+          "command": "npx",
+          "args": [
+            "-y",
+            "repomix",
+            "--mcp"
+          ],
+          "env": {}
+        },
+        "context7": {
+          "type": "stdio",
+          "command": "npx",
+          "args": [
+            "-y",
+            "@upstash/context7-mcp"
+          ],
+          "env": {}
+        },
+        "chrome-devtools": {
+          "type": "stdio",
+          "command": "npx",
+          "args": [
+            "-y",
+            "chrome-devtools-mcp@latest"
+          ],
+          "env": {}
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 226,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "CareerGuide.tsx",
+        "route.ts",
+        "page.tsx",
+        "chat.ts",
+        "package.json"
+      ],
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "lastCost": 5.5341547,
+      "lastAPIDuration": 863734,
+      "lastAPIDurationWithoutRetries": 863562,
+      "lastToolDuration": 456324,
+      "lastDuration": 14494048,
+      "lastLinesAdded": 8,
+      "lastLinesRemoved": 0,
+      "lastTotalInputTokens": 192623,
+      "lastTotalOutputTokens": 30777,
+      "lastTotalCacheCreationInputTokens": 461944,
+      "lastTotalCacheReadInputTokens": 5313109,
+      "lastTotalWebSearchRequests": 3,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 184248,
+          "outputTokens": 9187,
+          "cacheReadInputTokens": 738182,
+          "cacheCreationInputTokens": 111217,
+          "webSearchRequests": 0,
+          "costUSD": 0.44302244999999985
+        },
+        "claude-opus-4-5-20251101": {
+          "inputTokens": 8375,
+          "outputTokens": 21590,
+          "cacheReadInputTokens": 4574927,
+          "cacheCreationInputTokens": 350727,
+          "webSearchRequests": 3,
+          "costUSD": 5.09113225
+        }
+      },
+      "lastSessionId": "2677746d-db87-49de-a7f6-bc5c6fe60aaa",
+      "exampleFilesGeneratedAt": 1769457552544,
+      "lastFpsAverage": 1.94,
+      "lastFpsLow1Pct": 148.21
+    },
+    "/Volumes/Ext-code/GitHub Repos/LeavnOfficial": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "glif": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@glifxyz/glif-mcp-server@latest"
+          ],
+          "env": {
+            "GLIF_API_TOKEN": "glif_91a3a71c7e8226a0ac5d638c9d6f86a4ef1fcfe56e9caced986351a5f2bae8ba"
+          }
+        },
+        "stitch": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@_davideast/stitch-mcp@latest",
+            "proxy",
+            "--transport",
+            "stdio"
+          ]
+        },
+        "gemini-imagen": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "github:anthropics/gemini-mcp-server"
+          ],
+          "env": {
+            "GEMINI_API_KEY": "AIzaSyDVStEPVXM_95LJ3bwCcgWk4SoZZpgqWkQ"
+          }
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "HomeView.swift",
+        "ChapterView.swift",
+        "CommunityView.swift",
+        "BibleView.swift",
+        "DailyVerseCard.swift"
+      ],
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "exampleFilesGeneratedAt": 1769037007035,
+      "lastCost": 11.714287249999998,
+      "lastAPIDuration": 1152575,
+      "lastAPIDurationWithoutRetries": 1152359,
+      "lastToolDuration": 1320946,
+      "lastDuration": 10584912,
+      "lastLinesAdded": 242,
+      "lastLinesRemoved": 40,
+      "lastTotalInputTokens": 148798,
+      "lastTotalOutputTokens": 43387,
+      "lastTotalCacheCreationInputTokens": 802485,
+      "lastTotalCacheReadInputTokens": 11058918,
+      "lastTotalWebSearchRequests": 0,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 146777,
+          "outputTokens": 3613,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.164842
+        },
+        "claude-opus-4-5-20251101": {
+          "inputTokens": 2021,
+          "outputTokens": 39774,
+          "cacheReadInputTokens": 11058918,
+          "cacheCreationInputTokens": 802485,
+          "webSearchRequests": 0,
+          "costUSD": 11.54944525
+        }
+      },
+      "lastSessionId": "3b050dfa-5de2-4c08-aa75-abbef0a8d88b",
+      "hasCompletedProjectOnboarding": true,
+      "lastFpsAverage": 5.7,
+      "lastFpsLow1Pct": 99.2
+    },
+    "/Volumes/Ext-code/GitHub Repos/hubdash": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 9,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "Dashboard.tsx",
+        "Contacts.tsx",
+        "routers.ts",
+        "Sidebar.tsx",
+        "App.tsx"
+      ],
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "exampleFilesGeneratedAt": 1769378754912,
+      "lastCost": 28.210777149999974,
+      "lastAPIDuration": 3859428,
+      "lastAPIDurationWithoutRetries": 3859139,
+      "lastToolDuration": 1590914,
+      "lastDuration": 8952615,
+      "lastLinesAdded": 891,
+      "lastLinesRemoved": 567,
+      "lastTotalInputTokens": 525655,
+      "lastTotalOutputTokens": 246741,
+      "lastTotalCacheCreationInputTokens": 2429393,
+      "lastTotalCacheReadInputTokens": 63516935,
+      "lastTotalWebSearchRequests": 0,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 506546,
+          "outputTokens": 173469,
+          "cacheReadInputTokens": 42096694,
+          "cacheCreationInputTokens": 1038791,
+          "webSearchRequests": 0,
+          "costUSD": 6.88204915
+        },
+        "claude-opus-4-5-20251101": {
+          "inputTokens": 19109,
+          "outputTokens": 73272,
+          "cacheReadInputTokens": 21420241,
+          "cacheCreationInputTokens": 1390602,
+          "webSearchRequests": 0,
+          "costUSD": 21.328727999999987
+        }
+      },
+      "lastSessionId": "02604010-b91a-4a46-8756-689086cacdfa",
+      "hasCompletedProjectOnboarding": true
+    },
+    "/Volumes/Ext-code/GitHub Repos/hti-minisite": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "index.html",
+        "vercel.json",
+        "CLAUDE.md",
+        "index.html",
+        "vercel.json",
+        "CLAUDE.md"
+      ],
+      "exampleFilesGeneratedAt": 1766523030680
+    },
+    "/Volumes/Ext-code/GitHub Repos/willsigmon-media": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "page.tsx",
+        "ContactForm.tsx",
+        "layout.tsx",
+        "globals.css",
+        "FloatingElements.tsx"
+      ],
+      "exampleFilesGeneratedAt": 1768660651222,
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      }
+    },
+    "/Volumes/Ext-code/GitHub Repos/Modcaster": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "LibraryView.swift",
+        "StreamingPlayer.swift",
+        "AppState.swift",
+        "ContentView.swift",
+        "DownloadManager.swift"
+      ],
+      "exampleFilesGeneratedAt": 1768769445341,
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "hasCompletedProjectOnboarding": true,
+      "lastCost": 18.150746749999993,
+      "lastAPIDuration": 1717770,
+      "lastAPIDurationWithoutRetries": 1717505,
+      "lastToolDuration": 1357447,
+      "lastDuration": 74055804,
+      "lastLinesAdded": 719,
+      "lastLinesRemoved": 216,
+      "lastTotalInputTokens": 222574,
+      "lastTotalOutputTokens": 66499,
+      "lastTotalCacheCreationInputTokens": 965871,
+      "lastTotalCacheReadInputTokens": 21022036,
+      "lastTotalWebSearchRequests": 0,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 218730,
+          "outputTokens": 7633,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 28946,
+          "webSearchRequests": 0,
+          "costUSD": 0.29307750000000016
+        },
+        "claude-opus-4-5-20251101": {
+          "inputTokens": 3844,
+          "outputTokens": 58866,
+          "cacheReadInputTokens": 21022036,
+          "cacheCreationInputTokens": 936925,
+          "webSearchRequests": 0,
+          "costUSD": 17.857669249999994
+        }
+      },
+      "lastSessionId": "da450070-c62f-425b-b936-b15b9d5421e9"
+    },
+    "/Users/wsig/Downloads": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [],
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      }
+    },
+    "/Users/wsig/.claude-worktrees/LeavnOfficial/affectionate-proskuriakova": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "HomeView.swift",
+        "ChapterView.swift",
+        "BibleView.swift",
+        "BibleViewModel.swift",
+        "ScriptureDatabase.swift"
+      ],
+      "exampleFilesGeneratedAt": 1767741058796,
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      }
+    },
+    "/Volumes/Ext-code/GitHub Repos/leavnsite": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "splash.tsx",
+        "ComparisonChartEnhanced.tsx",
+        "routes.ts",
+        "BetaSignup.tsx",
+        "FAQ.tsx"
+      ],
+      "exampleFilesGeneratedAt": 1767744940529,
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      }
+    },
+    "/Volumes/Ext-code/GitHub Repos/catalyst": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 1,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "HeroSection.tsx",
+        "StrategicPillars.tsx",
+        "Header.tsx",
+        "page.tsx",
+        "board.ts"
+      ],
+      "exampleFilesGeneratedAt": 1769379729234,
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "lastCost": 2.3516955999999998,
+      "lastAPIDuration": 391293,
+      "lastAPIDurationWithoutRetries": 391263,
+      "lastToolDuration": 110737,
+      "lastDuration": 665653,
+      "lastLinesAdded": 3,
+      "lastLinesRemoved": 2,
+      "lastTotalInputTokens": 131457,
+      "lastTotalOutputTokens": 17524,
+      "lastTotalCacheCreationInputTokens": 142138,
+      "lastTotalCacheReadInputTokens": 3137099,
+      "lastTotalWebSearchRequests": 0,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 127911,
+          "outputTokens": 6222,
+          "cacheReadInputTokens": 564781,
+          "cacheCreationInputTokens": 67721,
+          "webSearchRequests": 0,
+          "costUSD": 0.3001503500000001
+        },
+        "claude-opus-4-5-20251101": {
+          "inputTokens": 3546,
+          "outputTokens": 11302,
+          "cacheReadInputTokens": 2572318,
+          "cacheCreationInputTokens": 74417,
+          "webSearchRequests": 0,
+          "costUSD": 2.05154525
+        }
+      },
+      "lastSessionId": "915e9ae9-d702-4bd4-80a9-a806ec42f31f"
+    },
+    "/Volumes/Ext-code/GitHub Repos/iswcpssclosed": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "page.tsx",
+        "prediction-engine.ts",
+        "weather-api.ts",
+        "NotificationSignup.tsx",
+        "AlertsPanel.tsx"
+      ],
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "exampleFilesGeneratedAt": 1768660649486,
+      "lastCost": 16.66540525,
+      "lastAPIDuration": 1606474,
+      "lastAPIDurationWithoutRetries": 1213459,
+      "lastToolDuration": 224996,
+      "lastDuration": 3619520,
+      "lastLinesAdded": 212,
+      "lastLinesRemoved": 86,
+      "lastTotalInputTokens": 498544,
+      "lastTotalOutputTokens": 41688,
+      "lastTotalCacheCreationInputTokens": 1514825,
+      "lastTotalCacheReadInputTokens": 11336586,
+      "lastTotalWebSearchRequests": 0,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 492101,
+          "outputTokens": 1853,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.5013659999999999
+        },
+        "claude-opus-4-5-20251101": {
+          "inputTokens": 6443,
+          "outputTokens": 39835,
+          "cacheReadInputTokens": 11336586,
+          "cacheCreationInputTokens": 1514825,
+          "webSearchRequests": 0,
+          "costUSD": 16.164039250000002
+        }
+      },
+      "lastSessionId": "7ada6d0a-b33d-4871-9cc2-efb6cfe52fcc",
+      "hasCompletedProjectOnboarding": true
+    },
+    "/Volumes/Ext-code/GitHub Repos/cjcommissioner": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "page.tsx",
+        "autonomous-log.md",
+        "globals.css",
+        "README.md",
+        "cj-headshot.png"
+      ],
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "lastCost": 16.174730499999995,
+      "lastAPIDuration": 1942719,
+      "lastAPIDurationWithoutRetries": 1942423,
+      "lastToolDuration": 950641,
+      "lastDuration": 12467921,
+      "lastLinesAdded": 1116,
+      "lastLinesRemoved": 467,
+      "lastTotalInputTokens": 144553,
+      "lastTotalOutputTokens": 94004,
+      "lastTotalCacheCreationInputTokens": 1097448,
+      "lastTotalCacheReadInputTokens": 13986547,
+      "lastTotalWebSearchRequests": 0,
+      "lastModelUsage": {
+        "claude-opus-4-5-20251101": {
+          "inputTokens": 4336,
+          "outputTokens": 89806,
+          "cacheReadInputTokens": 13986547,
+          "cacheCreationInputTokens": 1076322,
+          "webSearchRequests": 0,
+          "costUSD": 15.987115999999999
+        },
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 140217,
+          "outputTokens": 4198,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 21126,
+          "webSearchRequests": 0,
+          "costUSD": 0.1876145
+        }
+      },
+      "lastSessionId": "2651d499-e3d0-42b9-bf88-ab6458df157b",
+      "exampleFilesGeneratedAt": 1767993050357
+    },
+    "/Volumes/Ext-code/GitHub Repos/TwoTwelveReferralNetwork": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "DashboardView.swift",
+        "ReferralNetworkApp.swift",
+        "OnboardingManager.swift",
+        "SupabaseManager.swift",
+        "ProfileView.swift"
+      ],
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "exampleFilesGeneratedAt": 1768062689903
+    },
+    "/": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [],
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "hasCompletedProjectOnboarding": true,
+      "lastCost": 0.6571072,
+      "lastAPIDuration": 56327,
+      "lastAPIDurationWithoutRetries": 56318,
+      "lastToolDuration": 600,
+      "lastDuration": 297107,
+      "lastLinesAdded": 0,
+      "lastLinesRemoved": 0,
+      "lastTotalInputTokens": 15577,
+      "lastTotalOutputTokens": 1080,
+      "lastTotalCacheCreationInputTokens": 107564,
+      "lastTotalCacheReadInputTokens": 73320,
+      "lastTotalWebSearchRequests": 0,
+      "lastModelUsage": {
+        "claude-opus-4-5-20251101": {
+          "inputTokens": 22,
+          "outputTokens": 788,
+          "cacheReadInputTokens": 63138,
+          "cacheCreationInputTokens": 90648,
+          "webSearchRequests": 0,
+          "costUSD": 0.6179290000000001
+        },
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 15555,
+          "outputTokens": 292,
+          "cacheReadInputTokens": 10182,
+          "cacheCreationInputTokens": 16916,
+          "webSearchRequests": 0,
+          "costUSD": 0.0391782
+        }
+      },
+      "lastSessionId": "d8fcc381-61c7-4b87-b4c5-2da9f2390854"
+    },
+    "/Users/wsig/GitHub MBA/iswcpssclosed": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [],
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      }
+    },
+    "/Volumes/Ext-code/GitHub Repos/stash": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "annas-archive": {
+          "type": "stdio",
+          "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+          "args": [
+            "mcp"
+          ]
+        },
+        "calendar": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+          ]
+        },
+        "github": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-github"
+          ]
+        },
+        "mcp-server-sqlite": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-server-sqlite"
+          ]
+        },
+        "memory": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-memory"
+          ]
+        },
+        "microsoft_playwright_mcp": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@playwright/mcp@latest"
+          ]
+        },
+        "osascript": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+          ]
+        },
+        "vercel": {
+          "type": "sse",
+          "url": "https://mcp.vercel.com"
+        },
+        "wsiglog": {
+          "type": "stdio",
+          "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+          "args": [
+            "/Users/wsig/manusaisetup/wsiglog_mcp.py"
+          ],
+          "env": {
+            "WSIGLOG_URL": "http://192.168.1.139:3102"
+          }
+        },
+        "xcode": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+          "args": [
+            "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+          ]
+        },
+        "sosumi": {
+          "type": "sse",
+          "url": "https://sosumi.ai/mcp"
+        },
+        "supabase": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "@supabase/mcp-server-supabase@latest",
+            "--access-token",
+            "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+          ]
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": true,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [],
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      }
+    },
+    "/Users/wsig/gt/leavn/mayor/rig": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "stitch": {
+          "type": "stdio",
+          "command": "npx",
+          "args": [
+            "@_davideast/stitch-mcp",
+            "proxy"
+          ],
+          "env": {}
+        },
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false
+    },
+    "/Volumes/Ext-code/GitHub Repos/anas-guide": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "CareerGuide.tsx",
+        "ChatWidget.tsx",
+        "route.ts",
+        "layout.tsx",
+        "page.tsx"
+      ],
+      "exampleFilesGeneratedAt": 1769064699289
+    },
+    "/Volumes/Ext-code/GitHub Repos/vahair": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "omi": {
+          "type": "stdio",
+          "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.omi.me/v1/mcp/sse",
+            "--header",
+            "Authorization:${OMI_AUTH}"
+          ],
+          "env": {
+            "OMI_AUTH": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+          }
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "index.astro",
+        "Header.astro",
+        "about.astro",
+        "Layout.astro",
+        "Footer.astro"
+      ],
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "lastCost": 7.2889445999999944,
+      "lastAPIDuration": 992281,
+      "lastAPIDurationWithoutRetries": 992211,
+      "lastToolDuration": 443406,
+      "lastDuration": 10527436,
+      "lastLinesAdded": 225,
+      "lastLinesRemoved": 90,
+      "lastTotalInputTokens": 93029,
+      "lastTotalOutputTokens": 44468,
+      "lastTotalCacheCreationInputTokens": 777408,
+      "lastTotalCacheReadInputTokens": 6258886,
+      "lastTotalWebSearchRequests": 0,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 88529,
+          "outputTokens": 16115,
+          "cacheReadInputTokens": 1353281,
+          "cacheCreationInputTokens": 211683,
+          "webSearchRequests": 0,
+          "costUSD": 0.5690358499999998
+        },
+        "claude-opus-4-5-20251101": {
+          "inputTokens": 4500,
+          "outputTokens": 28353,
+          "cacheReadInputTokens": 4905605,
+          "cacheCreationInputTokens": 565725,
+          "webSearchRequests": 0,
+          "costUSD": 6.719908749999997
+        }
+      },
+      "lastSessionId": "40aaadba-7382-461e-b2dd-2b6bf918cd49",
+      "exampleFilesGeneratedAt": 1769387438212
+    }
+  },
+  "s1mAccessCache": {
+    "07f7f8d4-766b-44c5-9db9-36f0628cced4": {
+      "hasAccess": true,
+      "hasAccessNotAsDefault": false,
+      "timestamp": 1769564016708
+    },
+    "98534aa9-de86-4b5a-9e2a-d539b490155e": {
+      "hasAccess": false,
+      "hasAccessNotAsDefault": false,
+      "timestamp": 1769457551325
+    }
+  },
+  "passesEligibilityCache": {
+    "07f7f8d4-766b-44c5-9db9-36f0628cced4": {
+      "eligible": true,
+      "referral_code_details": {
+        "code": "KEC4MSZQSw",
+        "campaign": "claude_code_guest_pass",
+        "referral_link": "https://claude.ai/referral/KEC4MSZQSw"
+      },
+      "referrer_reward": null,
+      "timestamp": 1769563896860
+    },
+    "98534aa9-de86-4b5a-9e2a-d539b490155e": {
+      "eligible": true,
+      "referral_code_details": {
+        "code": "oBc5-a-Aww",
+        "campaign": "claude_code_guest_pass",
+        "referral_link": "https://claude.ai/referral/oBc5-a-Aww"
+      },
+      "referrer_reward": null,
+      "timestamp": 1769457551228
+    }
+  },
+  "lastReleaseNotesSeen": "2.1.20",
+  "officialMarketplaceAutoInstallAttempted": true,
+  "officialMarketplaceAutoInstalled": true,
+  "githubRepoPaths": {
+    "willsigmon/carterhelms": [
+      "/Volumes/Ext-code/GitHub Repos/carterhelms"
+    ],
+    "sawyerhood/dev-browser": [
+      "/Users/wsig/dotfiles-hub/claude/plugins/dev-browser/skills/dev-browser"
+    ],
+    "willsigmon/leavnofficial": [
+      "/Users/wsig/.claude-worktrees/LeavnOfficial/affectionate-proskuriakova",
+      "/Volumes/Ext-code/GitHub Repos/LeavnOfficial"
+    ],
+    "willsigmon/hubdash": [
+      "/Volumes/Ext-code/GitHub Repos/hubdash"
+    ],
+    "willsigmon/hti-minisite": [
+      "/Volumes/Ext-code/GitHub Repos/hti-minisite"
+    ],
+    "willsigmon/willsigmon-media": [
+      "/Volumes/Ext-code/GitHub Repos/willsigmon-media"
+    ],
+    "willsigmon/modcaster": [
+      "/Volumes/Ext-code/GitHub Repos/Modcaster"
+    ],
+    "thedotmack/claude-mem": [
+      "/Users/wsig/dotfiles-hub/claude/plugins/marketplaces/thedotmack"
+    ],
+    "willsigmon/leavnsite": [
+      "/Volumes/Ext-code/GitHub Repos/leavnsite"
+    ],
+    "willsigmon/catalyst": [
+      "/Volumes/Ext-code/GitHub Repos/catalyst"
+    ],
+    "willsigmon/iswcpssclosed": [
+      "/Volumes/Ext-code/GitHub Repos/iswcpssclosed"
+    ],
+    "willsigmon/cjcommissioner": [
+      "/Volumes/Ext-code/GitHub Repos/cjcommissioner"
+    ],
+    "willsigmon/twotwelvereferralnetwork": [
+      "/Volumes/Ext-code/GitHub Repos/TwoTwelveReferralNetwork"
+    ],
+    "automaker-org/automaker": [
+      "/Users/wsig/Projects/automaker/apps/server"
+    ],
+    "willsigmon/ana-career-guide": [
+      "/Volumes/Ext-code/GitHub Repos"
+    ],
+    "willsigmon/vahair": [
+      "/Volumes/Ext-code/GitHub Repos/vahair"
+    ]
+  },
+  "lastPlanModeUse": 1769558903930,
+  "passesUpsellSeenCount": 3,
+  "feedbackSurveyState": {
+    "lastShownTime": 1769462808337
+  },
+  "thinkingMigrationComplete": true,
+  "lspRecommendationIgnoredCount": 6,
+  "mcpServers": {
+    "annas-archive": {
+      "type": "stdio",
+      "command": "/Users/wsig/.local/bin/annas-mcp-wrapper",
+      "args": [
+        "mcp"
+      ]
+    },
+    "calendar": {
+      "type": "stdio",
+      "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+      "args": [
+        "/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"
+      ]
+    },
+    "github": {
+      "type": "stdio",
+      "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ]
+    },
+    "mcp-server-sqlite": {
+      "type": "stdio",
+      "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+      "args": [
+        "-y",
+        "mcp-server-sqlite"
+      ]
+    },
+    "memory": {
+      "type": "stdio",
+      "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ]
+    },
+    "microsoft_playwright_mcp": {
+      "type": "stdio",
+      "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    },
+    "osascript": {
+      "type": "stdio",
+      "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+      "args": [
+        "/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"
+      ]
+    },
+    "xcode": {
+      "type": "stdio",
+      "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/node",
+      "args": [
+        "/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"
+      ]
+    },
+    "supabase": {
+      "type": "stdio",
+      "command": "/Users/wsig/.nvm/versions/node/v22.17.1/bin/npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_7b2c210d4e0a6c02adb7adf4bc068022b2bf4b4b"
+      ]
+    },
+    "sosumi": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://sosumi.ai/mcp"
+      ],
+      "env": {}
+    },
+    "vercel": {
+      "type": "http",
+      "url": "https://mcp.vercel.com"
+    },
+    "sigstack-brain": {
+      "type": "stdio",
+      "command": "/Users/wsig/manusaisetup/.venv/bin/python",
+      "args": [
+        "/Users/wsig/manusaisetup/sigstack_brain_mcp.py"
+      ],
+      "env": {}
+    },
+    "omi": {
+      "type": "http",
+      "url": "https://api.omi.me/v1/mcp/sse",
+      "headers": {
+        "Authorization": "Bearer omi_mcp_e75398b2419ac307c2704a920b0df123"
+      }
+    }
+  },
+  "anonymousId": "claudecode.v1.b43c8adc-9639-486c-9554-ee06fdb545da",
+  "groveConfigCache": {
+    "e146468e-384f-4ecc-acfc-418799115e19": {
+      "grove_enabled": true,
+      "timestamp": 1769374869774
+    },
+    "d9e433d5-2cc7-4c97-b99f-80828b1f76f5": {
+      "grove_enabled": true,
+      "timestamp": 1769545437797
+    }
+  },
+  "subscriptionNoticeCount": 0,
+  "hasAvailableSubscription": false,
+  "hasVisitedPasses": true,
+  "skillUsage": {
+    "index": {
+      "usageCount": 2,
+      "lastUsedAt": 1769307508282
+    },
+    "statusline": {
+      "usageCount": 6,
+      "lastUsedAt": 1769307574234
+    },
+    "superpowers-auto": {
+      "usageCount": 3,
+      "lastUsedAt": 1768660759566
+    },
+    "mcp-server-sqlite:optimize-query (MCP)": {
+      "usageCount": 1,
+      "lastUsedAt": 1768935629078
+    },
+    "clean": {
+      "usageCount": 1,
+      "lastUsedAt": 1769529931082
+    }
+  },
+  "claudeInChromeDefaultEnabled": true,
+  "opusProMigrationComplete": true,
+  "cachedChromeExtensionInstalled": true,
+  "hasCompletedClaudeInChromeOnboarding": true,
+  "codeDiffFooterEnabled": false,
+  "autoUpdatesProtectedForNative": true,
+  "oauthAccount": {
+    "accountUuid": "d9e433d5-2cc7-4c97-b99f-80828b1f76f5",
+    "emailAddress": "wjsigmon@gmail.com",
+    "organizationUuid": "07f7f8d4-766b-44c5-9db9-36f0628cced4",
+    "hasExtraUsageEnabled": false,
+    "displayName": "Will",
+    "organizationRole": "admin",
+    "workspaceRole": null,
+    "organizationName": "wjsigmon@gmail.com's Organization"
+  }
 }
