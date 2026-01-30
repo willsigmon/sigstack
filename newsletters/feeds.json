@@ -31,8 +31,6 @@
     {"title": "Cruise Hive", "url": "https://www.cruisehive.com/feed"}
   ],
   "local_nc": [
-    {"title": "ITB Insider", "url": "https://www.itbinsider.com/feed/"},
-    {"title": "WRAL TechWire Fiber", "url": "https://wraltechwire.com/tag/fiber/feed/"},
     {"title": "CBS17 Local News", "url": "https://www.cbs17.com/news/local-news/feed/"},
     {"title": "r/Rolesville", "url": "https://www.reddit.com/r/Rolesville/.rss"},
     {"title": "r/WakeForest", "url": "https://www.reddit.com/r/wakeforest/.rss"}
