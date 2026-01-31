@@ -1,0 +1,8 @@
+{
+  "name": "media",
+  "version": "1.0.0",
+  "description": "Media apps - podcasts, audio, RSS, streaming",
+  "author": {
+    "name": "wsig"
+  }
+}
