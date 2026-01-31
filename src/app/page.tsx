@@ -995,7 +995,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-xl sm:text-2xl text-zinc-300 max-w-2xl mx-auto mb-4"
           >
-            My personal <span className="text-white font-semibold">Claude Code stack</span> for shipping software with AI
+            Now built on <span className="text-white font-semibold">Cowork Plugins</span> — Anthropic&apos;s official plugin architecture
           </motion.p>
 
           <motion.p
@@ -1004,7 +1004,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-zinc-400 mb-12"
           >
-            6 Cowork plugins · 80+ skills · 25 MCP servers · Vercel Sandbox · Ready to install
+            <span className="text-purple-400 font-medium">New Jan 2026:</span> 6 domain plugins · 80+ skills · Vercel Sandbox for ephemeral execution
           </motion.p>
 
           {/* Colorful Stats */}
@@ -1199,7 +1199,7 @@ export default function Home() {
 
         <FadeIn>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 text-center">Quick Start</h2>
-          <p className="text-zinc-400 text-xs sm:text-sm text-center mb-8 sm:mb-12">Clone and install in 30 seconds</p>
+          <p className="text-zinc-400 text-xs sm:text-sm text-center mb-8 sm:mb-12">Install the full plugin suite in seconds</p>
         </FadeIn>
 
         <FadeIn delay={0.1}>
@@ -1220,8 +1220,8 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
       {/* What's Inside */}
       <section className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16">
         <FadeIn>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 text-center">What&apos;s Inside</h2>
-          <p className="text-zinc-400 text-xs sm:text-sm text-center mb-6 sm:mb-8">Everything you need to ship with Claude Code</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 text-center">6 Domain Plugins</h2>
+          <p className="text-zinc-400 text-xs sm:text-sm text-center mb-6 sm:mb-8">Organized by context, not scattered files — the Cowork way</p>
         </FadeIn>
 
         <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-3">
