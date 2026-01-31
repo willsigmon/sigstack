@@ -239,17 +239,26 @@ const mcpServers = [
   { name: "GitHub", purpose: "PRs & issues" },
   { name: "Vercel", purpose: "Deploy" },
   { name: "Supabase", purpose: "Database" },
-  { name: "Letta", purpose: "Cross-session memory" },
+  { name: "Memory", purpose: "Knowledge graph" },
   { name: "Context7", purpose: "Library docs" },
   { name: "n8n", purpose: "Workflows" },
-  { name: "Memory", purpose: "Knowledge graph" },
   { name: "Puppeteer", purpose: "Browser" },
   { name: "Playwright", purpose: "Web automation" },
-  { name: "Chrome DevTools", purpose: "Browser debug" },
-  { name: "Repomix", purpose: "Codebase analysis" },
   { name: "Xcode", purpose: "iOS builds" },
   { name: "Calendar", purpose: "Events" },
-  { name: "SQLite", purpose: "Local database" },
+  { name: "Clipboard", purpose: "System clipboard" },
+  { name: "Notifications", purpose: "macOS alerts" },
+  { name: "osascript", purpose: "AppleScript" },
+  { name: "Fetch", purpose: "HTTP requests" },
+  { name: "Filesystem", purpose: "File access" },
+  { name: "Time", purpose: "Timezone" },
+  { name: "YouTube", purpose: "Transcripts" },
+  { name: "Pandoc", purpose: "Doc conversion" },
+  { name: "Greptile", purpose: "Code search" },
+  { name: "Firebase", purpose: "Backend" },
+  { name: "Stitch", purpose: "UI design" },
+  { name: "Glif", purpose: "AI workflows" },
+  { name: "iMessage", purpose: "Messages" },
   { name: "Omi", purpose: "Wearable memory" },
 ];
 
@@ -995,7 +1004,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-zinc-400 mb-12"
           >
-            88 skills · 24 commands · 16 MCP servers · Letta cross-session memory · Ready to clone
+            6 Cowork plugins · 80+ skills · 25 MCP servers · Vercel Sandbox · Ready to install
           </motion.p>
 
           {/* Colorful Stats */}
@@ -1006,9 +1015,9 @@ export default function Home() {
             className="flex justify-center gap-6 sm:gap-10 md:gap-16 mb-10 sm:mb-14"
           >
             {[
-              { label: "Skills", value: "88", gradient: "from-blue-400 to-cyan-300" },
-              { label: "Commands", value: "24", gradient: "from-green-400 to-emerald-300" },
-              { label: "MCP Servers", value: "16", gradient: "from-purple-400 to-pink-300" },
+              { label: "Plugins", value: "6", gradient: "from-purple-400 to-pink-300" },
+              { label: "Skills", value: "80+", gradient: "from-blue-400 to-cyan-300" },
+              { label: "MCP Servers", value: "25", gradient: "from-green-400 to-emerald-300" },
             ].map((stat) => (
               <motion.div
                 key={stat.label}
@@ -1194,12 +1203,16 @@ export default function Home() {
         </FadeIn>
 
         <FadeIn delay={0.1}>
-          <div className="max-w-3xl mx-auto">
-            <CodeBlock>{`# Clone and install
-git clone https://github.com/willsigmon/sigstack.git && cd sigstack && \\
-cp -r skills/* ~/.claude/skills/ && \\
-cp -r commands/* ~/.claude/commands/ && \\
-mkdir -p ~/.claude/rules && cp -r rules/* ~/.claude/rules/`}</CodeBlock>
+          <div className="max-w-3xl mx-auto space-y-4">
+            <CodeBlock>{`# Install via Claude Code CLI
+claude plugins install sigstack
+
+# Or clone and symlink manually
+git clone https://github.com/willsigmon/sigstack.git
+ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
+            <p className="text-zinc-500 text-xs text-center">
+              Built on the official <a href="https://claude.com/blog/cowork-plugins" target="_blank" className="text-purple-400 hover:text-purple-300">Cowork Plugins</a> architecture
+            </p>
           </div>
         </FadeIn>
       </section>
@@ -1211,27 +1224,37 @@ mkdir -p ~/.claude/rules && cp -r rules/* ~/.claude/rules/`}</CodeBlock>
           <p className="text-zinc-400 text-xs sm:text-sm text-center mb-6 sm:mb-8">Everything you need to ship with Claude Code</p>
         </FadeIn>
 
-        <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-3">
           {[
             {
-              title: "88 Skills",
-              description: "iOS, audio/ML, debug, architecture, n8n workflows",
+              title: "ios-dev",
+              description: "Swift, SwiftUI, Xcode, CloudKit, SwiftData",
               gradient: "from-blue-500/30 to-cyan-500/30",
             },
             {
-              title: "24 Commands",
-              description: "/test, /build, /deploy, /analyze, /cleanup, /git",
+              title: "app-dev",
+              description: "Features, audio, sync, ops, preferences",
               gradient: "from-green-500/30 to-emerald-500/30",
             },
             {
-              title: "iOS Bundle",
-              description: "Sosumi + Ralph Wiggum protocol + Apple docs",
+              title: "dev-essentials",
+              description: "Glif, Resend, performance, multi-agent coordination",
+              gradient: "from-purple-500/30 to-violet-500/30",
+            },
+            {
+              title: "superclaude",
+              description: "Meta-orchestration, agents, /spawn, /analyze",
               gradient: "from-pink-500/30 to-rose-500/30",
             },
             {
-              title: "Sigstack Network",
-              description: "Multi-device sync via Tailscale for context",
-              gradient: "from-purple-500/30 to-violet-500/30",
+              title: "work",
+              description: "Enterprise apps, databases, dashboards",
+              gradient: "from-orange-500/30 to-amber-500/30",
+            },
+            {
+              title: "media",
+              description: "Podcasts, audio, RSS, streaming",
+              gradient: "from-cyan-500/30 to-teal-500/30",
             },
           ].map((item, i) => (
             <FadeIn key={item.title} delay={i * 0.1}>
@@ -1265,18 +1288,18 @@ mkdir -p ~/.claude/rules && cp -r rules/* ~/.claude/rules/`}</CodeBlock>
             />
 
             <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-3 sm:mb-4 text-center">
-              Philosophy: Nanobot Healing Swarm
+              Philosophy: Plugin-First Development
             </h2>
             <p className="text-zinc-300 text-xs sm:text-sm max-w-2xl mx-auto text-center mb-8 sm:mb-12">
-              My CLAUDE.md instructs Claude to act as a &ldquo;healing swarm of nanobots&rdquo;&mdash;find every bug,
-              scrub every infection, optimize every inefficiency.
+              Built on Anthropic&apos;s official Cowork Plugins architecture. Domain-specific plugins for
+              iOS, apps, work, and media &mdash; plus Vercel Sandbox for ephemeral code execution.
             </p>
             <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
               {[
-                { principle: "Tools first", meaning: "Check MCP/skill before writing code" },
-                { principle: "Parallel agents", meaning: "Spawn 20+ agents for complex tasks" },
-                { principle: "Context is attention", meaning: "Manage 60% threshold, use /compact" },
-                { principle: "Memory graph", meaning: "Use Omi for session continuity" },
+                { principle: "Plugin domains", meaning: "Organized by context: ios-dev, app-dev, work, media" },
+                { principle: "Parallel agents", meaning: "Spawn 20+ agents via superclaude plugin" },
+                { principle: "Vercel Sandbox", meaning: "Ephemeral microVMs for safe code execution" },
+                { principle: "Cowork native", meaning: "Official plugin format, shareable & portable" },
               ].map((item, i) => (
                 <motion.div
                   key={item.principle}
