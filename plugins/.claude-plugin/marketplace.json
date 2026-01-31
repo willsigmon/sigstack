@@ -1,0 +1,59 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "sigstack",
+  "description": "Will Sigmon's Claude Code stack - iOS development, app tools, media, and orchestration plugins",
+  "owner": {
+    "name": "wsig",
+    "email": "will@sigstack.dev"
+  },
+  "plugins": [
+    {
+      "name": "ios-dev",
+      "description": "iOS development toolkit - Swift, SwiftUI, Xcode, CloudKit, SwiftData",
+      "version": "1.0.0",
+      "author": { "name": "wsig" },
+      "source": "./ios-dev",
+      "category": "development"
+    },
+    {
+      "name": "app-dev",
+      "description": "App development tools - features, audio, sync, ops, preferences",
+      "version": "1.0.0",
+      "author": { "name": "wsig" },
+      "source": "./app-dev",
+      "category": "development"
+    },
+    {
+      "name": "dev-essentials",
+      "description": "Cross-project tools including Glif, Resend, and performance utilities",
+      "version": "1.0.0",
+      "author": { "name": "wsig" },
+      "source": "./dev-essentials",
+      "category": "development"
+    },
+    {
+      "name": "superclaude",
+      "description": "Meta-orchestration plugin for spawning agents, analyzing code, troubleshooting",
+      "version": "1.0.0",
+      "author": { "name": "wsig" },
+      "source": "./superclaude",
+      "category": "orchestration"
+    },
+    {
+      "name": "media",
+      "description": "Media apps - podcasts, audio, RSS, streaming (Modcaster)",
+      "version": "1.0.0",
+      "author": { "name": "wsig" },
+      "source": "./media",
+      "category": "development"
+    },
+    {
+      "name": "work",
+      "description": "Work projects - enterprise apps, databases, dashboards (HTI/Knack)",
+      "version": "1.0.0",
+      "author": { "name": "wsig" },
+      "source": "./work",
+      "category": "development"
+    }
+  ]
+}
