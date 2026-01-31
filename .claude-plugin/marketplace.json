@@ -12,7 +12,7 @@
       "description": "iOS development toolkit - Swift, SwiftUI, Xcode, CloudKit, SwiftData",
       "version": "1.0.0",
       "author": { "name": "wsig" },
-      "source": "./ios-dev",
+      "source": "./plugins/ios-dev",
       "category": "development"
     },
     {
@@ -20,7 +20,7 @@
       "description": "App development tools - features, audio, sync, ops, preferences",
       "version": "1.0.0",
       "author": { "name": "wsig" },
-      "source": "./app-dev",
+      "source": "./plugins/app-dev",
       "category": "development"
     },
     {
@@ -28,7 +28,7 @@
       "description": "Cross-project tools including Glif, Resend, and performance utilities",
       "version": "1.0.0",
       "author": { "name": "wsig" },
-      "source": "./dev-essentials",
+      "source": "./plugins/dev-essentials",
       "category": "development"
     },
     {
@@ -36,7 +36,7 @@
       "description": "Meta-orchestration plugin for spawning agents, analyzing code, troubleshooting",
       "version": "1.0.0",
       "author": { "name": "wsig" },
-      "source": "./superclaude",
+      "source": "./plugins/superclaude",
       "category": "orchestration"
     },
     {
@@ -44,7 +44,7 @@
       "description": "Media apps - podcasts, audio, RSS, streaming (Modcaster)",
       "version": "1.0.0",
       "author": { "name": "wsig" },
-      "source": "./media",
+      "source": "./plugins/media",
       "category": "development"
     },
     {
@@ -52,7 +52,7 @@
       "description": "Work projects - enterprise apps, databases, dashboards (HTI/Knack)",
       "version": "1.0.0",
       "author": { "name": "wsig" },
-      "source": "./work",
+      "source": "./plugins/work",
       "category": "development"
     }
   ]
