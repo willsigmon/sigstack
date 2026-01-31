@@ -182,6 +182,15 @@ const terminalStack = [
 
 const agentStack = [
   {
+    name: "Sled",
+    description: "Voice from phone",
+    logo: "https://cdn.simpleicons.org/airplayaudio/06B6D4",
+    bgColor: "bg-gradient-to-br from-cyan-500/30 to-teal-500/40",
+    glowColor: "#06B6D4",
+    url: "https://sled.layercode.com",
+    highlight: true,
+  },
+  {
     name: "Plural",
     description: "Parallel branches",
     logo: "https://cdn.simpleicons.org/git/F05032",
@@ -196,14 +205,6 @@ const agentStack = [
     bgColor: "bg-gradient-to-br from-pink-500/30 to-rose-500/40",
     glowColor: "#F24E1E",
     url: "https://github.com/preset-io/agor",
-  },
-  {
-    name: "Sled",
-    description: "Mobile voice",
-    logo: "https://cdn.simpleicons.org/airplayaudio/white",
-    bgColor: "bg-gradient-to-br from-cyan-500/30 to-teal-500/40",
-    glowColor: "#06B6D4",
-    url: "https://sled.layercode.com",
   },
 ];
 
