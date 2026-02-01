@@ -1005,7 +1005,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-zinc-400 mb-12"
           >
-            <span className="text-purple-400 font-medium">New Jan 2026:</span> 6 domain plugins · 80+ skills · Vercel Sandbox for ephemeral execution
+            <span className="text-purple-400 font-medium">Jan 2026:</span> 23 plugins · 84 skills · 22 MCP servers · Team workflow patterns
           </motion.p>
 
           {/* Colorful Stats */}
@@ -1016,9 +1016,9 @@ export default function Home() {
             className="flex justify-center gap-6 sm:gap-10 md:gap-16 mb-10 sm:mb-14"
           >
             {[
-              { label: "Plugins", value: "6", gradient: "from-purple-400 to-pink-300" },
-              { label: "Skills", value: "80+", gradient: "from-blue-400 to-cyan-300" },
-              { label: "MCP Servers", value: "25", gradient: "from-green-400 to-emerald-300" },
+              { label: "Plugins", value: "23", gradient: "from-purple-400 to-pink-300" },
+              { label: "Skills", value: "84", gradient: "from-blue-400 to-cyan-300" },
+              { label: "MCP Servers", value: "22", gradient: "from-green-400 to-emerald-300" },
             ].map((stat) => (
               <motion.div
                 key={stat.label}
@@ -1221,8 +1221,8 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
       {/* What's Inside */}
       <section className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16">
         <FadeIn>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 text-center">6 Domain Plugins</h2>
-          <p className="text-zinc-400 text-xs sm:text-sm text-center mb-6 sm:mb-8">Organized by context, not scattered files — the Cowork way</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 text-center">Core Plugins</h2>
+          <p className="text-zinc-400 text-xs sm:text-sm text-center mb-6 sm:mb-8">6 domain plugins + 17 from community marketplaces — organized by context</p>
         </FadeIn>
 
         <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-3">
@@ -1289,18 +1289,17 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
             />
 
             <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-3 sm:mb-4 text-center">
-              Philosophy: Plugin-First Development
+              Workflow Patterns
             </h2>
             <p className="text-zinc-300 text-xs sm:text-sm max-w-2xl mx-auto text-center mb-8 sm:mb-12">
-              Built on Anthropic&apos;s official Cowork Plugins architecture. Domain-specific plugins for
-              iOS, apps, work, and media &mdash; plus Vercel Sandbox for ephemeral code execution.
+              Team-validated patterns from the Claude Code team. Plan first, improve docs, fix autonomously.
             </p>
             <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
               {[
-                { principle: "Plugin domains", meaning: "Organized by context: ios-dev, app-dev, work, media" },
-                { principle: "Parallel agents", meaning: "Spawn 20+ agents via superclaude plugin" },
-                { principle: "Vercel Sandbox", meaning: "Ephemeral microVMs for safe code execution" },
-                { principle: "Cowork native", meaning: "Official plugin format, shareable & portable" },
+                { principle: "Plan first", meaning: "Complex tasks → plan mode, then one-shot implement" },
+                { principle: "Self-improving docs", meaning: "After corrections: update docs to prevent repeats" },
+                { principle: "Autonomous fixing", meaning: "Paste error + 'fix' — minimal micromanagement" },
+                { principle: "Subagents", meaning: "Offload subtasks, keep main context clean" },
               ].map((item, i) => (
                 <motion.div
                   key={item.principle}
