@@ -1005,7 +1005,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-zinc-400 mb-12"
           >
-            <span className="text-purple-400 font-medium">Jan 2026:</span> 23 plugins · 84 skills · 22 MCP servers · Team workflow patterns
+            <span className="text-purple-400 font-medium">Jan 2026:</span> 36 plugins · 84 skills · 22 MCP servers · Cowork-compatible
           </motion.p>
 
           {/* Colorful Stats */}
@@ -1016,7 +1016,7 @@ export default function Home() {
             className="flex justify-center gap-6 sm:gap-10 md:gap-16 mb-10 sm:mb-14"
           >
             {[
-              { label: "Plugins", value: "23", gradient: "from-purple-400 to-pink-300" },
+              { label: "Plugins", value: "36", gradient: "from-purple-400 to-pink-300" },
               { label: "Skills", value: "84", gradient: "from-blue-400 to-cyan-300" },
               { label: "MCP Servers", value: "22", gradient: "from-green-400 to-emerald-300" },
             ].map((stat) => (
