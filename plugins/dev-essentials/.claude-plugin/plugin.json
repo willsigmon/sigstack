@@ -1,7 +1,7 @@
 {
   "name": "dev-essentials",
   "version": "1.0.0",
-  "description": "Cross-project tools including Glif, Resend, and performance utilities",
+  "description": "Cross-project development utilities - multi-agent coordination, Resend email, performance tools",
   "author": {
     "name": "wsig"
   }

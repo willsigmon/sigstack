@@ -1,0 +1,8 @@
+{
+  "name": "voice-input",
+  "version": "1.0.0",
+  "description": "Voice-to-text and speech input - Whisper, Deepgram, AssemblyAI, speech-to-code, Sled mobile voice",
+  "author": {
+    "name": "wsig"
+  }
+}

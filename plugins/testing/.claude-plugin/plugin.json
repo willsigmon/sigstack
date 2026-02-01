@@ -1,0 +1,8 @@
+{
+  "name": "testing",
+  "version": "1.0.0",
+  "description": "AI-powered testing - test generation, Playwright, visual regression, API testing, security scanning, code coverage",
+  "author": {
+    "name": "wsig"
+  }
+}

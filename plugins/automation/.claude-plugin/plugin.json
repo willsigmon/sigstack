@@ -1,0 +1,8 @@
+{
+  "name": "automation",
+  "version": "1.0.0",
+  "description": "Workflow automation - n8n, GitHub Actions, MCP automation, webhooks, CI/CD, Home Assistant",
+  "author": {
+    "name": "wsig"
+  }
+}

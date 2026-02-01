@@ -1,0 +1,24 @@
+{
+  "name": "sigstack-core",
+  "version": "2.0.0",
+  "description": "Core sigstack operations - efficiency, productivity, the default workflow",
+  "author": "sigstack",
+  "skills": [
+    "token-optimizer",
+    "interface-picker",
+    "agent-patterns",
+    "prompt-compression",
+    "mcp-efficiency",
+    "batch-processing",
+    "context-reuse",
+    "cost-calculator",
+    "daily-driver",
+    "knowledge-capture",
+    "decision-logger",
+    "task-decomposition",
+    "session-handoff",
+    "learning-accelerator",
+    "vision-qa-workflow",
+    "sigstack-quickstart"
+  ]
+}

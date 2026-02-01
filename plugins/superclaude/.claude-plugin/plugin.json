@@ -1,8 +1,18 @@
 {
   "name": "superclaude",
-  "version": "1.0.0",
-  "description": "Meta-orchestration plugin for spawning agents, analyzing code, troubleshooting, and coordinating development",
-  "author": {
-    "name": "wsig"
-  }
+  "version": "2.0.0",
+  "description": "Meta-orchestration - agent swarms, codebase analysis, multi-agent coordination",
+  "author": "sigstack",
+  "skills": [
+    "spawn-swarm",
+    "analyze-codebase",
+    "orchestrate-agents",
+    "meta-prompt"
+  ],
+  "agents": [
+    "explorer",
+    "reviewer",
+    "implementer",
+    "debugger"
+  ]
 }

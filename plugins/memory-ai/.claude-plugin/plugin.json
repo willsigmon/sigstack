@@ -1,0 +1,8 @@
+{
+  "name": "memory-ai",
+  "version": "1.0.0",
+  "description": "AI memory layer - Letta, vector databases, MCP memory, knowledge graphs, context persistence",
+  "author": {
+    "name": "wsig"
+  }
+}
