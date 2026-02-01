@@ -44,9 +44,11 @@ curl -s -X GET "https://api.letta.com/v1/agents/" \
 
 ## Devices
 
-| Device | Status |
-|--------|--------|
-| studio (mba) | ✅ Primary |
-| tower | Pending |
-| vt-pc | Pending |
-| deck | Pending |
+| Hostname | Device | Role | Status |
+|----------|--------|------|--------|
+| **Wills-MBA** | MacBook Air | Portable daily driver | ✅ Primary |
+| **wills-studio** | Mac Studio | Primary build machine | ✅ Active |
+| **tower** | Unraid NAS | Central hub, services | Pending |
+| **office-pc** | Desktop PC | Secondary workstation | Pending |
+| **vt-pc** | Desktop | TBD | Pending |
+| **deck** | Steam Deck | Portable | Pending |

@@ -182,6 +182,70 @@ Output:  Code changes, commits, deploys
 
 ---
 
+## Infrastructure
+
+### Device Mesh (Tailscale)
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    SIGSTACK NETWORK                           │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Wills-MBA (MacBook Air)          wills-studio (Mac Studio)  │
+│    └─ Portable daily driver         └─ Primary build machine │
+│    └─ Claude Code sessions          └─ Xcode builds          │
+│    └─ Voice input (Typeless)        └─ Leavn development     │
+│              │                              │                │
+│              └──────────┬───────────────────┘                │
+│                         │                                    │
+│                    tower (Unraid)                             │
+│                      └─ Central data hub                     │
+│                      └─ n8n workflows                        │
+│                      └─ Home Assistant                       │
+│                      └─ BRAIN (wsiglog + Omi)                │
+│                      └─ Ollama (local LLM)                   │
+│                      └─ Tailscale: 100.119.19.61             │
+│                         │                                    │
+│              ┌──────────┼───────────────────┐                │
+│              │          │                   │                │
+│          office-pc    vt-pc              deck                │
+│          (pending)   (pending)     (Steam Deck, pending)     │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Services on Tower
+
+| Service | Port | Purpose |
+|---------|------|---------|
+| n8n | — | Workflow automation (n8n.wsig.me) |
+| Home Assistant | 8123 | Smart home, desk automation |
+| Hub (LLM proxy) | 3030 | OpenAI-compatible router |
+| Ollama | 11434 | Local LLM inference |
+| BRAIN/wsiglog | — | Memory database layer |
+| Omi | — | Conversation ingestion |
+
+### Sync Architecture
+
+```
+MBA ──rsync──→ Tower (/mnt/user/data/claude/)
+       ↕              ↕ symlinks
+  ~/.claude/      MCP Memory Server
+  tower-sync/
+
+Schedule: Auto every 5 min + manual push at 9 AM, 2 PM, 6 PM
+```
+
+### Domain: sigstack.dev
+
+Email infrastructure via Resend:
+- `tips@sigstack.dev` — Newsletter (SigStack Tips)
+- `hello@sigstack.dev` — General contact
+- `noreply@sigstack.dev` — Transactional
+- `news@sigstack.dev` — News aggregation
+
+---
+
 ## Memory Architecture
 
 ```

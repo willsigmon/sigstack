@@ -394,23 +394,69 @@ See [`n8n-workflows/`](./n8n-workflows/) for importable workflows.
 
 ## Device Sync (Sigstack Network)
 
-Sync configuration across all your machines via Tailscale:
+All devices connected via Tailscale private mesh network.
+
+### Devices
+
+| Hostname | Device | Role | Status |
+|----------|--------|------|--------|
+| **Wills-MBA** | MacBook Air | Portable daily driver, Claude Code sessions | Active |
+| **wills-studio** | Mac Studio | Primary build machine, Xcode builds, Leavn dev | Active |
+| **tower** | Unraid NAS | Central hub: n8n, Home Assistant, BRAIN, Ollama | Active |
+| **office-pc** | Desktop PC | Secondary workstation | Pending |
+| **vt-pc** | Desktop | TBD | Pending |
+| **deck** | Steam Deck | Portable gaming/dev | Pending |
+
+### Network Topology
 
 ```
-mba (MacBook Air) ─┬─ tower (Unraid)
-                   ├─ office-pc (Desktop)
-                   └─ deck (Steam Deck)
+Wills-MBA ──────┬────── wills-studio
+(MacBook Air)   │      (Mac Studio)
+                │
+             tower ─── 100.119.19.61 (Tailscale)
+            (Unraid)
+                │
+        ┌───────┼────────┐
+    office-pc  vt-pc    deck
+    (pending) (pending) (pending)
+```
+
+### Quick Access
+
+```bash
+# Studio
+ssh studio          # or just: s
+studio_push         # rsync local → studio
+studio_pull         # rsync studio → local
+studio_status       # check tmux + tailscale
+studio_ip           # show studio's Tailscale IP
+sr <command>        # run command on studio in Leavn dir
+
+# Tower / Unraid
+ssh root@tower.local    # or: unraid
+ut                      # force Tailscale connection
+
+# Sync
+~/.claude/sync-tower.sh pull   # get latest from tower
+~/.claude/sync-tower.sh push   # push to tower
+~/.claude/sync-tower.sh both   # bidirectional (default)
 ```
 
 ### Sync Schedule
-- 9:00 AM, 2:00 PM, 6:00 PM
-- Push from mba → all devices
+- Auto-sync every 5 minutes via `com.wsig.tower-sync` LaunchAgent
+- Scheduled pushes: 9:00 AM, 2:00 PM, 6:00 PM (MBA → all devices)
 - Uses rsync over Tailscale mesh
 
-### Manual Sync
-```bash
-~/.claude/scripts/sync-to-sigstack-network.sh
-```
+### Domain: sigstack.dev
+
+Email infrastructure via Resend MCP:
+
+| Address | Purpose |
+|---------|---------|
+| `tips@sigstack.dev` | Newsletter (SigStack Tips) |
+| `hello@sigstack.dev` | General contact |
+| `noreply@sigstack.dev` | Transactional |
+| `news@sigstack.dev` | News aggregation |
 
 ---
 
