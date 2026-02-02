@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.sigserve.memory-api</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Volumes/Ext-code/GitHub Repos/sigstack/hub/memory-api/.venv/bin/uvicorn</string>
+        <string>main:app</string>
+        <string>--host</string>
+        <string>0.0.0.0</string>
+        <string>--port</string>
+        <string>8100</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Volumes/Ext-code/GitHub Repos/sigstack/hub/memory-api</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin</string>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/sigserve-memory-api.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/sigserve-memory-api.error.log</string>
+</dict>
+</plist>
