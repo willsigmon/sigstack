@@ -1,0 +1,48 @@
+{
+  "summary": {
+    "source": "wsiglog_limitless",
+    "total_conversations": 15912,
+    "date_range": "historical through 2025-12-07",
+    "enriched_at": "2026-02-02T17:55:00Z"
+  },
+  "people": {
+    "self": "Will Sigmon",
+    "partner": "Cassie",
+    "frequent": ["Rocky", "Maggie", "Jane", "Austin", "Josie", "Jamie", "Rachel", "Jesse", "Mike", "Sadie", "Jonah", "Mark"]
+  },
+  "topics_by_category": {
+    "family": {
+      "total": 10412,
+      "keywords": {"family": 2340, "mom": 2276, "kids": 1600, "dad": 1461, "wife": 809, "children": 759, "parents": 704, "husband": 457}
+    },
+    "work": {
+      "total": 9449,
+      "keywords": {"work": 3591, "job": 1738, "meeting": 1008, "business": 925, "project": 772, "career": 415}
+    },
+    "entertainment": {
+      "total": 7640,
+      "keywords": {"show": 2927, "game": 1395, "song": 786, "tv": 703, "music": 594, "youtube": 504, "movie": 328, "netflix": 203, "podcast": 200}
+    },
+    "life": {
+      "total": 3734,
+      "keywords": {"trip": 799, "health": 637, "travel": 629, "medical": 521, "sick": 483, "vacation": 325, "doctor": 340}
+    },
+    "food": {
+      "total": 3704,
+      "keywords": {"food": 1593, "dinner": 847, "restaurant": 494, "lunch": 459, "cooking": 311}
+    },
+    "tech": {
+      "total": 2242,
+      "keywords": {"ai": 1134, "gpt": 359, "ios": 218, "react": 175, "cloud": 167, "code": 88, "python": 51, "swift": 50}
+    }
+  },
+  "insights": [
+    "Family is the most discussed topic (10,412 mentions)",
+    "Work is second most common (9,449 mentions)",
+    "AI mentioned 1,134 times - significant interest",
+    "Cassie appears in 826 conversations",
+    "Location: North Carolina mentioned 87 times"
+  ],
+  "future_source": "omi",
+  "limitless_status": "deprecated"
+}

@@ -1,0 +1,489 @@
+{
+  "verified_people": {
+    "will_sigmon": {
+      "name": "William Justin Sigmon",
+      "aliases": ["Will", "will"],
+      "role": "self",
+      "full_name_gedcom": "William Justin Sigmon",
+      "gedcom_id": "@I12079222780@",
+      "mentions": 696
+    },
+    "cassie": {
+      "name": "Cassie Sigmon",
+      "full_name": "Cassie Nicole Sigmon",
+      "aliases": ["Cass", "Cassie"],
+      "role": "wife",
+      "maiden_name": "Chasak",
+      "gedcom_id": "@I27106674400@",
+      "married": "2013-09-28",
+      "married_location": "Wake, North Carolina, USA",
+      "mentions": 826
+    },
+    "pam": {
+      "name": "Pam Blemker",
+      "full_name": "Pamela Lynn Blemker",
+      "aliases": ["Pam"],
+      "role": "mother",
+      "side": "will",
+      "maiden_name": "Helmer",
+      "gedcom_id": "@I12079229296@",
+      "mentions": 140
+    },
+    "mike": {
+      "name": "Mike Blemker",
+      "full_name": "Michael Berrien Blemker Sr",
+      "aliases": ["Mike", "Michael"],
+      "role": "stepfather",
+      "side": "will",
+      "gedcom_id": "@I12079262983@",
+      "married_pam": "2011-06-04",
+      "married_location": "Spring Hope, NC",
+      "mentions": 109
+    },
+    "david": {
+      "name": "David Edward Sigmon Jr",
+      "aliases": ["David", "Dave", "Ed", "Eddie"],
+      "role": "biological_father",
+      "side": "will",
+      "gedcom_id": "@I12079222786@",
+      "goes_by": "Ed or Eddie",
+      "divorced_pam": "2007-06",
+      "mentions": 0
+    },
+    "tommy": {
+      "name": "Erwin Thomas Chasak Jr",
+      "aliases": ["Tommy", "Erwin"],
+      "role": "father-in-law",
+      "side": "cassie",
+      "gedcom_id": "@I27106674401@",
+      "mentions": 110
+    },
+    "joyce": {
+      "name": "Joyce Marie Horton",
+      "aliases": ["Joyce"],
+      "role": "mother-in-law",
+      "side": "cassie",
+      "maiden_name": "Horton",
+      "gedcom_id": "@I27106674402@",
+      "mentions": 84
+    },
+    "jeremy": {
+      "name": "Jeremy Thomas Chasak",
+      "aliases": ["Jeremy"],
+      "role": "brother-in-law",
+      "side": "cassie",
+      "gedcom_id": "@I27106674414@",
+      "mentions": 241
+    },
+    "shannon": {
+      "name": "Shannon Chasak",
+      "full_name": "Shannon Leigh Chasak",
+      "aliases": ["Shannon"],
+      "role": "sister-in-law",
+      "side": "cassie",
+      "maiden_name": "Lynch",
+      "gedcom_id": "@I232056087437@",
+      "married_to": "Jeremy Chasak",
+      "mentions": 117
+    },
+    "sadie": {
+      "name": "Sadie Leigh Chasak",
+      "aliases": ["Sadie"],
+      "role": "niece",
+      "full_name": "Sadie Leigh Chasak",
+      "parents": ["Jeremy", "Shannon"],
+      "gedcom_id": "@I232056169087@",
+      "mentions": 101
+    },
+    "callie": {
+      "name": "Callie Noel Chasak",
+      "aliases": ["Callie"],
+      "role": "niece",
+      "full_name": "Callie Noel Chasak",
+      "parents": ["Jeremy", "Shannon"],
+      "gedcom_id": "@I232280600801@",
+      "mentions": 50
+    },
+    "kolbie": {
+      "name": "Kolbie Chasak",
+      "aliases": ["Kolbie"],
+      "role": "niece",
+      "parents": ["Jeremy", "Shannon"],
+      "expected_birth": "2026-03",
+      "note": "Being born March 2026",
+      "mentions": 0
+    },
+    "bentley": {
+      "name": "Bentley Thomas Chasak",
+      "aliases": ["Bentley"],
+      "role": "nephew",
+      "full_name": "Bentley Thomas Chasak",
+      "parents": ["Jeremy", "Shannon"],
+      "gedcom_id": "@I232567350534@",
+      "mentions": 116
+    },
+    "jami": {
+      "name": "Jami Clark",
+      "aliases": ["Jami", "Jamie"],
+      "role": "coworker",
+      "workplace": "Cassie's school",
+      "relationship": "Cassie's co-teacher, on her team",
+      "mentions": 406
+    },
+    "jaymie": {
+      "name": "Jaymie",
+      "aliases": [],
+      "role": "coworker",
+      "workplace": "Cassie's school",
+      "relationship": "Cassie's co-teacher",
+      "mentions": 0
+    },
+    "carrie": {
+      "name": "Carrie Stepnoski",
+      "aliases": ["Carrie"],
+      "role": "coworker",
+      "workplace": "Cassie's school",
+      "relationship": "Cassie's co-worker",
+      "mentions": 320
+    },
+    "lisa_wells": {
+      "name": "Lisa Wells",
+      "aliases": ["Lisa"],
+      "role": "coworker",
+      "workplace": "Cassie's school",
+      "relationship": "Cassie's co-worker",
+      "mentions": 71
+    },
+    "adam": {
+      "name": "Adam",
+      "aliases": [],
+      "role": "coworker",
+      "workplace": "Cassie's school",
+      "relationship": "Cassie's co-worker",
+      "mentions": 165
+    },
+    "kalila": {
+      "name": "Kalila",
+      "aliases": [],
+      "role": "coworker",
+      "workplace": "Cassie's school",
+      "relationship": "Cassie's co-worker",
+      "mentions": 15
+    },
+    "rachel": {
+      "name": "Rachel",
+      "aliases": [],
+      "role": "coworker",
+      "workplace": "HTI",
+      "married_to": "Ron",
+      "mentions": 135
+    },
+    "jesse": {
+      "name": "Jesse",
+      "aliases": [],
+      "role": "likely_misheard",
+      "note": "Probably Josie the dog mistranscribed",
+      "mentions": 113
+    },
+    "jonah": {
+      "name": "Jonah Johnston",
+      "aliases": ["Jonah"],
+      "role": "friend",
+      "mentions": 96
+    },
+    "mark": {
+      "name": "Mark",
+      "aliases": [],
+      "role": "boss",
+      "title": "Executive Director",
+      "workplace": "HTI",
+      "mentions": 87
+    },
+    "shanna": {
+      "name": "Shanna Meraz",
+      "aliases": ["Shanna", "Shana"],
+      "role": "friend_family",
+      "relationship": "Janae's sister (Austin's SIL)",
+      "children": ["Ella Oller", "Cash Oller"],
+      "mentions": 50
+    },
+    "austin": {
+      "name": "Austin Oller",
+      "aliases": ["Austin"],
+      "role": "close_friend",
+      "married_to": "Janae Oller",
+      "mentions": 664
+    },
+    "janae": {
+      "name": "Janae Oller",
+      "aliases": ["Janae"],
+      "role": "friend",
+      "married_to": "Austin Oller",
+      "sister": "Shanna Meraz",
+      "mentions": 122
+    },
+    "ella_oller": {
+      "name": "Ella Oller",
+      "aliases": ["Ella"],
+      "role": "friend_child",
+      "parents": ["Shanna"],
+      "mentions": 1253
+    },
+    "cash_oller": {
+      "name": "Cash Oller",
+      "aliases": ["Cash"],
+      "role": "friend_child",
+      "parents": ["Shanna"],
+      "mentions": 336
+    },
+    "brad": {
+      "name": "Brad Williams",
+      "aliases": ["Brad"],
+      "role": "hti_contractor",
+      "workplace": "HTI",
+      "note": "Making stuff for HTI",
+      "mentions": 40
+    },
+    "alice": {
+      "name": "Alice",
+      "aliases": [],
+      "role": "likely_misheard",
+      "note": "Probably Alex mistranscribed",
+      "mentions": 30
+    },
+    "felix": {
+      "name": "Felix",
+      "aliases": [],
+      "role": "media_content",
+      "note": "Likely from podcasts/YouTube (e.g., xQc = Félix Lengyel)",
+      "mentions": 25
+    },
+    "jerry": {
+      "name": "Jerry",
+      "aliases": [],
+      "role": "likely_misheard",
+      "note": "Probably Jeremy mistranscribed",
+      "mentions": 20
+    },
+    "davion": {
+      "name": "Davion",
+      "aliases": [],
+      "role": "coworker",
+      "workplace": "HTI",
+      "employment": "part-time",
+      "mentions": 15
+    },
+    "ron": {
+      "name": "Ron",
+      "aliases": [],
+      "role": "coworker",
+      "workplace": "HTI",
+      "married_to": "Rachel",
+      "mentions": 0
+    },
+    "uncle_don": {
+      "name": "Donald Nelson Sigmon",
+      "aliases": ["Don", "Donald"],
+      "role": "uncle",
+      "side": "will_paternal",
+      "mentions": 227
+    },
+    "uncle_kenny": {
+      "name": "Kenneth Lynn Sigmon",
+      "aliases": ["Kenny", "Kenneth"],
+      "role": "uncle",
+      "side": "will_paternal",
+      "mentions": 38
+    },
+    "cousin_mandy": {
+      "name": "Mandy Sigmon Edwards",
+      "aliases": ["Mandy"],
+      "role": "cousin",
+      "side": "will_paternal",
+      "parent": "Uncle Don",
+      "mentions": 33
+    },
+    "aunt_cathy": {
+      "name": "Cathy Irene Helmer",
+      "aliases": ["Cathy"],
+      "role": "aunt",
+      "side": "pam_helmer",
+      "mentions": 13
+    },
+    "aunt_susan": {
+      "name": "Susan Jane Helmer",
+      "aliases": ["Susan"],
+      "role": "aunt",
+      "side": "pam_helmer",
+      "mentions": 56
+    },
+    "cousin_tom": {
+      "name": "Thomas Owens Helmer",
+      "aliases": ["Tom", "Thomas"],
+      "role": "cousin",
+      "side": "pam_helmer",
+      "mentions": 71
+    },
+    "emily": {
+      "name": "Emily Blemker",
+      "aliases": ["Emily"],
+      "role": "stepsister",
+      "parent": "Mike Blemker",
+      "mentions": 58
+    },
+    "grandma_peggy": {
+      "name": "Peggy",
+      "aliases": ["Peggy"],
+      "role": "grandmother",
+      "mentions": 45
+    },
+    "harry": {
+      "name": "Harry Helmer",
+      "aliases": ["Harry", "Uncle Harry", "Harry III", "Harry IV"],
+      "role": "family_helmer",
+      "note": "Could be Uncle Harry, Harry III, or Harry IV",
+      "mentions": 85
+    },
+    "gloria": {
+      "name": "Gloria",
+      "aliases": [],
+      "role": "aunt",
+      "side": "cassie_horton",
+      "note": "Cassie's aunt",
+      "mentions": 20
+    },
+    "toby": {
+      "name": "Van 'Toby' Horton",
+      "aliases": ["Toby"],
+      "role": "grandfather",
+      "side": "cassie",
+      "note": "Cassie's grandfather",
+      "mentions": 15
+    },
+    "alex": {
+      "name": "Alex",
+      "aliases": ["Alice"],
+      "role": "unknown",
+      "note": "Alice in transcripts is likely Alex",
+      "mentions": 214
+    },
+    "carter_helms": {
+      "name": "Carter Helms",
+      "aliases": ["Carter"],
+      "role": "active_contact",
+      "family": "Helms",
+      "mentions": 108
+    },
+    "ashley_helms": {
+      "name": "Ashley Helms",
+      "aliases": ["Ashley"],
+      "role": "active_contact",
+      "family": "Helms",
+      "mentions": 200
+    },
+    "charlotte_helms": {
+      "name": "Charlotte Helms",
+      "aliases": ["Charlotte"],
+      "role": "active_contact",
+      "family": "Helms",
+      "mentions": 103
+    }
+  },
+  "family": {
+    "wills_side": {
+      "mother": {
+        "name": "Pamela Lynn Helmer",
+        "nickname": "Pam"
+      },
+      "stepfather": {
+        "name": "Michael Berrien Blemker Sr",
+        "nickname": "Mike",
+        "married_to_pam": "2011-06-04"
+      },
+      "biological_father": {
+        "name": "David Edward Sigmon Jr",
+        "divorced": "2007-06"
+      }
+    },
+    "cassies_side": {
+      "father": {
+        "name": "Erwin Thomas Chasak Jr",
+        "nickname": "Tommy"
+      },
+      "mother": {
+        "name": "Joyce Marie Horton",
+        "nickname": "Joyce"
+      },
+      "brother": {
+        "name": "Jeremy Thomas Chasak",
+        "nickname": "Jeremy"
+      },
+      "sister_in_law": {
+        "name": "Shannon Leigh Lynch",
+        "nickname": "Shannon",
+        "married_to": "Jeremy"
+      },
+      "nieces": [
+        {"name": "Sadie Leigh Chasak", "nickname": "Sadie"},
+        {"name": "Callie Noel Chasak", "nickname": "Callie"},
+        {"name": "Kolbie Chasak", "nickname": "Kolbie", "note": "Not in GEDCOM yet"}
+      ],
+      "nephew": {
+        "name": "Bentley Thomas Chasak",
+        "nickname": "Bentley"
+      }
+    }
+  },
+  "pets": {
+    "maggie": {
+      "name": "Maggie Sigmon",
+      "aliases": ["Jane", "Mags", "Maggie"],
+      "type": "dog",
+      "mentions": 587,
+      "note": "Jane and Maggie are the same dog"
+    },
+    "rocky": {
+      "name": "Rocky Sigmon",
+      "aliases": ["Rocky"],
+      "type": "dog",
+      "mentions": 359
+    },
+    "lucky": {
+      "name": "Lucky Sigmon",
+      "aliases": ["Lucky"],
+      "type": "dog",
+      "mentions": 165
+    },
+    "josie": {
+      "name": "Josie Sigmon",
+      "aliases": ["Josie"],
+      "type": "dog",
+      "mentions": 139
+    }
+  },
+  "household": {
+    "members": ["William Justin Sigmon", "Cassie Nicole Chasak"],
+    "pets": ["Maggie", "Rocky", "Lucky", "Josie"],
+    "pet_count": 4,
+    "location": "North Carolina"
+  },
+  "locations": {
+    "north_carolina": {
+      "name": "North Carolina",
+      "aliases": ["NC"],
+      "mentions": 87
+    }
+  },
+  "key_dates": {
+    "will_cassie_married": "2013-09-28",
+    "pam_mike_married": "2011-06-04",
+    "will_parents_divorced": "2007-06"
+  },
+  "discovery_sources": {
+    "gedcom_file": "/Users/wsig/Downloads/Sigmon Family Tree.ged",
+    "other_tools": ["clay_mcp", "contacts_app"]
+  },
+  "updated_at": "2026-02-02T18:25:00Z",
+  "source": "wsiglog_limitless_15912_conversations + GEDCOM_family_tree + user_verified",
+  "user_verified": true
+}
