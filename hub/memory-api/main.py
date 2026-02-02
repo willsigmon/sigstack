@@ -20,7 +20,7 @@ import asyncio
 import sqlite3
 import json
 
-from sources import omi, letta, knowledge_graph, local_db
+from sources import omi, letta, knowledge_graph, local_db, wsiglog
 
 # Extended DB path for SIGSERVE
 SIGSERVE_DB = Path.home() / ".sigserve" / "memory.db"
@@ -28,7 +28,7 @@ SIGSERVE_DB = Path.home() / ".sigserve" / "memory.db"
 app = FastAPI(
     title="Sigserve Memory API",
     description="Unified memory hub for sigstack",
-    version="1.0.0",
+    version="2.0.0",
 )
 
 app.add_middleware(
@@ -161,6 +161,11 @@ async def list_sources():
                 "name": "local",
                 "description": "Local SQLite - fast cache with full-text search",
                 "capabilities": ["cache", "fts", "search"],
+            },
+            {
+                "name": "wsiglog",
+                "description": "Tower wsiglog - conversation history from all sources",
+                "capabilities": ["conversations", "search"],
             },
         ]
     }
@@ -729,3 +734,32 @@ async def reject_action(action_id: int):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8100)
+
+
+# === wsiglog endpoints ===
+
+@app.get("/wsiglog/conversations")
+async def get_wsiglog_conversations(
+    limit: int = Query(default=50, le=100),
+    days_back: Optional[int] = None,
+    source: Optional[str] = None
+):
+    """Get conversations from tower wsiglog"""
+    return await wsiglog.get_conversations(limit=limit, days_back=days_back, source=source)
+
+
+@app.get("/wsiglog/sources")
+async def get_wsiglog_sources():
+    """Get available conversation sources in wsiglog"""
+    sources = await wsiglog.get_sources()
+    return {"sources": sources}
+
+
+@app.get("/wsiglog/search")
+async def search_wsiglog(
+    query: str,
+    limit: int = Query(default=20, le=50),
+    days_back: Optional[int] = None
+):
+    """Search wsiglog conversations"""
+    return await wsiglog.search(query, limit, days_back)

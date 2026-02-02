@@ -30,11 +30,10 @@ MCP Memory Server → reads/writes memory.json
 
 | Service | Port | Purpose |
 |---------|------|---------|
-| n8n | — | Workflow automation (n8n.wsig.me) |
 | Home Assistant | 8123 | Smart home, desk automation, CI status lights |
 | Hub (LLM proxy) | 3030 | OpenAI-compatible router |
 | Ollama | 11434 | Local LLM inference |
-| BRAIN/wsiglog | — | SQLite memory database layer |
+| Sigserve Memory API | 8100 | Unified memory hub (SQLite + Letta + Omi) |
 | Omi | — | Conversation ingestion from wearable |
 
 ## Connected Devices
@@ -42,7 +41,7 @@ MCP Memory Server → reads/writes memory.json
 | Device | Syncs With Tower | How |
 |--------|-----------------|-----|
 | Wills-MBA (MacBook Air) | Every 5 min + manual | rsync via Tailscale |
-| wills-studio (Mac Studio) | Push from MBA | rsync via Tailscale |
+| sigserve (Mac Studio) | Primary hub | Memory API + Tailscale Funnel |
 | office-pc / vt-pc / deck | Pending setup | — |
 
 ## Sync Commands
