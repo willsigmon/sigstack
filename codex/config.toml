@@ -1,0 +1,354 @@
+# Codex CLI configuration - OCTOBER 2025 OPTIMIZED
+# Full autonomy, maximum code generation, modern stack
+
+# Model settings - Codex latest (October 2025)
+model = "gpt-5.3-codex"
+codex_model = "gpt-5-codex"
+model_max_output_tokens = 32000
+model_instructions_file = "/Users/wsig/.codex/instructions.md"
+# When a repo doesn't have Codex-native docs, fall back to common agent docs.
+project_doc_fallback_filenames = ["CLAUDE.md"]
+# Sandbox - Full access for trusted paths
+sandbox_mode = "danger-full-access"
+approval_policy = "never"
+model_reasoning_effort = "medium"
+personality = "friendly"
+web_search = "live"
+
+# Feature flags - default Codex CLI capabilities
+[features]
+plan_tool = true
+approve_all = true
+rmcp_client = true
+view_image_tool = true
+unified_exec = true
+shell_snapshot = true
+
+# Agent configuration - Full autonomy
+[agent]
+max_iterations = 200
+
+# Shell environment - Inherit all paths
+[shell_environment_policy]
+inherit = "all"
+preserve_path = true
+preserve_home = true
+preserve_env = true
+
+# Environment variables
+[environment]
+EDITOR = "code-insiders"
+GITHUB_TOKEN = "${GITHUB_TOKEN:-}"
+FIREBASE_TOKEN = "${FIREBASE_TOKEN:-}"
+BRAVE_API_KEY = "${BRAVE_API_KEY:-}"
+AWS_PROFILE = "default"
+LIMITLESS_API_KEY = "${LIMITLESS_API_KEY:-}"
+
+# Trusted workspaces - Auto-approve all
+[projects."/Users/wsig"]
+trust_level = "trusted"
+auto_approve = true
+
+[projects."/Users/wsig/GitHub Builds"]
+trust_level = "trusted"
+auto_approve = true
+
+[projects."/Users/wsig/Projects"]
+trust_level = "trusted"
+auto_approve = true
+
+[projects."/Users/wsig/Desktop"]
+trust_level = "trusted"
+auto_approve = true
+
+[projects."/Users/wsig/Documents"]
+trust_level = "trusted"
+auto_approve = true
+
+[projects."/Users/wsig/Downloads"]
+trust_level = "trusted"
+auto_approve = true
+
+# MCP Integration - 16 servers fully enabled
+[mcp]
+config_path = "/Users/wsig/.codex/mcp-config.json"
+auto_discover = false
+enable_all_servers = false
+parallel_servers = true
+timeout = 60000
+max_concurrent = 16
+cache_responses = true
+
+# Code preferences
+[code_style]
+format_on_save = true
+organize_imports = true
+auto_fix_lint = true
+line_length = 120
+trailing_comma = true
+
+# Swift/iOS specific - iOS 18+ compatible
+[swift]
+use_spm = true
+target_platform = "ios"
+min_version = "18.0"
+enable_previews = true
+enable_strict_concurrency = true
+enable_swiftlint = true
+enable_swift_testing = true
+swift_version = "6.0"
+
+# macOS specific
+[macos]
+min_version = "15.0"
+enable_native_apis = true
+enable_osascript = true
+
+# Git integration - Full workflow
+[git]
+auto_stage = false
+auto_commit = false
+auto_push = false
+sign_commits = false
+verify_commits = false
+enable_git_flow = true
+
+# Performance tuning - Optimized for 2025
+[performance]
+parallel_operations = true
+cache_enabled = true
+async_operations = true
+connection_pooling = true
+lazy_loading = true
+request_batching = true
+
+# Logging
+[logging]
+level = "warn"
+file = "/Users/wsig/.codex/codex.log"
+console = false
+retention_days = 7
+
+# API settings - 2025 standards
+[api]
+timeout = 180000
+retry_attempts = 5
+retry_delay = 2000
+exponential_backoff = true
+connection_keep_alive = true
+
+# Development settings
+[development]
+enable_debug = false
+enable_profiling = false
+enable_memory_tracking = false
+enable_verbose_mcp = false
+
+# Code generation specific
+[codex]
+enable_completions = true
+enable_edits = true
+syntax_highlighting = true
+code_snippets = true
+language_detection = true
+auto_import_suggestions = true
+
+# Output and display
+[output]
+theme = "dark"
+stream_tokens = true
+
+[notice]
+hide_full_access_warning = true
+hide_gpt5_1_migration_prompt = true
+hide_rate_limit_model_nudge = true
+
+[notice.model_migrations]
+"gpt-5.2" = "gpt-5.2-codex"
+
+[mcp_servers.calendar]
+command = "node"
+args = ["/Users/wsig/.mcp-fixed-servers/fixed-calendar.js"]
+
+[mcp_servers.clipboard]
+command = "node"
+args = ["/Users/wsig/.mcp-fixed-servers/fixed-clipboard.js"]
+
+[mcp_servers.filesystem]
+command = "/Users/wsig/.local/share/mcp/node_modules/.bin/mcp-server-filesystem"
+args = ["/Users/wsig"]
+
+[mcp_servers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+
+[mcp_servers.mcp-server-docker]
+command = "npx"
+args = ["-y", "mcp-server-docker"]
+
+[mcp_servers.mcp-server-fetch]
+command = "/Users/wsig/.local/bin/uvx"
+args = ["mcp-server-fetch"]
+
+[mcp_servers.mcp-server-sequential-thinking]
+command = "npx"
+args = ["-y", "mcp-server-sequential-thinking"]
+
+[mcp_servers.mcp-server-sqlite]
+command = "npx"
+args = ["-y", "mcp-server-sqlite"]
+
+[mcp_servers.memory]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-memory"]
+
+[mcp_servers.microsoft_playwright_mcp]
+command = "npx"
+args = ["@playwright/mcp@latest"]
+
+[mcp_servers.notifications]
+command = "node"
+args = ["/Users/wsig/.mcp-fixed-servers/fixed-notifications.js"]
+
+[mcp_servers.osascript]
+command = "node"
+args = ["/Users/wsig/.mcp-fixed-servers/fixed-osascript.js"]
+
+[mcp_servers.postmanlabs_postman_mcp_server]
+command = "npx"
+args = ["@postman/postman-mcp-server@latest"]
+
+[mcp_servers.postmanlabs_postman_mcp_server.env]
+POSTMAN_API_KEY = "${input:api_key}"
+
+[mcp_servers.puppeteer]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-puppeteer"]
+
+# Vercel MCP (remote Streamable HTTP with OAuth)
+[mcp_servers.vercel]
+url = "https://mcp.vercel.com"
+startup_timeout_sec = 20
+tool_timeout_sec = 120
+
+# BRAIN: wsiglog (single source of truth)
+# Note: Codex CLI currently reads MCP server definitions from `config.toml`
+# (the `mcp.config_path` JSON is not used by `codex mcp list/get`), so this
+# entry needs to live here for Codex to start the wsiglog server.
+[mcp_servers.wsiglog]
+command = "/Users/wsig/manusaisetup/.venv/bin/python"
+args = ["/Users/wsig/manusaisetup/wsiglog_mcp.py"]
+
+[mcp_servers.wsiglog.env]
+WSIGLOG_URL = "http://192.168.1.139:3102"
+
+[mcp_servers.shell]
+command = "npx"
+args = ["-y", "mcp-shell"]
+
+[mcp_servers.xcode]
+command = "node"
+args = ["/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"]
+
+[mcp_servers.sosumi]
+url = "https://sosumi.ai/mcp"
+
+[mcp_servers.supabase]
+command = "npx"
+args = ["-y", "@supabase/mcp-server-supabase@latest", "--access-token", "sbp_REDACTED"]
+
+# Context7 - Library documentation lookup
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@context7/mcp-server"]
+
+# Mermaid - Diagram generation
+[mcp_servers.mermaid]
+command = "npx"
+args = ["-y", "mcp-server-mermaid"]
+
+# FAL - Image generation
+[mcp_servers.fal]
+command = "npx"
+args = ["-y", "@fal-ai/mcp-server"]
+
+[mcp_servers.fal.env]
+FAL_KEY = "${FAL_KEY:-}"
+
+# Brave Search
+[mcp_servers.brave]
+command = "npx"
+args = ["-y", "@anthropic/mcp-brave-search"]
+
+[mcp_servers.brave.env]
+BRAVE_API_KEY = "${BRAVE_API_KEY:-}"
+
+# Manus AI agent delegation
+[mcp_servers.manus]
+command = "uv"
+args = ["--directory", "/Users/wsig/manusaisetup", "run", "mcp_server.py"]
+
+[mcp_servers.manus.env]
+SANDBOX_DIR = "/Users/wsig/manus-sandbox"
+BROWSER_HEADLESS = "true"
+
+# n8n workflow automation
+[mcp_servers.n8n]
+command = "npx"
+args = ["-y", "n8n-mcp"]
+
+[mcp_servers.n8n.env]
+N8N_API_KEY = "${N8N_API_KEY:-}"
+N8N_URL = "https://n8n.wsig.me"
+
+# END AUTO-GENERATED MCP SERVERS
+
+# ============================================================
+# DEVELOPER INSTRUCTIONS (Codex equivalent of CLAUDE.md hooks)
+# ============================================================
+
+developer_instructions = """
+## Expert Partner Mode
+
+You are a senior engineer pairing with a talented novice vibecoder.
+
+### Core Behaviors:
+1. **Ask Before Acting**: For vague requirements, ask clarifying questions
+2. **Push Back**: On bad patterns, duplicate code, tech debt
+3. **Teach**: Explain the "why" behind decisions, not just the "what"
+4. **Surface Tradeoffs**: Fast way vs right way - let user decide
+5. **Warn Early**: Speak up BEFORE executing on risky changes
+
+### iOS Development:
+- ALWAYS use sosumi MCP for Apple docs - never guess APIs
+- Use xcode MCP for build/diagnostics
+- Target iOS 18+, Swift 6, SwiftUI
+
+### Code Quality:
+- NEVER use try! or force unwraps
+- ALWAYS handle errors properly
+- Prefer immutability
+- Small files (<800 lines), small functions (<50 lines)
+
+### Before Committing:
+- No hardcoded secrets
+- All errors handled
+- Tests pass
+- Build succeeds
+
+### Available Skills: Use $skill-name to invoke
+$planner, $architect, $tdd-guide, $code-reviewer, $security-reviewer
+$ios-build-test, $xcode-build-fixer, $swiftui-debug, $actor-isolation-fixer
+$leavn-commit-machine, $bible-feature-expert, $reading-plan-expert
+$guided-mode-expert, $audio-features-expert, and 50+ more
+"""
+
+[profiles.fast]
+# Cheap + snappy: for quick edits, simple questions, small refactors.
+model_reasoning_effort = "low"
+model_max_output_tokens = 8000
+
+[profiles.deep]
+# Default "big brain" mode: for architecture, gnarly bugs, migrations.
+model_reasoning_effort = "xhigh"
+model_max_output_tokens = 32000
