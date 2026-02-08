@@ -12,7 +12,6 @@ from pathlib import Path
 
 
 WEB_SEARCH_LINE = 'web_search = "live"\n'
-MODEL_INSTR_LINE = 'model_instructions_file = "/Users/wsig/.codex/instructions.md"\n'
 FALLBACK_DOCS_LINE = 'project_doc_fallback_filenames = ["CLAUDE.md"]\n'
 
 PROFILES_BLOCK = """
@@ -58,13 +57,17 @@ def _ensure_insert_before_features(text: str, line: str) -> str:
 
 
 def _ensure_model_header_keys(text: str) -> str:
-    if MODEL_INSTR_LINE.rstrip("\n") not in text:
+    # Use an absolute path so Codex can always find it (works across macOS/Linux).
+    instructions_path = (Path.home() / ".codex" / "instructions.md").as_posix()
+    model_instr_line = f'model_instructions_file = "{instructions_path}"\n'
+
+    if model_instr_line.rstrip("\n") not in text:
         m = re.search(r"(?m)^model_max_output_tokens\s*=.*$", text)
         if m:
             insert_at = m.end()
-            text = text[:insert_at] + "\n" + MODEL_INSTR_LINE + text[insert_at:]
+            text = text[:insert_at] + "\n" + model_instr_line + text[insert_at:]
         else:
-            text = MODEL_INSTR_LINE + text
+            text = model_instr_line + text
 
     if FALLBACK_DOCS_LINE.rstrip("\n") not in text:
         m = re.search(r"(?m)^model_instructions_file\s*=.*$", text)
