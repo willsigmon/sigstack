@@ -73,7 +73,7 @@ def build_story_image_html(image_url: str, alt: str = "") -> str:
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
         <td>
-          <img src="{image_url}" alt="{alt}" width="580" style="width: 100%; max-width: 580px; height: auto; display: block; border-radius: 8px; border: 1px solid #262626;" />
+          <img src="{image_url}" alt="{alt}" width="556" style="width: 100%; max-width: 556px; height: auto; display: block; border-radius: 10px;" />
         </td>
       </tr>
     </table>
@@ -81,40 +81,36 @@ def build_story_image_html(image_url: str, alt: str = "") -> str:
 
 
 def build_story_item_html(item: dict, accent_color: str) -> str:
-    """Build HTML for a single story item with image support"""
-    image_html = ""
+    """Build HTML for a single story item - Morning Brew card style"""
     if item.get("image"):
-        image_html = f'''
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 12px;">
+        return f'''
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#f9fafb" style="background-color: #f9fafb; border-radius: 10px; margin-bottom: 14px; border: 1px solid #e5e7eb;">
           <tr>
-            <td width="100" style="vertical-align: top; padding-right: 16px;">
-              <img src="{item["image"]}" alt="" width="100" height="70" style="width: 100px; height: 70px; object-fit: cover; border-radius: 6px; display: block;" />
+            <td width="110" style="vertical-align: top;">
+              <img src="{item["image"]}" alt="" width="110" height="80" style="width: 110px; height: 80px; object-fit: cover; border-radius: 10px 0 0 10px; display: block;" />
             </td>
-            <td style="vertical-align: top;">
+            <td style="vertical-align: top; padding: 14px 16px;">
               <a href="{item["link"]}" style="text-decoration: none;">
-                <p style="margin: 0 0 6px 0; font-size: 16px; color: #ffffff; font-weight: 500; line-height: 1.35; font-family: Georgia, serif;">{item["title"]}</p>
+                <p style="margin: 0 0 6px 0; font-size: 15px; color: #1a1a1a; font-weight: 700; line-height: 1.35;">{item["title"]}</p>
               </a>
-              <p style="margin: 0; font-size: 13px; color: #a3a3a3; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">{item["summary"]}</p>
+              <p style="margin: 0; font-size: 13px; color: #6b7280; line-height: 1.5;">{item["summary"]}</p>
             </td>
           </tr>
         </table>
         '''
-    else:
-        # No image - simple text layout
-        image_html = f'''
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 16px; border-bottom: 1px solid #1f1f1f; padding-bottom: 16px;">
+    return f'''
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 14px; border-bottom: 1px solid #e5e7eb; padding-bottom: 14px;">
           <tr>
             <td>
               <a href="{item["link"]}" style="text-decoration: none;">
-                <p style="margin: 0 0 6px 0; font-size: 17px; color: #ffffff; font-weight: 400; line-height: 1.35; font-family: Georgia, serif;">{item["title"]}</p>
+                <p style="margin: 0 0 6px 0; font-size: 16px; color: #1a1a1a; font-weight: 700; line-height: 1.35;">{item["title"]}</p>
               </a>
-              <p style="margin: 0 0 8px 0; font-size: 14px; color: #a3a3a3; line-height: 1.55; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">{item["summary"]}</p>
-              <a href="{item["link"]}" style="color: {accent_color}; font-size: 12px; text-decoration: none; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">Read more &rarr;</a>
+              <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280; line-height: 1.55;">{item["summary"]}</p>
+              <a href="{item["link"]}" style="color: {accent_color}; font-size: 12px; text-decoration: none; font-weight: 700;">Read more &rarr;</a>
             </td>
           </tr>
         </table>
         '''
-    return image_html
 
 
 def send_tips_newsletter(to: list, tip_data: dict) -> dict:
@@ -144,7 +140,7 @@ def send_tips_newsletter(to: list, tip_data: dict) -> dict:
     intro_text = tip_data.get("intro_text", "One actionable technique to level up your workflow. No fluff, just signal.")
 
     variables = {
-        "DATE": datetime.now().strftime("%B %d, %Y"),
+        "DATE": datetime.now().strftime("%B %-d, %Y"),
         "PREHEADER": preheader,
         "INTRO_TEXT": intro_text,
         "ISSUE_NUMBER": tip_data.get("issue_number", "001"),
@@ -182,16 +178,20 @@ def send_news_newsletter(to: list, news_data: dict) -> dict:
     for item in news_data.get("dev_tools", []):
         dev_tools_html += build_story_item_html(item, "#4ade80")
 
-    # Build quick links HTML
+    # Build quick links HTML - Morning Brew numbered list style
     quick_links_html = ""
     for i, item in enumerate(news_data.get("quick_links", [])):
-        border_style = "border-bottom: 1px solid #262626;" if i < len(news_data.get("quick_links", [])) - 1 else ""
+        border_style = "border-bottom: 1px solid #e5e7eb;" if i < len(news_data.get("quick_links", [])) - 1 else ""
+        num = i + 1
         quick_links_html += f'''
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="{border_style} margin-bottom: 14px; padding-bottom: 14px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="{border_style} margin-bottom: 12px; padding-bottom: 12px;">
           <tr>
-            <td>
-              <a href="{item["link"]}" style="color: #ffffff; text-decoration: none; font-size: 15px; font-family: Georgia, serif; line-height: 1.4;">{item["title"]}</a>
-              <p style="color: #525252; font-size: 12px; margin: 4px 0 0 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">{item["source"]}</p>
+            <td width="32" valign="top" style="padding-top: 2px;">
+              <span style="display: inline-block; width: 24px; height: 24px; background-color: #f59e0b; color: #ffffff; font-size: 12px; font-weight: 800; text-align: center; line-height: 24px; border-radius: 50%;">{num}</span>
+            </td>
+            <td style="padding-left: 10px;">
+              <a href="{item["link"]}" style="color: #1a1a1a; text-decoration: none; font-size: 15px; font-weight: 600; line-height: 1.4;">{item["title"]}</a>
+              <p style="color: #9ca3af; font-size: 12px; margin: 4px 0 0 0; font-weight: 500;">{item["source"]}</p>
             </td>
           </tr>
         </table>
@@ -204,7 +204,7 @@ def send_news_newsletter(to: list, news_data: dict) -> dict:
     preheader = news_data.get("preheader", news_data.get("top_story", {}).get("title", "Your daily digest"))
 
     variables = {
-        "DATE": datetime.now().strftime("%A, %B %d, %Y"),
+        "DATE": datetime.now().strftime("%A, %B %-d, %Y"),
         "PREHEADER": preheader,
         "INTRO_TEXT": intro_text,
         "TOP_STORY_IMAGE": top_story_image,
