@@ -1,20 +1,50 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --background: #f6f1e7;
+  --foreground: #1a1814;
+  --surface: #fffdf7;
+  --sub: #5c564a;
+  --muted: #9e9586;
+  --faint: #d6cfc2;
+  --accent-1: #f97316;
+  --accent-2: #ec4899;
+  --border: rgba(60,48,30,0.1);
+  --border-light: rgba(60,48,30,0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #2b2a28;
+    --foreground: #f0ece4;
+    --surface: #363432;
+    --sub: rgba(240,236,228,0.6);
+    --muted: rgba(240,236,228,0.35);
+    --faint: rgba(240,236,228,0.12);
+    --border: rgba(240,236,228,0.1);
+    --border-light: rgba(240,236,228,0.05);
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-surface: var(--surface);
+  --color-sub: var(--sub);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent-1: var(--accent-1);
+  --color-accent-2: var(--accent-2);
+  --color-border: var(--border);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-instrument-serif);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-sans);
 }
 
 /* Gradient animations */
@@ -29,26 +59,34 @@ body {
   animation: gradient 8s ease infinite;
 }
 
-/* Code block styling */
+/* Code block styling — warm toned */
 .code-block {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #3a3530 0%, #2e2a26 100%);
+  border: 1px solid var(--border);
 }
 
-/* Glass effect */
-.glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* Card with gradient top bar */
+.card-warm {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
 }
 
-/* Glow effects */
-.glow-blue {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+.card-warm::before {
+  content: "";
+  display: block;
+  height: 4px;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
 }
 
-.glow-purple {
-  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+/* Warm glow effects */
+.glow-orange {
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.25);
+}
+
+.glow-pink {
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.2);
 }
 
 /* Animated gradient text */
@@ -68,8 +106,47 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Selection */
+/* Selection — warm orange */
 ::selection {
-  background: rgba(168, 85, 247, 0.3);
-  color: white;
+  background: rgba(249, 115, 22, 0.25);
+}
+
+/* Paper texture via SVG filter */
+.paper-grain {
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  z-index: 2;
+  mix-blend-mode: multiply;
+  opacity: 0.14;
+}
+
+@media (prefers-color-scheme: dark) {
+  .paper-grain {
+    mix-blend-mode: overlay;
+    opacity: 0.06;
+  }
+}
+
+/* Vignette */
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: inset 0 0 200px 60px rgba(60, 45, 20, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  .vignette {
+    box-shadow: inset 0 0 150px 50px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Shimmer animation for gradient bars */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
 }

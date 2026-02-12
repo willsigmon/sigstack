@@ -5,7 +5,13 @@ import Image from "next/image";
 import { motion, useScroll, useTransform, useSpring, useMotionValue, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect, useMemo } from "react";
 
-// Magnetic button component - juicy and playful
+// ─── Palette constants (matching wsm-invoice) ───
+const A1 = "#f97316";
+const A2 = "#ec4899";
+const GRAD = `linear-gradient(135deg, ${A1}, ${A2})`;
+const GLOW = "rgba(249,115,22,0.25)";
+
+// Magnetic button component
 function MagneticButton({ children, href, className, variant = "default" }: { children: React.ReactNode; href: string; className?: string; variant?: "default" | "primary" | "secondary" }) {
   const ref = useRef<HTMLAnchorElement>(null);
   const x = useMotionValue(0);
@@ -45,7 +51,6 @@ function MagneticButton({ children, href, className, variant = "default" }: { ch
         transition: { type: "spring", stiffness: 400, damping: 10 }
       }}
     >
-      {/* Shimmer effect on hover */}
       <motion.div
         className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
         whileHover={{ translateX: "200%" }}
@@ -56,13 +61,14 @@ function MagneticButton({ children, href, className, variant = "default" }: { ch
   );
 }
 
-// Playful bouncy button for CTAs
-function BouncyButton({ children, href, className, glow = false }: { children: React.ReactNode; href: string; className?: string; glow?: boolean }) {
+// Bouncy CTA button
+function BouncyButton({ children, href, className, glow = false, style }: { children: React.ReactNode; href: string; className?: string; glow?: boolean; style?: React.CSSProperties }) {
   return (
     <motion.a
       href={href}
       target="_blank"
       className={`relative group ${className}`}
+      style={style}
       whileHover={{
         scale: 1.08,
         y: -4,
@@ -78,20 +84,20 @@ function BouncyButton({ children, href, className, glow = false }: { children: R
         mass: 0.8
       }}
     >
-      {/* Glow effect */}
       {glow && (
         <motion.div
-          className="absolute -inset-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-2xl blur-lg opacity-50 group-hover:opacity-80"
+          className="absolute -inset-1 rounded-2xl blur-lg opacity-50 group-hover:opacity-80"
+          style={{
+            background: GRAD,
+            backgroundSize: "200% 200%",
+          }}
           animate={{
             backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
           }}
           transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          style={{ backgroundSize: "200% 200%" }}
         />
       )}
-      {/* Button content */}
       <span className="relative block">
-        {/* Shimmer */}
         <span className="absolute inset-0 overflow-hidden rounded-xl">
           <motion.span
             className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"
@@ -106,7 +112,7 @@ function BouncyButton({ children, href, className, glow = false }: { children: R
   );
 }
 
-// Fade-in component with blur
+// Fade-in component
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   return (
     <motion.div
@@ -121,13 +127,13 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
   );
 }
 
-// Tech stack data - brand-matched colors
+// Tech stack data
 const coreStack = [
   {
     name: "Claude Code",
     description: "CLI-first AI coding",
     logo: "https://cdn.simpleicons.org/anthropic/D4A574",
-    bgColor: "bg-gradient-to-br from-[#D4A574]/30 to-[#B8956A]/40",
+    bgColor: "bg-gradient-to-br from-[#D4A574]/20 to-[#B8956A]/30",
     glowColor: "#D4A574",
     url: "https://claude.ai/code",
     highlight: true,
@@ -136,7 +142,7 @@ const coreStack = [
     name: "Omi",
     description: "AI wearable memory",
     logo: "/icons/omi.png",
-    bgColor: "bg-gradient-to-br from-emerald-500/30 to-teal-500/40",
+    bgColor: "bg-gradient-to-br from-emerald-500/20 to-teal-500/30",
     glowColor: "#10B981",
     url: "https://www.omi.me/?ref=WILLSIGMON",
   },
@@ -144,7 +150,7 @@ const coreStack = [
     name: "Letta",
     description: "Cross-session memory",
     logo: "/icons/letta.png",
-    bgColor: "bg-gradient-to-br from-teal-500/30 to-cyan-500/40",
+    bgColor: "bg-gradient-to-br from-teal-500/20 to-cyan-500/30",
     glowColor: "#14B8A6",
     url: "https://letta.com",
   },
@@ -155,7 +161,7 @@ const voiceStack = [
     name: "Typeless",
     description: "Speech to prompts",
     logo: "https://www.typeless.com/favicon.ico",
-    bgColor: "bg-gradient-to-br from-blue-500/30 to-indigo-500/40",
+    bgColor: "bg-gradient-to-br from-blue-500/20 to-indigo-500/30",
     glowColor: "#3B82F6",
     url: "https://www.typeless.com/?via=wsig",
   },
@@ -166,7 +172,7 @@ const terminalStack = [
     name: "iTerm2",
     description: "macOS terminal",
     logo: "https://cdn.simpleicons.org/iterm2/10B981",
-    bgColor: "bg-gradient-to-br from-[#10B981]/30 to-[#059669]/40",
+    bgColor: "bg-gradient-to-br from-[#10B981]/20 to-[#059669]/30",
     glowColor: "#10B981",
     url: "https://iterm2.com",
   },
@@ -174,7 +180,7 @@ const terminalStack = [
     name: "CleanShot X",
     description: "Screenshots",
     logo: "/icons/cleanshot.png",
-    bgColor: "bg-gradient-to-br from-[#5B9BD5]/30 to-[#2B6CB0]/40",
+    bgColor: "bg-gradient-to-br from-[#5B9BD5]/20 to-[#2B6CB0]/30",
     glowColor: "#5B9BD5",
     url: "https://cleanshot.sjv.io/5520D3",
   },
@@ -185,7 +191,7 @@ const agentStack = [
     name: "Sled",
     description: "Voice from phone",
     logo: "https://cdn.simpleicons.org/airplayaudio/06B6D4",
-    bgColor: "bg-gradient-to-br from-cyan-500/30 to-teal-500/40",
+    bgColor: "bg-gradient-to-br from-cyan-500/20 to-teal-500/30",
     glowColor: "#06B6D4",
     url: "https://sled.layercode.com",
     highlight: true,
@@ -194,7 +200,7 @@ const agentStack = [
     name: "Plural",
     description: "Parallel branches",
     logo: "https://cdn.simpleicons.org/git/F05032",
-    bgColor: "bg-gradient-to-br from-orange-500/30 to-red-500/40",
+    bgColor: "bg-gradient-to-br from-orange-500/20 to-red-500/30",
     glowColor: "#F05032",
     url: "https://github.com/zhubert/plural",
   },
@@ -202,7 +208,7 @@ const agentStack = [
     name: "Agor",
     description: "Agent canvas",
     logo: "https://cdn.simpleicons.org/figma/F24E1E",
-    bgColor: "bg-gradient-to-br from-pink-500/30 to-rose-500/40",
+    bgColor: "bg-gradient-to-br from-pink-500/20 to-rose-500/30",
     glowColor: "#F24E1E",
     url: "https://github.com/preset-io/agor",
   },
@@ -212,24 +218,24 @@ const infraStack = [
   {
     name: "GitHub",
     description: "Code & PRs",
-    logo: "https://cdn.simpleicons.org/github/white",
-    bgColor: "bg-gradient-to-br from-zinc-400/30 to-zinc-600/40",
-    glowColor: "#A1A1AA",
+    logo: "https://cdn.simpleicons.org/github/1a1814",
+    bgColor: "bg-gradient-to-br from-stone-400/20 to-stone-600/30",
+    glowColor: "#78716c",
     url: "https://github.com",
   },
   {
     name: "Vercel",
     description: "Deploy",
-    logo: "https://cdn.simpleicons.org/vercel/white",
-    bgColor: "bg-gradient-to-br from-zinc-300/30 to-zinc-500/40",
-    glowColor: "#FFFFFF",
+    logo: "https://cdn.simpleicons.org/vercel/1a1814",
+    bgColor: "bg-gradient-to-br from-stone-300/20 to-stone-500/30",
+    glowColor: "#78716c",
     url: "https://vercel.com",
   },
   {
     name: "Supabase",
     description: "Postgres & Auth",
     logo: "https://cdn.simpleicons.org/supabase/3FCF8E",
-    bgColor: "bg-gradient-to-br from-[#3FCF8E]/30 to-[#22C55E]/40",
+    bgColor: "bg-gradient-to-br from-[#3FCF8E]/20 to-[#22C55E]/30",
     glowColor: "#3FCF8E",
     url: "https://supabase.com",
   },
@@ -290,30 +296,34 @@ function StackCard({
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className={`group relative block rounded-2xl p-5 sm:p-6 bg-white/[0.05] backdrop-blur-md border border-white/[0.1] overflow-hidden ${
+        className={`group relative block rounded-2xl p-5 sm:p-6 border overflow-hidden ${
           highlight ? "ring-2 ring-[#D4A574]/50" : ""
         }`}
+        style={{
+          background: "var(--surface)",
+          borderColor: "var(--border)",
+          boxShadow: highlight ? `0 10px 40px ${glowColor}30` : undefined,
+        }}
         whileHover={{
           scale: 1.05,
           y: -6,
         }}
         whileTap={{ scale: 0.97 }}
         transition={{ type: "spring", stiffness: 400, damping: 15 }}
-        style={{
-          boxShadow: highlight ? `0 10px 40px ${glowColor}40` : undefined,
-        }}
       >
+        {/* Gradient top bar */}
+        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: GRAD }} />
+
         {/* Brand-colored hover glow */}
         <motion.div
           className="absolute inset-0 opacity-0 group-hover:opacity-100 blur-2xl -z-10 transition-opacity duration-300"
-          style={{ backgroundColor: glowColor || "#8B5CF6" }}
+          style={{ backgroundColor: glowColor || A1 }}
         />
 
-        {/* Icon-first layout */}
         <div className="flex flex-col items-center text-center gap-3">
-          {/* Big bold icon */}
           <motion.div
-            className={`h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 rounded-2xl ${bgColor} flex items-center justify-center shadow-lg border border-white/[0.1]`}
+            className={`h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 rounded-2xl ${bgColor} flex items-center justify-center shadow-lg border`}
+            style={{ borderColor: "var(--border)" }}
             whileHover={{ scale: 1.15, rotate: 5 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
@@ -328,19 +338,18 @@ function StackCard({
                 unoptimized
               />
             ) : fallbackLetter ? (
-              <span className="text-white font-black text-2xl sm:text-3xl">{fallbackLetter}</span>
+              <span className="font-black text-2xl sm:text-3xl" style={{ color: "var(--foreground)" }}>{fallbackLetter}</span>
             ) : null}
           </motion.div>
 
-          {/* Text */}
           <div>
             <h3
-              className="font-bold text-white text-sm sm:text-base transition-colors leading-tight"
-              style={{ color: highlight ? glowColor : undefined }}
+              className="font-bold text-sm sm:text-base transition-colors leading-tight"
+              style={{ color: highlight ? glowColor : "var(--foreground)" }}
             >
               {name}
             </h3>
-            <p className="text-xs sm:text-sm text-zinc-400 mt-1">{description}</p>
+            <p className="text-xs sm:text-sm mt-1" style={{ color: "var(--muted)" }}>{description}</p>
           </div>
         </div>
       </motion.a>
@@ -351,22 +360,25 @@ function StackCard({
 function CodeBlock({ children }: { children: string }) {
   return (
     <motion.pre
-      className="rounded-xl sm:rounded-2xl p-4 sm:p-6 overflow-x-auto text-[11px] sm:text-sm bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-md border border-white/[0.1] shadow-2xl"
+      className="rounded-xl sm:rounded-2xl p-4 sm:p-6 overflow-x-auto text-[11px] sm:text-sm shadow-lg border"
+      style={{
+        background: "linear-gradient(135deg, #3a3530 0%, #2e2a26 100%)",
+        borderColor: "var(--border)",
+      }}
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
     >
-      <code className="text-emerald-300">{children}</code>
+      <code style={{ color: "#d4a574" }}>{children}</code>
     </motion.pre>
   );
 }
 
-// Newsletter signup card component
+// Newsletter signup card
 function NewsletterCard({
   title,
   description,
   emoji,
-  gradient,
   borderColor,
   accentColor,
   newsletterType,
@@ -374,9 +386,8 @@ function NewsletterCard({
   title: string;
   description: string;
   emoji: string;
-  gradient: string;
   borderColor: string;
-  accentColor: "purple" | "orange";
+  accentColor: "orange" | "pink";
   newsletterType: string;
 }) {
   const [email, setEmail] = useState("");
@@ -409,29 +420,30 @@ function NewsletterCard({
       setMessage("Network error. Try again?");
     }
 
-    // Reset after 3 seconds
     setTimeout(() => {
       setStatus("idle");
       setMessage("");
     }, 3000);
   };
 
-  const buttonColors = {
-    purple: "from-purple-500 to-blue-500 hover:from-purple-400 hover:to-blue-400",
-    orange: "from-orange-500 to-pink-500 hover:from-orange-400 hover:to-pink-400",
-  };
-
   return (
     <motion.div
-      className={`rounded-xl sm:rounded-2xl p-5 sm:p-6 bg-gradient-to-br ${gradient} backdrop-blur-md border ${borderColor}`}
+      className="rounded-xl sm:rounded-2xl p-5 sm:p-6 border"
+      style={{
+        background: "var(--surface)",
+        borderColor,
+      }}
       whileHover={{ y: -4, scale: 1.02 }}
       transition={{ type: "spring", stiffness: 400 }}
     >
+      {/* Gradient top bar */}
+      <div className="h-1 -mx-5 sm:-mx-6 -mt-5 sm:-mt-6 mb-4 sm:mb-5 rounded-t-xl sm:rounded-t-2xl" style={{ background: GRAD }} />
+
       <div className="flex items-start gap-3 mb-4">
         <span className="text-2xl sm:text-3xl">{emoji}</span>
         <div>
-          <h3 className="text-base sm:text-lg font-bold text-white">{title}</h3>
-          <p className="text-xs sm:text-sm text-zinc-400 mt-1 leading-relaxed">{description}</p>
+          <h3 className="text-base sm:text-lg font-bold" style={{ color: "var(--foreground)" }}>{title}</h3>
+          <p className="text-xs sm:text-sm mt-1 leading-relaxed" style={{ color: "var(--muted)" }}>{description}</p>
         </div>
       </div>
 
@@ -441,17 +453,23 @@ function NewsletterCard({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
-          className="flex-1 rounded-lg px-3 py-2 text-sm bg-white/10 border border-white/20 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/30"
+          className="flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2"
+          style={{
+            background: "var(--background)",
+            border: `1px solid var(--border)`,
+            color: "var(--foreground)",
+          }}
           disabled={status === "loading" || status === "success"}
         />
         <motion.button
           type="submit"
           disabled={status === "loading" || status === "success"}
-          className={`rounded-lg px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r ${buttonColors[accentColor]} transition-all disabled:opacity-50`}
+          className="rounded-full px-4 py-2 text-sm font-semibold text-white transition-all disabled:opacity-50"
+          style={{ background: GRAD }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          {status === "loading" ? "..." : status === "success" ? "✓" : "Subscribe"}
+          {status === "loading" ? "..." : status === "success" ? "Done" : "Subscribe"}
         </motion.button>
       </form>
 
@@ -461,7 +479,7 @@ function NewsletterCard({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className={`text-xs mt-2 ${status === "success" ? "text-green-400" : "text-red-400"}`}
+            className={`text-xs mt-2 ${status === "success" ? "text-green-600 dark:text-green-400" : "text-red-500"}`}
           >
             {message}
           </motion.p>
@@ -505,11 +523,11 @@ const SectionIcon = ({ type }: { type: "brain" | "voice" | "terminal" | "cloud" 
       </svg>
     ),
   };
-  return <span className="text-purple-300">{icons[type]}</span>;
+  return <span style={{ color: A1 }}>{icons[type]}</span>;
 };
 
-// Floating accent dots for section decoration
-function FloatingAccents({ count = 6, color = "purple" }: { count?: number; color?: "purple" | "blue" | "pink" | "cyan" }) {
+// Floating accent dots
+function FloatingAccents({ count = 6, color = "orange" }: { count?: number; color?: "orange" | "pink" | "warm" | "amber" }) {
   const [accents, setAccents] = useState<Array<{ left: number; top: number; size: number; delay: number }>>([]);
 
   useEffect(() => {
@@ -526,10 +544,10 @@ function FloatingAccents({ count = 6, color = "purple" }: { count?: number; colo
   if (accents.length === 0) return null;
 
   const colors = {
-    purple: "bg-purple-400",
-    blue: "bg-blue-400",
+    orange: "bg-orange-400",
     pink: "bg-pink-400",
-    cyan: "bg-cyan-400",
+    warm: "bg-amber-400",
+    amber: "bg-amber-500",
   };
 
   return (
@@ -537,7 +555,7 @@ function FloatingAccents({ count = 6, color = "purple" }: { count?: number; colo
       {accents.map((accent, i) => (
         <div
           key={i}
-          className={`absolute ${colors[color]} rounded-full animate-float opacity-30`}
+          className={`absolute ${colors[color]} rounded-full animate-float opacity-20`}
           style={{
             left: `${accent.left}%`,
             top: `${accent.top}%`,
@@ -551,14 +569,13 @@ function FloatingAccents({ count = 6, color = "purple" }: { count?: number; colo
   );
 }
 
-// Floating particles component - positions generated client-side to avoid hydration mismatch
+// Floating particles — warm-toned
 function FloatingParticles() {
   const [particles, setParticles] = useState<Array<{ left: number; top: number; duration: number; delay: number }>>([]);
 
   useEffect(() => {
-    // Generate random positions only on client side
     setParticles(
-      [...Array(20)].map(() => ({
+      [...Array(15)].map(() => ({
         left: Math.random() * 100,
         top: Math.random() * 100,
         duration: 3 + Math.random() * 2,
@@ -574,14 +591,16 @@ function FloatingParticles() {
       {particles.map((particle, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 bg-white/20 rounded-full"
+          className="absolute w-1 h-1 rounded-full"
           style={{
             left: `${particle.left}%`,
             top: `${particle.top}%`,
+            backgroundColor: i % 2 === 0 ? A1 : A2,
+            opacity: 0.15,
           }}
           animate={{
             y: [0, -30, 0],
-            opacity: [0.2, 0.5, 0.2],
+            opacity: [0.1, 0.25, 0.1],
           }}
           transition={{
             duration: particle.duration,
@@ -595,15 +614,13 @@ function FloatingParticles() {
   );
 }
 
-// Stacking animation for "sigstack" - letters fall and stack like blocks, then fan out
+// Stacking animation for "sigstack"
 function StackingTitle({ onComplete, onReplay, skipAnimation = false }: { onComplete: () => void; onReplay?: () => void; skipAnimation?: boolean }) {
   const letters = "sigstack".split("");
   const [phase, setPhase] = useState<"falling" | "stacking" | "shuffling" | "done">(skipAnimation ? "done" : "falling");
   const containerRef = useRef<HTMLDivElement>(null);
   const [letterOffsets, setLetterOffsets] = useState<number[]>([]);
 
-  // Stacked positions - letters pile up vertically like building blocks
-  // Using useMemo to keep these stable across renders
   const stackedPositions = useMemo(() => letters.map((_, i) => ({
     x: (Math.random() - 0.5) * 20,
     y: -i * 18,
@@ -611,20 +628,17 @@ function StackingTitle({ onComplete, onReplay, skipAnimation = false }: { onComp
     scale: 1,
   })), []);
 
-  // Store initial random values to avoid recalculating during animation
   const initialPositions = useMemo(() => letters.map(() => ({
     y: -300 - (Math.random() * 60),
     x: (Math.random() - 0.5) * 200,
     rotate: Math.random() * 180 - 90,
   })), []);
 
-  // Calculate actual letter widths for precise final positioning
   useEffect(() => {
-    // Measure actual letter widths using a hidden span
     const measureLetters = () => {
       const measurements: number[] = [];
       const tempSpan = document.createElement('span');
-      tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:clamp(3.75rem,8vw,6rem);font-weight:900;letter-spacing:-0.025em;';
+      tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:clamp(3.75rem,8vw,6rem);font-weight:900;letter-spacing:-0.025em;font-family:var(--font-instrument-serif),Georgia,serif;';
       document.body.appendChild(tempSpan);
 
       letters.forEach(letter => {
@@ -634,12 +648,11 @@ function StackingTitle({ onComplete, onReplay, skipAnimation = false }: { onComp
 
       document.body.removeChild(tempSpan);
 
-      // Calculate cumulative offsets
       const offsets: number[] = [];
       const totalWidth = measurements.reduce((a, b) => a + b, 0);
       let cumulative = -totalWidth / 2;
 
-      measurements.forEach((width, i) => {
+      measurements.forEach((width) => {
         offsets.push(cumulative + width / 2);
         cumulative += width;
       });
@@ -682,12 +695,10 @@ function StackingTitle({ onComplete, onReplay, skipAnimation = false }: { onComp
     }
   };
 
-  // Fallback offsets if measurements aren't ready
   const getOffset = (i: number) => {
     if (letterOffsets.length > 0) {
       return letterOffsets[i];
     }
-    // Fallback: approximate based on average letter width
     const avgWidth = 48;
     const totalWidth = letters.length * avgWidth;
     return (i * avgWidth) - (totalWidth / 2) + (avgWidth / 2);
@@ -713,10 +724,14 @@ function StackingTitle({ onComplete, onReplay, skipAnimation = false }: { onComp
           return (
             <motion.span
               key={i}
-              className="text-6xl sm:text-8xl font-black bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent absolute"
+              className="text-6xl sm:text-8xl font-black absolute"
               style={{
-                textShadow: "0 4px 30px rgba(139, 92, 246, 0.5), 0 8px 60px rgba(59, 130, 246, 0.3)",
-                filter: "drop-shadow(0 4px 20px rgba(139, 92, 246, 0.4)) drop-shadow(0 8px 40px rgba(59, 130, 246, 0.2))",
+                fontFamily: "var(--font-instrument-serif), Georgia, serif",
+                fontStyle: "italic",
+                background: GRAD,
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                filter: `drop-shadow(0 4px 20px ${GLOW})`,
               }}
               initial={
                 skipAnimation
@@ -795,21 +810,24 @@ function StackingTitle({ onComplete, onReplay, skipAnimation = false }: { onComp
   );
 }
 
-// Static title with depth and shadow - clickable to replay animation
+// Static title — clickable to replay
 function StaticTitle({ onClick }: { onClick?: () => void }) {
   return (
     <motion.h1
       className="text-6xl sm:text-8xl font-black tracking-tight cursor-pointer"
+      style={{ fontFamily: "var(--font-instrument-serif), Georgia, serif" }}
       onClick={onClick}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       title="Click to replay animation"
     >
       <span
-        className="bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent"
         style={{
-          textShadow: "0 4px 30px rgba(139, 92, 246, 0.5), 0 8px 60px rgba(59, 130, 246, 0.3)",
-          filter: "drop-shadow(0 4px 20px rgba(139, 92, 246, 0.4)) drop-shadow(0 8px 40px rgba(59, 130, 246, 0.2))",
+          background: GRAD,
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          fontStyle: "italic",
+          filter: `drop-shadow(0 4px 20px ${GLOW})`,
         }}
       >
         sigstack
@@ -828,14 +846,12 @@ export default function Home() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
 
-  // Animation state
   const [animationKey, setAnimationKey] = useState(0);
   const [isClient, setIsClient] = useState(false);
   const [shouldSkipAnimation, setShouldSkipAnimation] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
-    // Check if this is first visit - show animation only on first visit
     const hasVisited = localStorage.getItem("sigstack-visited");
     if (!hasVisited) {
       setShouldSkipAnimation(false);
@@ -843,9 +859,7 @@ export default function Home() {
     }
   }, []);
 
-  const handleAnimationComplete = () => {
-    // Animation complete - letters stay in final position
-  };
+  const handleAnimationComplete = () => {};
 
   const replayAnimation = () => {
     setAnimationKey(prev => prev + 1);
@@ -853,76 +867,41 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-[#0f0a1f] to-slate-900 overflow-hidden">
-      {/* Breathing background wallpaper - CSS animations for smoothness */}
-      <div className="fixed inset-0 -z-10">
-        {/* Main breathing gradient - pure CSS */}
+    <div className="min-h-screen overflow-hidden" style={{ background: "var(--background)", color: "var(--foreground)" }}>
+      {/* Paper texture + vignette (matching wsm-invoice) */}
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 2 }}>
+        <svg style={{ position: "absolute", width: 0, height: 0 }}>
+          <filter id="paper-grain">
+            <feTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="4" stitchTiles="stitch" />
+            <feColorMatrix type="saturate" values="0" />
+          </filter>
+        </svg>
+        <div className="paper-grain" style={{ filter: "url(#paper-grain)" }} />
+        <div className="vignette" />
+      </div>
+
+      {/* Ambient orbs — warm toned */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
         <div
-          className="absolute inset-0 animate-breathe"
-          style={{
-            background: `
-              radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.3), transparent),
-              radial-gradient(ellipse 60% 40% at 100% 50%, rgba(59, 130, 246, 0.2), transparent),
-              radial-gradient(ellipse 50% 30% at 0% 80%, rgba(236, 72, 153, 0.15), transparent)
-            `,
-          }}
+          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full filter blur-[120px]"
+          style={{ background: `${A1}12`, animation: "breathe 10s ease-in-out infinite" }}
         />
-        {/* Secondary breathing layer */}
         <div
-          className="absolute inset-0 animate-breathe-slow"
-          style={{
-            background: `
-              radial-gradient(circle at 30% 70%, rgba(168, 85, 247, 0.15), transparent 50%),
-              radial-gradient(circle at 70% 30%, rgba(34, 211, 238, 0.12), transparent 50%)
-            `,
-          }}
+          className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] rounded-full filter blur-[100px]"
+          style={{ background: `${A2}10`, animation: "breathe 14s ease-in-out infinite 2s" }}
         />
-        {/* Mesh grid overlay */}
         <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)
-            `,
-            backgroundSize: "60px 60px",
-          }}
-        />
-        {/* Noise texture */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          }}
+          className="absolute top-1/2 right-1/3 w-[300px] h-[300px] rounded-full filter blur-[80px]"
+          style={{ background: `${A1}08`, animation: "breathe 12s ease-in-out infinite 4s" }}
         />
         <FloatingParticles />
       </div>
 
-      {/* CSS for breathing animations */}
+      {/* CSS animations */}
       <style jsx global>{`
         @keyframes breathe {
-          0%, 100% { opacity: 0.7; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.02); }
-        }
-        @keyframes breathe-slow {
           0%, 100% { opacity: 0.5; transform: scale(1); }
           50% { opacity: 0.9; transform: scale(1.05); }
-        }
-        @keyframes orb-1 {
-          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-          50% { transform: translate(50px, -30px) scale(1.3); opacity: 0.5; }
-        }
-        @keyframes orb-2 {
-          0%, 100% { transform: translate(0, 0) scale(1.2); opacity: 0.2; }
-          50% { transform: translate(-30px, 40px) scale(1); opacity: 0.4; }
-        }
-        @keyframes orb-3 {
-          0%, 100% { transform: scale(1); opacity: 0.2; }
-          50% { transform: scale(1.4); opacity: 0.35; }
-        }
-        @keyframes orb-4 {
-          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.1; }
-          50% { transform: translate(-20px, 0) scale(1.2); opacity: 0.25; }
         }
         @keyframes float {
           0%, 100% { transform: translateY(0); }
@@ -932,24 +911,6 @@ export default function Home() {
           0%, 100% { opacity: 0.4; }
           50% { opacity: 0.8; }
         }
-        .animate-breathe {
-          animation: breathe 8s ease-in-out infinite;
-        }
-        .animate-breathe-slow {
-          animation: breathe-slow 12s ease-in-out infinite;
-        }
-        .animate-orb-1 {
-          animation: orb-1 10s ease-in-out infinite;
-        }
-        .animate-orb-2 {
-          animation: orb-2 12s ease-in-out infinite;
-        }
-        .animate-orb-3 {
-          animation: orb-3 14s ease-in-out infinite;
-        }
-        .animate-orb-4 {
-          animation: orb-4 8s ease-in-out infinite;
-        }
         .animate-float {
           animation: float 3s ease-in-out infinite;
         }
@@ -958,25 +919,13 @@ export default function Home() {
         }
       `}</style>
 
-      {/* Hero */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center">
-        {/* Animated background orbs - CSS for smooth breathing */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-purple-500/30 rounded-full filter blur-[150px] animate-orb-1" />
-          <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] bg-blue-500/25 rounded-full filter blur-[120px] animate-orb-2" />
-          <div className="absolute top-1/2 right-1/3 w-[400px] h-[400px] bg-pink-500/20 rounded-full filter blur-[100px] animate-orb-3" />
-          <div className="absolute top-1/3 left-1/2 w-[300px] h-[300px] bg-cyan-500/15 rounded-full filter blur-[80px] animate-orb-4" />
-        </div>
-
-        {/* Gradient overlay - lighter */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/20 to-slate-900/70" />
-
-        {/* Hero content */}
+      {/* ═══ Hero ═══ */}
+      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center" style={{ zIndex: 1 }}>
         <motion.div
           className="relative z-10 mx-auto max-w-5xl px-6 text-center"
           style={{ opacity: heroOpacity, scale: heroScale }}
         >
-          {/* Title with stacking animation - click to replay */}
+          {/* Stacking title */}
           <div className="mb-6 h-[200px] sm:h-[280px] flex items-center justify-center" style={{ overflow: 'visible' }}>
             {isClient ? (
               <StackingTitle
@@ -994,21 +943,23 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl sm:text-2xl text-zinc-300 max-w-2xl mx-auto mb-4"
+            className="text-xl sm:text-2xl max-w-2xl mx-auto mb-4"
+            style={{ color: "var(--sub)" }}
           >
-            Now built on <span className="text-white font-semibold">Cowork Plugins</span> — Anthropic&apos;s official plugin architecture
+            Now built on <span className="font-semibold" style={{ color: "var(--foreground)" }}>Cowork Plugins</span> — Anthropic&apos;s official plugin architecture
           </motion.p>
 
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-zinc-400 mb-12"
+            className="mb-12"
+            style={{ color: "var(--muted)" }}
           >
-            <span className="text-purple-400 font-medium">Jan 2026:</span> 36 plugins · 84 skills · 22 MCP servers · Cowork-compatible
+            <span className="font-medium" style={{ color: A1 }}>Jan 2026:</span> 36 plugins &middot; 84 skills &middot; 22 MCP servers &middot; Cowork-compatible
           </motion.p>
 
-          {/* Colorful Stats */}
+          {/* Stats */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1016,9 +967,9 @@ export default function Home() {
             className="flex justify-center gap-6 sm:gap-10 md:gap-16 mb-10 sm:mb-14"
           >
             {[
-              { label: "Plugins", value: "36", gradient: "from-purple-400 to-pink-300" },
-              { label: "Skills", value: "84", gradient: "from-blue-400 to-cyan-300" },
-              { label: "MCP Servers", value: "22", gradient: "from-green-400 to-emerald-300" },
+              { label: "Plugins", value: "36", color: A1 },
+              { label: "Skills", value: "84", color: A2 },
+              { label: "MCP Servers", value: "22", color: "#d4a574" },
             ].map((stat) => (
               <motion.div
                 key={stat.label}
@@ -1026,15 +977,21 @@ export default function Home() {
                 whileHover={{ scale: 1.1, y: -5 }}
                 transition={{ type: "spring", stiffness: 400 }}
               >
-                <div className={`text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent drop-shadow-lg`}>
+                <div
+                  className="text-3xl sm:text-4xl md:text-5xl font-black drop-shadow-lg"
+                  style={{
+                    fontFamily: "var(--font-instrument-serif), Georgia, serif",
+                    color: stat.color,
+                  }}
+                >
                   {stat.value}
                 </div>
-                <div className="text-[10px] sm:text-xs text-zinc-400 mt-1">{stat.label}</div>
+                <div className="text-[10px] sm:text-xs mt-1" style={{ color: "var(--muted)" }}>{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
 
-          {/* CTA Buttons */}
+          {/* CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1044,7 +1001,12 @@ export default function Home() {
             <BouncyButton
               href="https://github.com/willsigmon/sigstack"
               glow
-              className="inline-flex items-center justify-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl bg-gradient-to-r from-white via-zinc-100 to-white px-6 sm:px-9 py-4 sm:py-5 text-slate-900 font-bold text-base sm:text-lg shadow-2xl shadow-white/25 border-2 border-white/50"
+              className="inline-flex items-center justify-center gap-2 sm:gap-3 rounded-full px-6 sm:px-9 py-4 sm:py-5 font-bold text-base sm:text-lg shadow-2xl border-2"
+              style={{
+                background: GRAD,
+                color: "#fff",
+                borderColor: `${A1}50`,
+              }}
             >
               <motion.span
                 animate={{ rotate: [0, -10, 10, -10, 0] }}
@@ -1058,11 +1020,16 @@ export default function Home() {
             </BouncyButton>
             <motion.a
               href="#quick-start"
-              className="group inline-flex items-center justify-center gap-2 rounded-xl sm:rounded-2xl bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 backdrop-blur-md border-2 border-white/20 px-6 sm:px-9 py-4 sm:py-5 text-white font-bold text-base sm:text-lg hover:border-white/40 transition-all"
+              className="group inline-flex items-center justify-center gap-2 rounded-full border-2 px-6 sm:px-9 py-4 sm:py-5 font-bold text-base sm:text-lg transition-all"
+              style={{
+                borderColor: "var(--border)",
+                color: "var(--foreground)",
+                background: "var(--surface)",
+              }}
               whileHover={{
                 scale: 1.05,
                 y: -3,
-                boxShadow: "0 20px 40px rgba(139, 92, 246, 0.3)",
+                boxShadow: `0 20px 40px ${GLOW}`,
               }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 400, damping: 15 }}
@@ -1081,33 +1048,27 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* The Stack */}
-      <section className="relative mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16">
-        <FloatingAccents count={8} color="purple" />
+      {/* ═══ The Stack ═══ */}
+      <section className="relative mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16" style={{ zIndex: 1 }}>
+        <FloatingAccents count={8} color="orange" />
         <FadeIn>
-          <h2 className="text-3xl sm:text-4xl font-black text-white mb-2 text-center">The Stack</h2>
-          <p className="text-zinc-400 text-sm sm:text-base text-center mb-8 sm:mb-10">Tools that power the workflow</p>
+          <h2 className="text-3xl sm:text-4xl font-black mb-2 text-center" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>The Stack</h2>
+          <p className="text-sm sm:text-base text-center mb-8 sm:mb-10" style={{ color: "var(--muted)" }}>Tools that power the workflow</p>
         </FadeIn>
 
-        {/* All tools in a unified grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5">
-          {/* Core */}
           {coreStack.map((item, i) => (
             <StackCard key={item.name} {...item} index={i} />
           ))}
-          {/* Voice */}
           {voiceStack.map((item, i) => (
             <StackCard key={item.name} {...item} index={i + coreStack.length} />
           ))}
-          {/* Agent Tools */}
           {agentStack.map((item, i) => (
             <StackCard key={item.name} {...item} index={i + coreStack.length + voiceStack.length} />
           ))}
-          {/* Terminal Tools */}
           {terminalStack.map((item, i) => (
             <StackCard key={item.name} {...item} index={i + coreStack.length + voiceStack.length + agentStack.length} />
           ))}
-          {/* Infrastructure */}
           {infraStack.map((item, i) => (
             <StackCard key={item.name} {...item} index={i + coreStack.length + voiceStack.length + agentStack.length + terminalStack.length} />
           ))}
@@ -1115,92 +1076,82 @@ export default function Home() {
 
         {/* MCP Servers */}
         <div className="mt-8 sm:mt-10">
-          <h3 className="text-xs sm:text-sm font-medium text-zinc-400 mb-4 uppercase tracking-widest text-center">
+          <h3 className="text-xs sm:text-sm font-medium mb-4 uppercase tracking-widest text-center" style={{ color: "var(--muted)" }}>
             MCP Servers
           </h3>
           <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
             {mcpServers.map((server, i) => (
               <motion.div
                 key={server.name}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.05] border border-white/[0.1]"
+                className="flex items-center gap-2 px-4 py-2 rounded-full border"
+                style={{
+                  background: "var(--surface)",
+                  borderColor: "var(--border)",
+                }}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.1)" }}
+                whileHover={{ scale: 1.05 }}
                 transition={{ delay: i * 0.03 }}
                 viewport={{ once: true }}
               >
-                <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-white text-sm font-medium">{server.name}</span>
+                <div className="h-2 w-2 rounded-full animate-pulse-glow" style={{ backgroundColor: A1 }} />
+                <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>{server.name}</span>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Hardware Network */}
-      <section className="relative mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-12">
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-[300px] sm:w-[400px] h-[150px] sm:h-[200px] bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-full filter blur-[80px]" />
-        </div>
-
+      {/* ═══ Hardware Network ═══ */}
+      <section className="relative mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-12" style={{ zIndex: 1 }}>
         <FadeIn>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 text-center flex items-center justify-center gap-2 sm:gap-3">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-2 text-center flex items-center justify-center gap-2 sm:gap-3" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>
             <SectionIcon type="server" /> The Network
           </h2>
-          <p className="text-zinc-400 text-xs sm:text-sm text-center mb-8 sm:mb-12">How everything syncs together</p>
+          <p className="text-xs sm:text-sm text-center mb-8 sm:mb-12" style={{ color: "var(--muted)" }}>How everything syncs together</p>
         </FadeIn>
 
         <FadeIn delay={0.1}>
-          <div className="rounded-xl sm:rounded-2xl p-5 sm:p-8 bg-white/[0.04] backdrop-blur-md border border-white/[0.1]">
+          <div className="rounded-xl sm:rounded-2xl p-5 sm:p-8 border overflow-hidden" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+            {/* Gradient top bar */}
+            <div className="h-1 -mx-5 sm:-mx-8 -mt-5 sm:-mt-8 mb-5 sm:mb-8" style={{ background: GRAD }} />
+
             <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
-              <div>
-                <h3 className="text-base sm:text-lg font-semibold text-white mb-2 sm:mb-3">Local Server (Tower)</h3>
-                <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">
-                  A home server running Unraid handles persistent services: n8n for workflow automation,
-                  PostgreSQL for life logging, and Home Assistant for smart home integration. All accessible
-                  via Tailscale VPN from any device.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-semibold text-white mb-2 sm:mb-3">Multi-Device Sync</h3>
-                <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">
-                  Code lives on GitHub. Config and memory persist on BRAIN. Syncthing keeps dotfiles
-                  synchronized across machines. Claude Code sessions can continue across any terminal
-                  with full context.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-semibold text-white mb-2 sm:mb-3">Voice-First Workflow</h3>
-                <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">
-                  Omi captures conversations and memories throughout the day. Typeless converts
-                  natural speech directly into formatted prompts. Voice input enables hands-free
-                  coding and ideation.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-semibold text-white mb-2 sm:mb-3">Memory Persistence</h3>
-                <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">
-                  Letta Subconscious provides cross-session memory that survives context resets.
-                  Combined with Omi for conversation history and the memory graph, Claude maintains
-                  full continuity across sessions and devices.
-                </p>
-              </div>
+              {[
+                {
+                  title: "Local Server (Tower)",
+                  text: "A home server running Unraid handles persistent services: n8n for workflow automation, PostgreSQL for life logging, and Home Assistant for smart home integration. All accessible via Tailscale VPN from any device.",
+                },
+                {
+                  title: "Multi-Device Sync",
+                  text: "Code lives on GitHub. Config and memory persist on BRAIN. Syncthing keeps dotfiles synchronized across machines. Claude Code sessions can continue across any terminal with full context.",
+                },
+                {
+                  title: "Voice-First Workflow",
+                  text: "Omi captures conversations and memories throughout the day. Typeless converts natural speech directly into formatted prompts. Voice input enables hands-free coding and ideation.",
+                },
+                {
+                  title: "Memory Persistence",
+                  text: "Letta Subconscious provides cross-session memory that survives context resets. Combined with Omi for conversation history and the memory graph, Claude maintains full continuity across sessions and devices.",
+                },
+              ].map((item) => (
+                <div key={item.title}>
+                  <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3" style={{ color: "var(--foreground)" }}>{item.title}</h3>
+                  <p className="text-xs sm:text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{item.text}</p>
+                </div>
+              ))}
             </div>
           </div>
         </FadeIn>
       </section>
 
-      {/* Quick Start */}
-      <section id="quick-start" className="relative mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16">
-        <FloatingAccents count={5} color="cyan" />
-        {/* Background glow */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-[400px] sm:w-[600px] h-[250px] sm:h-[400px] bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full filter blur-[100px] sm:blur-[120px]" />
-        </div>
+      {/* ═══ Quick Start ═══ */}
+      <section id="quick-start" className="relative mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16" style={{ zIndex: 1 }}>
+        <FloatingAccents count={5} color="warm" />
 
         <FadeIn>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 text-center">Quick Start</h2>
-          <p className="text-zinc-400 text-xs sm:text-sm text-center mb-8 sm:mb-12">Install the full plugin suite in seconds</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-2 text-center" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>Quick Start</h2>
+          <p className="text-xs sm:text-sm text-center mb-8 sm:mb-12" style={{ color: "var(--muted)" }}>Install the full plugin suite in seconds</p>
         </FadeIn>
 
         <FadeIn delay={0.1}>
@@ -1211,107 +1162,96 @@ claude plugins install sigstack
 # Or clone and symlink manually
 git clone https://github.com/willsigmon/sigstack.git
 ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
-            <p className="text-zinc-500 text-xs text-center">
-              Built on the official <a href="https://claude.com/blog/cowork-plugins" target="_blank" className="text-purple-400 hover:text-purple-300">Cowork Plugins</a> architecture
+            <p className="text-xs text-center" style={{ color: "var(--muted)" }}>
+              Built on the official <a href="https://claude.com/blog/cowork-plugins" target="_blank" style={{ color: A1 }} className="hover:opacity-80">Cowork Plugins</a> architecture
             </p>
           </div>
         </FadeIn>
       </section>
 
-      {/* What's Inside */}
-      <section className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16">
+      {/* ═══ Core Plugins ═══ */}
+      <section className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16" style={{ zIndex: 1 }}>
         <FadeIn>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 text-center">Core Plugins</h2>
-          <p className="text-zinc-400 text-xs sm:text-sm text-center mb-6 sm:mb-8">6 domain plugins + 17 from community marketplaces — organized by context</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-2 text-center" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>Core Plugins</h2>
+          <p className="text-xs sm:text-sm text-center mb-6 sm:mb-8" style={{ color: "var(--muted)" }}>6 domain plugins + 17 from community marketplaces — organized by context</p>
         </FadeIn>
 
         <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-3">
           {[
-            {
-              title: "ios-dev",
-              description: "Swift, SwiftUI, Xcode, CloudKit, SwiftData",
-              gradient: "from-blue-500/30 to-cyan-500/30",
-            },
-            {
-              title: "app-dev",
-              description: "Features, audio, sync, ops, preferences",
-              gradient: "from-green-500/30 to-emerald-500/30",
-            },
-            {
-              title: "dev-essentials",
-              description: "Glif, Resend, performance, multi-agent coordination",
-              gradient: "from-purple-500/30 to-violet-500/30",
-            },
-            {
-              title: "superclaude",
-              description: "Meta-orchestration, agents, /spawn, /analyze",
-              gradient: "from-pink-500/30 to-rose-500/30",
-            },
-            {
-              title: "work",
-              description: "Enterprise apps, databases, dashboards",
-              gradient: "from-orange-500/30 to-amber-500/30",
-            },
-            {
-              title: "media",
-              description: "Podcasts, audio, RSS, streaming",
-              gradient: "from-cyan-500/30 to-teal-500/30",
-            },
+            { title: "ios-dev", description: "Swift, SwiftUI, Xcode, CloudKit, SwiftData", color: A1 },
+            { title: "app-dev", description: "Features, audio, sync, ops, preferences", color: "#d4a574" },
+            { title: "dev-essentials", description: "Glif, Resend, performance, multi-agent coordination", color: A2 },
+            { title: "superclaude", description: "Meta-orchestration, agents, /spawn, /analyze", color: "#c2956a" },
+            { title: "work", description: "Enterprise apps, databases, dashboards", color: A1 },
+            { title: "media", description: "Podcasts, audio, RSS, streaming", color: "#b8956a" },
           ].map((item, i) => (
             <FadeIn key={item.title} delay={i * 0.1}>
               <motion.div
-                className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 bg-gradient-to-br ${item.gradient} backdrop-blur-md border border-white/[0.12] h-full`}
+                className="rounded-xl sm:rounded-2xl p-4 sm:p-6 border h-full overflow-hidden"
+                style={{
+                  background: "var(--surface)",
+                  borderColor: "var(--border)",
+                }}
                 whileHover={{ y: -5, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 400 }}
               >
-                <h3 className="text-sm sm:text-lg font-bold text-white mb-1 sm:mb-2">{item.title}</h3>
-                <p className="text-[10px] sm:text-sm text-zinc-300 leading-relaxed">{item.description}</p>
+                {/* Gradient top bar */}
+                <div className="h-1 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 mb-3 sm:mb-5" style={{ background: `linear-gradient(135deg, ${item.color}, ${A2})` }} />
+                <h3 className="text-sm sm:text-lg font-bold mb-1 sm:mb-2" style={{ color: "var(--foreground)" }}>{item.title}</h3>
+                <p className="text-[10px] sm:text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{item.description}</p>
               </motion.div>
             </FadeIn>
           ))}
         </div>
       </section>
 
-      {/* Philosophy */}
-      <section className="relative mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16">
+      {/* ═══ Philosophy / Workflow Patterns ═══ */}
+      <section className="relative mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16" style={{ zIndex: 1 }}>
         <FloatingAccents count={6} color="pink" />
         <FadeIn>
           <motion.div
-            className="rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-14 bg-gradient-to-br from-purple-800/30 via-transparent to-blue-800/30 backdrop-blur-md border border-white/[0.12] relative overflow-hidden"
+            className="rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-14 border relative overflow-hidden"
+            style={{
+              background: "var(--surface)",
+              borderColor: "var(--border)",
+            }}
             whileHover={{ scale: 1.01 }}
             transition={{ type: "spring", stiffness: 200 }}
           >
             {/* Animated gradient line */}
             <motion.div
-              className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-purple-400 to-transparent"
-              animate={{ x: ["-100%", "100%"] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              className="absolute top-0 left-0 right-0 h-1"
+              style={{ background: GRAD }}
             />
 
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-3 sm:mb-4 text-center">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black mb-3 sm:mb-4 text-center" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>
               Workflow Patterns
             </h2>
-            <p className="text-zinc-300 text-xs sm:text-sm max-w-2xl mx-auto text-center mb-8 sm:mb-12">
+            <p className="text-xs sm:text-sm max-w-2xl mx-auto text-center mb-8 sm:mb-12" style={{ color: "var(--muted)" }}>
               Team-validated patterns from the Claude Code team. Plan first, improve docs, fix autonomously.
             </p>
             <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
               {[
-                { principle: "Plan first", meaning: "Complex tasks → plan mode, then one-shot implement" },
+                { principle: "Plan first", meaning: "Complex tasks -> plan mode, then one-shot implement" },
                 { principle: "Self-improving docs", meaning: "After corrections: update docs to prevent repeats" },
-                { principle: "Autonomous fixing", meaning: "Paste error + 'fix' — minimal micromanagement" },
+                { principle: "Autonomous fixing", meaning: "Paste error + 'fix' -- minimal micromanagement" },
                 { principle: "Subagents", meaning: "Offload subtasks, keep main context clean" },
               ].map((item, i) => (
                 <motion.div
                   key={item.principle}
-                  className="bg-white/[0.08] rounded-lg sm:rounded-xl p-3 sm:p-5 hover:bg-white/[0.12] transition-colors border border-white/[0.08]"
+                  className="rounded-lg sm:rounded-xl p-3 sm:p-5 transition-colors border"
+                  style={{
+                    background: "var(--background)",
+                    borderColor: "var(--border)",
+                  }}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
                   viewport={{ once: true }}
                   whileHover={{ y: -3 }}
                 >
-                  <div className="font-semibold text-white text-xs sm:text-sm mb-0.5 sm:mb-1">{item.principle}</div>
-                  <div className="text-[10px] sm:text-sm text-zinc-400 leading-relaxed">{item.meaning}</div>
+                  <div className="font-semibold text-xs sm:text-sm mb-0.5 sm:mb-1" style={{ color: "var(--foreground)" }}>{item.principle}</div>
+                  <div className="text-[10px] sm:text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{item.meaning}</div>
                 </motion.div>
               ))}
             </div>
@@ -1319,12 +1259,14 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
         </FadeIn>
       </section>
 
-      {/* Showcase - Leavn */}
-      <section className="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-12">
+      {/* ═══ Showcase — Leavn ═══ */}
+      <section className="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-12" style={{ zIndex: 1 }}>
         <FadeIn>
-          <div className="rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 bg-white/[0.04] backdrop-blur-md border border-white/[0.1]">
+          <div className="rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border overflow-hidden" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+            {/* Gradient top bar */}
+            <div className="h-1 -mx-4 sm:-mx-6 md:-mx-8 -mt-4 sm:-mt-6 md:-mt-8 mb-4 sm:mb-6 md:mb-8" style={{ background: GRAD }} />
+
             <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-              {/* App icon */}
               <motion.div
                 className="flex-shrink-0"
                 whileHover={{ scale: 1.05 }}
@@ -1339,20 +1281,23 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
                 />
               </motion.div>
 
-              {/* Content */}
               <div className="flex-1 text-center sm:text-left">
-                <p className="text-zinc-500 text-[10px] sm:text-xs mb-0.5 sm:mb-1">Built with this stack</p>
-                <h3 className="text-base sm:text-lg font-bold text-white mb-0.5 sm:mb-1">Leavn.app</h3>
-                <p className="text-zinc-400 text-xs sm:text-sm max-w-md">
+                <p className="text-[10px] sm:text-xs mb-0.5 sm:mb-1" style={{ color: "var(--muted)" }}>Built with this stack</p>
+                <h3 className="text-base sm:text-lg font-bold mb-0.5 sm:mb-1" style={{ color: "var(--foreground)" }}>Leavn.app</h3>
+                <p className="text-xs sm:text-sm max-w-md" style={{ color: "var(--muted)" }}>
                   A Bible study app built ~90% with Claude Code using this stack.
                 </p>
               </div>
 
-              {/* CTA */}
               <motion.a
                 href="https://leavn.app"
                 target="_blank"
-                className="inline-flex items-center gap-2 rounded-lg sm:rounded-xl px-4 sm:px-5 py-2 sm:py-2.5 bg-white/[0.1] border border-white/[0.15] text-white text-xs sm:text-sm font-medium hover:bg-white/[0.15] transition-colors"
+                className="inline-flex items-center gap-2 rounded-full px-4 sm:px-5 py-2 sm:py-2.5 border text-xs sm:text-sm font-medium transition-colors"
+                style={{
+                  background: "var(--background)",
+                  borderColor: "var(--border)",
+                  color: "var(--foreground)",
+                }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -1366,50 +1311,45 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
         </FadeIn>
       </section>
 
-      {/* Newsletter Signup */}
-      <section className="relative mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16">
-        <FloatingAccents count={5} color="blue" />
+      {/* ═══ Newsletter ═══ */}
+      <section className="relative mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16" style={{ zIndex: 1 }}>
+        <FloatingAccents count={5} color="amber" />
         <FadeIn>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-2 text-center" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>
             The SigStack Newsletter
           </h2>
-          <p className="text-zinc-400 text-xs sm:text-sm text-center mb-8 sm:mb-10">
+          <p className="text-xs sm:text-sm text-center mb-8 sm:mb-10" style={{ color: "var(--muted)" }}>
             Curated news delivered to your inbox. Choose your flavor.
           </p>
         </FadeIn>
 
         <FadeIn delay={0.1}>
           <div className="grid gap-4 sm:gap-6 md:grid-cols-2 max-w-3xl mx-auto">
-            {/* AI News */}
             <NewsletterCard
               title="AI & Tech News"
-              description="Claude, GPT, Gemini, dev tools, and the future of AI-assisted development. Fresh stories only — nothing older than 24 hours."
+              description="Claude, GPT, Gemini, dev tools, and the future of AI-assisted development. Fresh stories only -- nothing older than 24 hours."
               emoji="🤖"
-              gradient="from-purple-500/20 to-blue-500/20"
-              borderColor="border-purple-500/30"
-              accentColor="purple"
+              borderColor={`${A1}30`}
+              accentColor="orange"
               newsletterType="ai_news"
             />
-
-            {/* Personal Digest */}
             <NewsletterCard
               title="Personal Digest"
               description="Apple, podcasts, food, local NC news, Disney parks, and everything else I follow. The full RSS experience."
               emoji="📰"
-              gradient="from-orange-500/20 to-pink-500/20"
-              borderColor="border-orange-500/30"
-              accentColor="orange"
+              borderColor={`${A2}30`}
+              accentColor="pink"
               newsletterType="personal_digest"
             />
           </div>
         </FadeIn>
       </section>
 
-      {/* Support */}
-      <section className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16">
+      {/* ═══ Support ═══ */}
+      <section className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16" style={{ zIndex: 1 }}>
         <FadeIn>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2 text-center">Support the Stack</h2>
-          <p className="text-zinc-400 text-xs sm:text-sm text-center mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-2 text-center" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>Support the Stack</h2>
+          <p className="text-xs sm:text-sm text-center mb-6 sm:mb-8" style={{ color: "var(--muted)" }}>
             If this helps you ship faster, consider using my affiliate links
           </p>
         </FadeIn>
@@ -1417,30 +1357,31 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
         <FadeIn delay={0.1}>
           <div className="flex flex-wrap justify-center gap-3 sm:gap-5">
             {[
-              { name: "Omi", url: "https://www.omi.me/?ref=WILLSIGMON", emoji: "🧠" },
-              { name: "Typeless", url: "https://www.typeless.com/?via=wsig", emoji: "🎤" },
+              { name: "Omi", url: "https://www.omi.me/?ref=WILLSIGMON", emoji: "🧠", highlight: false },
+              { name: "Typeless", url: "https://www.typeless.com/?via=wsig", emoji: "🎤", highlight: false },
               { name: "Tip the Creator", url: "https://tip.wsig.me", highlight: true, emoji: "☕" },
             ].map((item, i) => (
               <motion.a
                 key={item.name}
                 href={item.url}
                 target="_blank"
-                className={`group relative inline-flex items-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl px-4 sm:px-7 py-3 sm:py-4 font-semibold text-sm sm:text-base overflow-hidden ${
-                  item.highlight
-                    ? "bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 text-white shadow-2xl shadow-purple-500/40"
-                    : "bg-white/[0.08] backdrop-blur-md border-2 border-white/[0.15] text-white"
-                }`}
+                className="group relative inline-flex items-center gap-2 sm:gap-3 rounded-full px-4 sm:px-7 py-3 sm:py-4 font-semibold text-sm sm:text-base overflow-hidden"
+                style={{
+                  background: item.highlight ? GRAD : "var(--surface)",
+                  color: item.highlight ? "#fff" : "var(--foreground)",
+                  border: item.highlight ? "none" : `2px solid var(--border)`,
+                  boxShadow: item.highlight ? `0 8px 30px ${GLOW}` : undefined,
+                }}
                 whileHover={{
                   scale: 1.08,
                   y: -4,
                   boxShadow: item.highlight
-                    ? "0 25px 50px rgba(168, 85, 247, 0.5)"
-                    : "0 20px 40px rgba(255, 255, 255, 0.1)",
+                    ? `0 25px 50px ${GLOW}`
+                    : `0 20px 40px rgba(0, 0, 0, 0.06)`,
                 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 12, delay: i * 0.05 }}
               >
-                {/* Shimmer for highlighted */}
                 {item.highlight && (
                   <motion.div
                     className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12"
@@ -1459,10 +1400,9 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
                 {!item.highlight && (
                   <motion.span
                     className="opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline"
-                    initial={{ x: -5 }}
-                    whileHover={{ x: 0 }}
+                    style={{ color: "var(--muted)" }}
                   >
-                    →
+                    &rarr;
                   </motion.span>
                 )}
               </motion.a>
@@ -1471,13 +1411,13 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
         </FadeIn>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/[0.1] py-10 sm:py-14">
+      {/* ═══ Footer ═══ */}
+      <footer className="border-t py-10 sm:py-14" style={{ borderColor: "var(--border)", zIndex: 1, position: "relative" }}>
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-6">
             <div className="text-center sm:text-left">
-              <div className="font-black text-lg sm:text-xl text-white mb-1">sigstack</div>
-              <div className="text-xs sm:text-sm text-zinc-400">
+              <div className="font-black text-lg sm:text-xl mb-1" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>sigstack</div>
+              <div className="text-xs sm:text-sm" style={{ color: "var(--muted)" }}>
                 Built with Claude Code and ~5,000 hours of figuring out what works.
               </div>
             </div>
@@ -1493,7 +1433,8 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
                   key={social.href}
                   href={social.href}
                   target="_blank"
-                  className="text-zinc-400 hover:text-white transition-colors p-1"
+                  className="transition-colors p-1"
+                  style={{ color: "var(--muted)" }}
                   whileHover={{ scale: 1.2, y: -2 }}
                 >
                   <svg
@@ -1508,7 +1449,7 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
               ))}
             </div>
           </div>
-          <div className="mt-8 sm:mt-10 text-center text-xs sm:text-sm text-zinc-500">
+          <div className="mt-8 sm:mt-10 text-center text-xs sm:text-sm" style={{ color: "var(--muted)" }}>
             MIT License — Use it, modify it, make it yours.
           </div>
         </div>
