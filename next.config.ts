@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      { source: "/pay", destination: "https://wsm-invoice.vercel.app/pay" },
+      { source: "/pay/:path*", destination: "https://wsm-invoice.vercel.app/pay/:path*" },
+    ];
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "cdn.simpleicons.org" },
