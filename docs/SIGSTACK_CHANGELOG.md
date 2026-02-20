@@ -6,6 +6,80 @@
 
 ---
 
+## 3.5 - Marlin (February 20, 2026)
+
+### Theme
+SigServe becomes the single brain for all Claude interfaces. Claude gets a name (Marlin), a phone number, and always-on chat across 12 group conversations.
+
+### Major Changes
+- **SigServe as Brain**: All Claude interfaces (Web, Desktop, Code) route through SigServe
+- **MCP Gateway**: Custom MCP server (7 tools) exposed via supergateway + Tailscale Funnel
+  - Claude Web: `https://sigserve.tail7b9e1.ts.net:9500/mcp` (Settings > Connectors)
+  - Claude Desktop: mcp-remote over HTTPS (auto-configured via sigstack-sync)
+  - Claude Code: SSH + tmux (`cc` alias on SigStudio/SigAir)
+- **Marlin Identity**: Claude Code IS Marlin on every Sig device. CLAUDE.md rewritten as "Marlin — SigServe Central Hub"
+- **Marlin Router**: Always-on dual-LLM chat auto-responder
+  - Polls 12 group chats every 15s via BlueBubbles API
+  - 18 scenario types with per-call model + thinking depth tuning
+  - Claude (sonnet/haiku) + OpenAI Codex (gpt-5.3-codex/spark)
+  - 14 personality profiles from USER.md
+  - Port 18790, launchd: ai.marlin.router
+- **Twilio Voice**: +1 (844) 719-3335
+  - OpenAI realtime STT/TTS (gpt-4o-transcribe, voice: coral)
+  - Tailscale Funnel :10000 → localhost:3334
+- **Rich Cards**: marlin-cards server for iMessage OG link previews
+  - Endpoints: /card/media, /card/status, /card/briefing, /card/weather, /card/generic
+  - Port 3500, Funnel :8443
+- **iMessage Superpowers**: Effects, tapbacks, threading, subject lines, invisible ink
+- **Monorepo**: ~/Projects/marlin consolidation
+  - Absorbed marlin-recall + Infrastructure repos
+  - Structure: recall/, claude/, infra/, services/, bin/
+  - Symlinked: ~/.claude/{rules,skills,agents,commands,prompts,CLAUDE.md} → marlin/claude/
+  - git-autopush daemon (every 30s)
+- **sigstack-sync v2**: Now deploys Claude Desktop configs, shell aliases, SSH ControlMaster
+
+### Infrastructure
+- **4 Tailscale Funnels**: Plex :443, Cards :8443, Twilio :10000, MCP Gateway :9500
+- **27 MCP servers** (up from 22): added marlin-recall, sigskills, n8n-mcp, gemini-imagen, wsiglog
+- **7 specialized agents**: bug-hunter, ios-architect, swarm-leader, infra-ops, media-stack, batch-reviewer, codebase-auditor
+- **84 skills** (confirmed accurate)
+- **30+ launch agents** (16 KeepAlive daemons, hardened with ExitTimeOut/ThrottleInterval/ProcessType)
+- **9 Docker containers** with healthchecks on all
+
+### Media Pipeline
+- **NZBGet**: Newshosting → Newsgroup Ninja (50 connections, SSL 563)
+- **Sonarr**: 10 Apple TV+ shows added (47 total)
+- **Channels DVR**: Disabled (replaced by Plex + Tdarr pipeline)
+- **Kometa v2.3.0**: Plex metadata/collections (5 AM daily)
+- **Posterizarr**: Added for Plex poster art generation
+
+### Maintenance
+- **~83 GB disk reclaimed** across multiple cleanup sessions
+- **launchd overhaul**: Fixed 10 broken plists, deleted 5 dead ones, hardened all KeepAlive daemons
+- **Plex stability**: Deleted conflicting plist, Cloudflared QUIC→HTTP/2, Butler analysis throttled to 2-6 AM
+- **SigServe re-registered** on Tailscale (fresh node, Funnels reactivated)
+
+### Config Files
+- `~/Projects/marlin/services/mcp-gateway/` — MCP Gateway server
+- `~/Projects/marlin/services/marlin-router/` — Chat router
+- `~/Projects/marlin/services/marlin-cards/` — Rich cards server
+- `~/Projects/marlin/infra/plists/ai.marlin.mcp-gateway.plist` — Gateway launchd
+- `~/Projects/marlin/claude/CLAUDE.md` — Rewritten hub doc
+- `~/Projects/marlin/claude/desktop-configs/` — Claude Desktop configs + shell aliases
+- `~/.marlin/mcp-gateway-secret` — Gateway bearer token
+
+### Session Info
+```
+[SESSION] Date: 2026-02-20
+├── Claude Code: latest
+├── Model: Opus 4.6
+├── OpenClaw: 2026.2.17
+├── Marlin Router: ai.marlin.router
+└── MCP Gateway: ai.marlin.mcp-gateway
+```
+
+---
+
 ## 3.1 - Sigmachines (February 8, 2026)
 
 ### Major Changes

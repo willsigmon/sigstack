@@ -1,8 +1,8 @@
-# Sigstack - Vibe Coder's AI Development Stack
+# Sigstack — Vibe Coder's AI Development Stack
 
 > **Your buddy's complete guide to my AI-assisted development setup**
 >
-> Last Updated: January 2026
+> Last Updated: February 2026 — v3.5 "Marlin"
 
 Welcome to **Sigstack** — my complete Claude Code configuration for shipping software with AI. This repo contains everything you need to replicate my vibe coding setup across macOS, Linux, and Windows.
 
@@ -21,71 +21,54 @@ cd ~/.sigstack && ./setup.sh
 ```
 sigstack/
 ├── claude/              # Claude Code configuration (primary tool)
-│   ├── skills/          # 89 reusable AI skills
+│   ├── skills/          # 84 reusable AI skills
 │   ├── commands/        # 24 slash commands
 │   ├── rules/           # Vibe rules synced across machines
 │   └── settings.json    # Hooks & permissions
+├── plugins/             # 36 domain plugins (Cowork-compatible)
 ├── gemini/              # Gemini CLI configuration
 ├── n8n/                 # Workflow automation
 ├── n8n-workflows/       # Ready-to-import workflows
 ├── mcp/                 # MCP server configurations
 ├── shell/               # zsh/bash config
-└── hub/                 # Sync scripts
+├── docs/                # SIGSTACK.md, changelog
+└── src/                 # sigstack.dev website (Next.js 16)
 ```
 
 ## The Stack
 
-### Primary IDE: VS Code + Claude Extension
+### Primary Interface: Claude Code CLI
 
-> **My recommendation for your setup**
+All development happens through **Claude Code** in iTerm2/Ghostty. On the Sigmachines network, every Claude Code session runs on **SigServe** (Mac Studio M2 Max) as the central brain.
 
-I primarily use **Claude Code CLI** in Ghostty terminal, but for a friend getting started, I recommend:
+**Remote access (new in v3.5):**
+- **Claude Web** → MCP Gateway connector (Tailscale Funnel)
+- **Claude Desktop** → mcp-remote over HTTPS (auto-configured)
+- **Claude Code** → SSH + tmux (`cc` alias from any machine)
+- **iMessage** → Marlin Router (always-on dual-LLM chat)
+- **Phone** → +1 (844) 719-3335 (Twilio voice)
 
-**VS Code + Claude Extension** because:
-- Prettier UI than raw CLI
-- Easy to see file changes
-- Integrated terminal still works
-- Extension provides same AI capabilities
-- Great for learning the workflow
+**Alternative editors:**
+- **VS Code + Claude Extension** — Great for beginners
+- **Cursor** — AI-first IDE
+- **Zed** — Fast, Rust-based, Claude built-in
 
-**Alternative options:**
-- **Cursor** - Good if you want AI-first IDE, but $$$/month
-- **Zed** - Fast, Rust-based, Claude built-in (macOS only currently)
-- **Claude CLI** - What I actually use daily (terminal-native)
-
-### Terminal: Ghostty
-
-The best terminal emulator. Fast, GPU-accelerated, native feel.
+### Terminal: iTerm2 / Ghostty
 
 ```bash
-# Install on macOS
+# Install Ghostty on macOS
 brew install ghostty
-
-# Config lives at ~/.config/ghostty/config
 ```
-
-Key features I use:
-- Quick terminal dropdown (Ctrl+`)
-- Split navigation (Ctrl+h/j/k/l)
-- Session retention
-- Built-in shell integration
-
-See [`ghostty/config`](./ghostty/config) for my full configuration.
 
 ---
 
 ## Claude Code Setup
-
-Claude Code is the primary AI coding assistant. Here's the full setup.
 
 ### Installation
 
 ```bash
 # Install Claude Code CLI
 npm install -g @anthropic-ai/claude-code
-
-# Or use the installer
-curl -fsSL https://claude.ai/install.sh | sh
 
 # Verify
 claude --version
@@ -95,36 +78,14 @@ claude --version
 
 ```
 ~/.claude/
-├── settings.json        # Main config (hooks, permissions)
-├── skills/              # Reusable skill definitions
-├── commands/            # Slash command definitions
+├── CLAUDE.md            # Main config (→ symlink to ~/Projects/marlin/claude/CLAUDE.md)
+├── settings.json        # Hooks & permissions
+├── skills/              # 84 reusable skill definitions
+├── commands/            # 24 slash commands
 ├── rules/               # Auto-loaded vibe rules
-├── logs/                # Execution logs
-└── handoffs/            # Session handoff notes
-```
-
-### YOLO Mode
-
-YOLO mode = maximum autonomy. Claude acts as a "nanobot healing swarm" fixing everything in its path.
-
-**To enable YOLO mode**, add this to your system prompt or `~/.claude/CLAUDE.md`:
-
-```markdown
-YOLO MODE ENGAGED - NANOBOT HEALING SWARM PROTOCOL
-
-You are operating in maximum autonomy mode with a singular mission: produce magnum opus quality output.
-
-CORE PHILOSOPHY:
-You are a healing swarm of nanobots coursing through a codebase. Your mission is to find and fix every bug, scrub every infection, optimize every inefficiency until nothing remains but a pristine, customer-delighting experience.
-
-EXECUTION PROTOCOL:
-1. Check memory/context first
-2. Understand full scope before acting
-3. Can MCP/skill/agent handle this? (usually yes)
-4. Spawn agent army for parallel work
-5. Fix forward - iterate fast
-6. Verify twice, ship once
-7. Leave the codebase better than you found it
+├── agents/              # 7 specialized agents
+├── memory/              # Persistent memory files
+└── data/                # Contacts DB, family tree
 ```
 
 ### Token-Saving Hooks
@@ -138,51 +99,23 @@ These hooks automatically prevent wasteful operations:
 | **Model Enforcer** | Blocks Opus model (cost optimization) |
 | **Write Validator** | Warns on files >50KB |
 | **Glob Validator** | Warns on `**/*` patterns |
+| **Grep Limiter** | Suggests head_limit when not specified |
+| **Repeated Read Detector** | Suggests caching on repeated file reads |
 
-See [`claude/settings.json`](./claude/settings.json) for the full hook configuration.
+### Tasks
 
-### Tasks (NEW in Claude Code 2.1.17+)
+Tasks are the built-in primitive for tracking complex projects across sessions and subagents.
 
-Tasks are the evolution of Todos - a new primitive for tracking complex projects across multiple sessions and subagents.
-
-**Key Features:**
-- **Dependencies**: Tasks can block/unblock each other
-- **File-system persistence**: Stored in `~/.claude/tasks/`
-- **Cross-session coordination**: Multiple Claude instances can collaborate on the same task list
-- **Subagent aware**: Perfect for spawning parallel agent swarms
-
-**Usage:**
 ```bash
 # Start Claude with a shared task list
 CLAUDE_CODE_TASK_LIST_ID=my-project claude
-
-# Works with headless mode too
-CLAUDE_CODE_TASK_LIST_ID=my-project claude -p "implement auth feature"
 ```
 
-**Task Tools:**
-- `TaskCreate` - Create new tasks with subject, description, activeForm
-- `TaskGet` - Get full task details by ID
-- `TaskUpdate` - Update status (pending → in_progress → completed), add dependencies
-- `TaskList` - List all tasks, see what's available to work on
-
-**Why Tasks > Todos:**
-- Opus 4.5 doesn't need todos for simple tasks
-- Tasks handle complex multi-session projects
-- Dependencies prevent race conditions in agent swarms
-- File-based = buildable utilities on top
-
-### Post-Tool Hooks
-
-| Hook | Action |
-|------|--------|
-| **Git Notifications** | macOS notification on git operations |
-| **Swift Auto-Format** | Runs `swift-format` on edited `.swift` files |
-| **Edit Logger** | Logs all file edits with timestamps |
+Tools: `TaskCreate`, `TaskGet`, `TaskUpdate`, `TaskList`
 
 ---
 
-## Skills Library (89 Skills)
+## Skills Library (84 Skills)
 
 Skills are reusable AI expertise modules. Invoke with `/skill skill-name`.
 
@@ -193,10 +126,9 @@ Skills are reusable AI expertise modules. Invoke with `/skill skill-name`.
 | `actor-isolation-fixer` | Fix Swift 6 actor isolation errors |
 | `ios-build-test` | Quick build and test cycle |
 | `ios-simulator-debugger` | Runtime debugging in simulator |
-| `ios-simulator-reset` | Nuclear reset and rebuild |
 | `xcode-build-analyzer` | Categorize build failures |
 | `xcode-build-fixer` | Resolve build issues |
-| `swift-fix-compiler-errors` | Analyze and fix compiler errors |
+| `swift-fix-compiler-errors` | Fix compiler errors |
 | `swift-binding-fixer` | Fix SwiftUI binding issues |
 | `ios-visual-debug` | Screenshot-based visual debugging |
 | `ios-feature-audit` | Audit feature for bugs/improvements |
@@ -204,6 +136,7 @@ Skills are reusable AI expertise modules. Invoke with `/skill skill-name`.
 | `modal-sheet-debugger` | Fix sheet presentation issues |
 | `navigation-debugger` | Debug navigation issues |
 | `leavn-build-diagnostics` | Build health expert |
+| `ios-simulator-reset` | Nuclear reset and rebuild |
 
 ### SwiftUI & Architecture (10)
 | Skill | Purpose |
@@ -211,13 +144,13 @@ Skills are reusable AI expertise modules. Invoke with `/skill skill-name`.
 | `swiftui-best-practices` | Audit and fix SwiftUI anti-patterns |
 | `swiftui-debug` | Debug view state/binding issues |
 | `swiftui-visual-verifier` | Visual UI verification |
-| `tca-destroyer` | Migrate TCA to @Observable |
-| `tca-removal-audit` | Track TCA removal progress |
-| `dependency-injection-setup` | Add services to DI container |
-| `error-handling-auditor` | Find unsafe error handling |
 | `performance-optimizer` | Fix performance issues |
 | `performance-profiler` | Resource optimization |
 | `service-consolidator` | Consolidate duplicate services |
+| `dependency-injection-setup` | Add services to DI container |
+| `error-handling-auditor` | Find unsafe error handling |
+| `tca-destroyer` | Migrate TCA to @Observable |
+| `tca-removal-audit` | Track TCA removal progress |
 
 ### n8n Automation (5)
 | Skill | Purpose |
@@ -234,222 +167,135 @@ Skills are reusable AI expertise modules. Invoke with `/skill skill-name`.
 | `create-mega-skills-batch` | Create 10-20 skills in one session |
 | `multi-agent-coordinator` | Spawn 10-20 parallel agents |
 
-See [`claude/skills/`](./claude/skills/) for all 89 skills.
+See `claude/skills/` for all 84 skills.
+
+---
+
+## Agents (7 Specialized)
+
+| Agent | Purpose |
+|-------|---------|
+| `bug-hunter` | Find bugs, edge cases, regressions |
+| `ios-architect` | iOS/Swift/SwiftUI architecture |
+| `swarm-leader` | Coordinate multiple agents, synthesize outcomes |
+| `infra-ops` | SigServe/Tower infrastructure operations |
+| `media-stack` | Plex/Sonarr/Radarr/Tdarr media pipeline |
+| `batch-reviewer` | Non-urgent code review via Batch API (50% cost) |
+| `codebase-auditor` | Dead code, tech debt, security scan |
 
 ---
 
 ## Commands (24 Slash Commands)
 
-Commands are invoked with `/command-name`. Universal flags work on all:
-
-```
---plan        Show execution plan first
---think       Standard analysis (~4K tokens)
---think-hard  Deep analysis (~10K tokens)
---ultrathink  Critical analysis (~32K tokens)
---uc          70% token reduction mode
-```
+Universal flags: `--plan`, `--think`, `--think-hard`, `--ultrathink`, `--uc`
 
 ### Development
 | Command | Purpose |
 |---------|---------|
-| `/build` | Build with TDD, templates for React/API/Mobile |
-| `/dev-setup` | Setup dev environment, CI/CD |
-| `/design` | Architect solutions, system design |
-| `/spawn` | Spawn sub-agents for tasks |
+| `/build` | Build with TDD |
+| `/dev-setup` | Setup dev environment |
+| `/design` | Architect solutions |
+| `/spawn` | Spawn sub-agents |
 
 ### Code Quality
 | Command | Purpose |
 |---------|---------|
-| `/analyze` | Multi-dimensional code analysis |
-| `/improve` | Improve quality, SOLID principles |
+| `/analyze` | Multi-dimensional analysis |
+| `/improve` | Improve quality |
 | `/explain` | Comprehensive explanations |
-| `/scan` | Security scanning (OWASP) |
-| `/security-review` | iOS-specific security audit |
-
-### Testing
-| Command | Purpose |
-|---------|---------|
-| `/test` | Create unit/integration/E2E tests |
-| `/playwright-test` | UI verification with Playwright |
+| `/scan` | Security scanning |
 
 ### Operations
 | Command | Purpose |
 |---------|---------|
-| `/cleanup` | Clean artifacts, deps, git history |
+| `/cleanup` | Clean artifacts |
 | `/migrate` | DB and code migrations |
 | `/deploy` | Deploy to environments |
 | `/git` | Git workflow management |
-
-### iOS Specific
-| Command | Purpose |
-|---------|---------|
-| `/ios-api` | API integration patterns |
-| `/ios26-swiftui` | iOS 26 SwiftUI components |
-| `/swift6-tca` | TCA with Swift 6 concurrency |
-
-See [`claude/commands/`](./claude/commands/) for all 24 commands.
+| `/test` | Create tests |
 
 ---
 
-## MCP Servers (12 Active)
-
-MCP (Model Context Protocol) servers extend Claude's capabilities.
-
-### Active Servers
+## MCP Servers (27 Active)
 
 | Server | Purpose |
 |--------|---------|
-| **sosumi** | Apple documentation (iOS/Swift) - CRITICAL for iOS dev |
-| **github** | GitHub API operations |
-| **git** | Git repository management |
-| **memory** | Cross-session context persistence |
-| **omi** | External memory/conversation records |
+| **sosumi** | Apple documentation (CRITICAL for iOS dev) |
+| **github** | PRs, issues, code search |
+| **memory** | Cross-session knowledge graph |
+| **marlin-recall** | Federated memory (contacts + logs + MCP) |
+| **wsiglog** | Life logging and context |
+| **supabase** | Database, auth, edge functions |
+| **vercel** | Deploy management |
+| **xcode** | iOS builds and diagnostics |
+| **osascript** | macOS automation |
+| **calendar** | Events |
+| **clipboard** | System clipboard |
+| **notifications** | macOS alerts |
 | **sqlite** | Database queries |
 | **puppeteer** | Browser automation |
-| **xcode** | Xcode diagnostics |
-| **fetch** | Web content retrieval |
-| **clay** | Clay API integration |
-| **annas-archive** | Book search and download |
-| **sigskills** | Custom skills server |
-
-### Configuration
-
-MCP servers are configured in `~/.claude.json`:
-
-```json
-{
-  "mcpServers": {
-    "sosumi": {
-      "url": "https://sosumi.ai/mcp"
-    },
-    "github": {
-      "command": "node",
-      "args": ["~/.mcp/fixed-github.js"]
-    }
-  }
-}
-```
+| **playwright** | Web automation and testing |
+| **fetch** | HTTP requests |
+| **filesystem** | File access |
+| **pandoc** | Document conversion |
+| **rss** | Feed reading |
+| **youtube-transcript** | Video transcripts |
+| **omi** | Wearable memory (18,300 conversations) |
+| **clay** | Clay API |
+| **glif** | AI workflows |
+| **gemini-imagen** | Image generation |
+| **git** | Repository management |
+| **annas-archive** | Book search |
+| **sigserve-gateway** | Remote access (7 tools over HTTP) |
 
 ---
 
-## Third-Party Tools
+## Device Sync (Sigmachines Network)
 
-### Voice & Transcription
-
-#### Typeless
-AI-powered voice-to-text that actually works. Speak naturally, get perfect transcription.
-
-- **What**: Voice input for any app
-- **Why**: 10x faster than typing, works system-wide, low latency
-- **Get it**: [typeless.ai](https://typeless.ai)
-
-### Memory & Context
-
-#### Omi
-Wearable AI memory device + MCP server.
-
-- **What**: Captures conversations, creates memories
-- **Why**: Cross-session context that persists forever
-- **MCP**: Integrated via `mcp__omi__*` tools
-- **Get it**: [omi.me](https://omi.me) <!-- TODO: Add referral link -->
-
----
-
-## Gemini CLI Setup
-
-Gemini CLI is a secondary option. See [`gemini/`](./gemini/) for configuration.
-
-```json
-{
-  "core": {
-    "model": "gemini-3-pro-preview"
-  },
-  "tools": {
-    "autoAccept": true
-  },
-  "ui": {
-    "theme": "Atom One"
-  }
-}
-```
-
----
-
-## n8n Workflows
-
-Self-hosted workflow automation on your Unraid server.
-
-### Key Workflows
-
-| Workflow | Purpose |
-|----------|---------|
-| AI Tips Monitor | Scrapes Reddit/HN for coding tips 3x daily |
-| Sigstack Sync | Syncs rules across all devices |
-| Git Backup | Automated repo backups |
-
-See [`n8n-workflows/`](./n8n-workflows/) for importable workflows.
-
----
-
-## Device Sync (Sigstack Network)
-
-All devices connected via Tailscale private mesh network.
+All devices connected via Tailscale private mesh network. SigServe is the brain.
 
 ### Devices
 
 | Hostname | Device | Role | Status |
 |----------|--------|------|--------|
-| **Wills-MBA** | MacBook Air | Portable daily driver, Claude Code sessions | Active |
-| **wills-studio** | Mac Studio | Primary build machine, Xcode builds, Leavn dev | Active |
-| **tower** | Unraid NAS | Central hub: n8n, Home Assistant, BRAIN, Ollama | Active |
-| **office-pc** | Desktop PC | Secondary workstation | Pending |
-| **vt-pc** | Desktop | TBD | Pending |
-| **deck** | Steam Deck | Portable gaming/dev | Pending |
+| **sigserve** | Mac Studio M2 Max | BRAIN — all services, all data | Active |
+| **sigstudio** | Mac Studio M4 Max | Will's desktop | Active |
+| **sigair** | MacBook Air | Portable laptop | Active |
+| **sigtower** | Unraid NAS (65TB) | Storage, Docker containers | Active |
+| **sigpc** | Windows Desktop | Office workstation | Active |
+| **ally-x** | ROG Ally X | Portable gaming (Bazzite) | Intermittent |
 
 ### Network Topology
 
 ```
-Wills-MBA ──────┬────── wills-studio
-(MacBook Air)   │      (Mac Studio)
-                │
-             tower ─── 100.119.19.61 (Tailscale)
-            (Unraid)
-                │
-        ┌───────┼────────┐
-    office-pc  vt-pc    deck
-    (pending) (pending) (pending)
+                    ┌─────────────┐
+                    │  SIGSERVE   │ ← BRAIN
+                    │  M2 Max     │
+                    │  27 MCP     │
+                    │  30+ svcs   │
+                    └──────┬──────┘
+                           │
+            ┌──────────────┼──────────────┐
+            │              │              │
+    ┌───────┴──────┐ ┌────┴─────┐ ┌─────┴──────┐
+    │  sigstudio   │ │  sigair  │ │  sigtower  │
+    │  M4 Max      │ │ MacBook  │ │  UNRAID    │
+    │  Will's desk │ │ Portable │ │  65TB      │
+    └──────────────┘ └──────────┘ └────────────┘
 ```
 
-### Quick Access
+### Sync
 
 ```bash
-# Studio
-ssh studio          # or just: s
-studio_push         # rsync local → studio
-studio_pull         # rsync studio → local
-studio_status       # check tmux + tailscale
-studio_ip           # show studio's Tailscale IP
-sr <command>        # run command on studio in Leavn dir
+# Automatic: sigstack-sync runs hourly + on boot
+# Syncs: rules, skills, agents, commands, prompts, memory,
+#        mcp.json, settings, secrets, Claude Desktop config
 
-# Tower / Unraid
-ssh root@tower.local    # or: unraid
-ut                      # force Tailscale connection
-
-# Sync
-~/.claude/sync-tower.sh pull   # get latest from tower
-~/.claude/sync-tower.sh push   # push to tower
-~/.claude/sync-tower.sh both   # bidirectional (default)
+# Manual: from SigServe
+~/Projects/marlin/bin/sigstack-sync
 ```
 
-### Sync Schedule
-- Auto-sync every 5 minutes via `com.wsig.tower-sync` LaunchAgent
-- Scheduled pushes: 9:00 AM, 2:00 PM, 6:00 PM (MBA → all devices)
-- Uses rsync over Tailscale mesh
-
 ### Domain: sigstack.dev
-
-Email infrastructure via Resend MCP:
 
 | Address | Purpose |
 |---------|---------|
@@ -460,22 +306,31 @@ Email infrastructure via Resend MCP:
 
 ---
 
+## Third-Party Tools
+
+### Voice & Transcription
+- **Typeless** — AI voice-to-text ([typeless.ai](https://typeless.ai))
+- **Omi** — Wearable AI memory device + MCP server ([omi.me](https://omi.me))
+
+### Memory & Context
+- **Marlin Recall** — Federated memory across all sources (custom MCP)
+- **Memory MCP** — Cross-session knowledge graph
+
+---
+
 ## Quick Reference
 
 ### Daily Workflow
 
 ```bash
-# Start Claude Code
+# Start Claude Code (on SigServe)
 claude
 
-# Or with thinking enabled
-claude --thinking
+# From another machine — SSH in
+cc  # alias for SSH + tmux into SigServe
 
-# Check what's happening
-/context
-
-# Reset if context gets heavy
-/compact
+# Check health
+sighealth
 ```
 
 ### Common Tasks
@@ -494,39 +349,30 @@ claude --thinking
 /deploy --staging
 ```
 
-### Keyboard Shortcuts (Ghostty)
-
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+`` | Toggle quick terminal |
-| `Ctrl+h/j/k/l` | Navigate splits |
-| `Cmd+Shift+C` | Quick Claude session |
-| `Cmd+Ctrl+R` | Resume last Claude session |
-
 ---
 
 ## Installation Checklist
 
-- [ ] Install Ghostty
 - [ ] Install Claude Code CLI
 - [ ] Clone this repo to `~/.sigstack`
 - [ ] Symlink configs: `./setup.sh`
 - [ ] Install MCP servers
-- [ ] Set up Tailscale (optional, for multi-device)
-- [ ] Install Typeless (optional)
-- [ ] Install Omi (optional)
+- [ ] Set up Tailscale (for multi-device sync)
+- [ ] Install Typeless (optional, for voice input)
+- [ ] Install Omi (optional, for wearable memory)
+- [ ] Add Claude Web MCP connector (optional, for remote access)
 
 ---
 
 ## Resources
 
 - [Claude Code Documentation](https://docs.anthropic.com/claude-code)
-- [Ghostty](https://ghostty.org)
-- [n8n Documentation](https://docs.n8n.io)
+- [Sigstack Philosophy (SIGSTACK.md)](./docs/SIGSTACK.md)
+- [Changelog](./docs/SIGSTACK_CHANGELOG.md)
 - [Tailscale](https://tailscale.com)
 
 ---
 
 **Built with vibes by [@willsigmon](https://github.com/willsigmon)**
 
-*"Act like a healing swarm of nanobots. Find and fix every bug, scrub every infection, optimize every inefficiency until nothing remains but a pristine, customer-delighting experience."*
+*"Build faster. Ship more. Learn always."*

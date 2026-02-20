@@ -2,13 +2,13 @@
 
 **The Vibe Coder's Operating System for Claude**
 
-*Version 2.0 — February 1, 2026*
+*Version 3.5 "Marlin" — February 20, 2026*
 
 ---
 
 ## Philosophy
 
-Sigstack is for builders who think in outcomes, not syntax. You have 5000+ hours of Claude Code experience but no traditional coding background. You don't need to learn programming—you need Claude to understand your vision and execute it.
+Sigstack is for builders who think in outcomes, not syntax. You have 5000+ hours of Claude Code experience but no traditional coding background. You don't need to learn programming — you need Claude to understand your vision and execute it.
 
 ### Core Principles
 
@@ -18,6 +18,7 @@ Sigstack is for builders who think in outcomes, not syntax. You have 5000+ hours
 4. **Memory Persistence** — Never explain the same thing twice
 5. **Token Efficiency** — Spend tokens on creation, not repetition
 6. **Voice Native** — Speak your ideas into existence
+7. **One Brain** — SigServe is the single source of truth for all interfaces
 
 ---
 
@@ -29,10 +30,10 @@ Sigstack is for builders who think in outcomes, not syntax. You have 5000+ hours
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │   1. DESCRIBE  ──→  What do you want?                      │
-│        │                                                    │
+│        │              (voice, text, any device)             │
 │        ▼                                                    │
 │   2. BUILD     ──→  Claude writes the code                 │
-│        │                                                    │
+│        │              (on SigServe, always)                 │
 │        ▼                                                    │
 │   3. SCREENSHOT ──→  Capture the result                    │
 │        │                                                    │
@@ -47,47 +48,78 @@ Sigstack is for builders who think in outcomes, not syntax. You have 5000+ hours
 └─────────────────────────────────────────────────────────────┘
 ```
 
-This is **THE** workflow. Every feature. Every bug fix. Every change.
+---
+
+## What's New in 3.5 "Marlin"
+
+v3.5 is the release where the stack became sentient (sort of). Every Claude interface — Code, Web, Desktop — now routes through SigServe as the central brain. Claude has a name (Marlin), a phone number, and can text you back.
+
+- **MCP Gateway** — Remote access from Claude Web + Desktop via Tailscale Funnel
+- **Marlin Identity** — Claude Code IS Marlin on every Sig device
+- **Marlin Router** — Always-on dual-LLM chat auto-responder (12 group chats)
+- **Voice Calls** — Twilio + OpenAI realtime STT/TTS
+- **Rich Cards** — iMessage link previews for media, status, briefings
+- **iMessage Superpowers** — Effects, tapbacks, threading, subject lines
+- **Monorepo** — ~/Projects/marlin (config, services, infra, all symlinked)
+- **27 MCP Servers** — Up from 22
+- **7 Specialized Agents** — bug-hunter, ios-architect, infra-ops, media-stack, etc.
+- **4 Tailscale Funnels** — Plex, Cards, Twilio, MCP Gateway
 
 ---
 
 ## Stack Architecture
 
-### Tier 1: Core Operations
+### Tier 1: Brain (SigServe)
 ```
-sigstack-core     Meta-skills for efficiency and productivity
+marlin            Identity, CLAUDE.md, memory, decision authority
+mcp-gateway       Remote access for Claude Web/Desktop/Code
+marlin-router     Always-on chat (Claude + OpenAI dual-LLM)
+marlin-recall     Unified memory federation (MCP + contacts + logs)
 ```
 
-### Tier 2: Build Domains
+### Tier 2: Communication
+```
+bluebubbles       iMessage bridge (12 group chats, 6 numbers)
+twilio            Voice calls (+18447193335, STT/TTS)
+marlin-cards      Rich link preview cards for iMessage
+ntfy              Push notifications to all devices
+```
+
+### Tier 3: Build Domains
 ```
 ios-dev           Swift, SwiftUI, Xcode, CloudKit, SwiftData
 app-dev           Features, architecture, services, preferences
 ```
 
-### Tier 3: Create
+### Tier 4: Media Pipeline
 ```
-design-tools      AI image, video, audio, UI generation
-media             Podcasts, transcription, streaming, analytics
-```
-
-### Tier 4: Quality
-```
-testing           AI Vision QA, Playwright, coverage, security
-```
-
-### Tier 5: Intelligence
-```
-memory-ai         Vector DBs, knowledge graphs, context management
-voice-input       Speech-to-code, Sled, transcription APIs
+plex              533 shows, 1,302 movies ("Sigflix")
+sonarr/radarr     Automated acquisition + monitoring
+tdarr             VideoToolbox HEVC transcoding
+nzbget            Usenet downloads (Newsgroup Ninja)
+prowlarr          Indexer management (4 indexers)
+bazarr            Subtitle management
+tautulli          Analytics and monitoring
+sigflixseeker     Request management (Overseerr fork)
 ```
 
-### Tier 6: Automation
+### Tier 5: Smart Home
 ```
-automation        CI/CD, webhooks, Home Assistant, workflows
+homeassistant     34 integrations, 285 entities, 14 automations
+homey-pro         Zigbee/Z-Wave hub
+hue-bridge        75 lights across 14 rooms
 ```
 
-### Tier 7: Work
+### Tier 6: Intelligence
 ```
+memory-ai         Knowledge graph, cross-session context
+voice-input       Typeless (dictation), Omi (wearable memory)
+marlin-recall     Federated memory across all sources
+```
+
+### Tier 7: Quality & Work
+```
+testing           Vision QA, Playwright, coverage, security
 work              Enterprise apps, Knack, HTI integrations
 dev-essentials    Multi-agent coordination, email, performance
 ```
@@ -100,13 +132,16 @@ dev-essentials    Multi-agent coordination, email, performance
 ┌──────────────┬─────────────────────────────────────────────┐
 │ Model        │ Use For                                     │
 ├──────────────┼─────────────────────────────────────────────┤
-│ Haiku 3.5    │ File search, formatting, simple tasks       │
-│ Sonnet 4     │ Code writing, reviews, most work            │
-│ Opus 4.5     │ Architecture, complex reasoning, debugging  │
+│ Haiku 4.5    │ File search, formatting, simple tasks       │
+│ Sonnet 4.6   │ Code writing, reviews, most work (DEFAULT)  │
+│ Opus 4.6     │ Architecture, complex reasoning (on request)│
 └──────────────┴─────────────────────────────────────────────┘
 
-Default: Sonnet for quality-speed balance
-Skills specify model in frontmatter
+Marlin Router models:
+│ Claude Sonnet │ Nuanced conversations (effort=high)        │
+│ Claude Haiku  │ Quick banter (effort=low)                  │
+│ GPT-5.3 Codex│ Deep reasoning (effort=xhigh)              │
+│ GPT-5.3 Spark│ Instant replies (1000+ tok/s)              │
 ```
 
 ---
@@ -114,22 +149,36 @@ Skills specify model in frontmatter
 ## Interface Strategy
 
 ```
-┌──────────────┬─────────────────────────────────────────────┐
-│ Interface    │ Use For                                     │
-├──────────────┼─────────────────────────────────────────────┤
-│ Claude Code  │ All codebase work (primary)                 │
-│ Claude Desktop│ PDFs, images, research                     │
-│ API Batch    │ 100+ items, 50% cost savings               │
-│ CLI          │ Quick queries, scripting                    │
-│ MCP          │ External data (Supabase, GitHub, etc.)     │
-└──────────────┴─────────────────────────────────────────────┘
+┌──────────────────┬───────────────────────────────────────────────┐
+│ Interface        │ Use For                                       │
+├──────────────────┼───────────────────────────────────────────────┤
+│ Claude Code      │ All codebase work (primary, SSH into SigServe)│
+│ Claude Web       │ Remote access via MCP Gateway connector       │
+│ Claude Desktop   │ PDFs, images, research (MCP Gateway via SSH)  │
+│ API Batch        │ 100+ items, 50% cost savings                  │
+│ CLI (claude -p)  │ Scripting, Marlin Router calls                │
+│ iMessage         │ Chat with Marlin from any Apple device        │
+│ Phone            │ Voice calls to +1 (844) 719-3335              │
+│ ntfy             │ Push notifications (P1 alerts)                │
+└──────────────────┴───────────────────────────────────────────────┘
 
-Default: Claude Code with MCP servers enabled
+All interfaces route through SigServe. One brain, many surfaces.
 ```
 
 ---
 
 ## Agent Swarm Patterns
+
+### 7 Specialized Agents
+```
+bug-hunter        Find bugs, edge cases, regressions
+ios-architect     iOS/Swift/SwiftUI architecture
+swarm-leader      Coordinate multiple agents, synthesize outcomes
+infra-ops         SigServe/Tower infrastructure operations
+media-stack       Plex/Sonarr/Radarr/Tdarr media pipeline
+batch-reviewer    Non-urgent code review via Batch API (50% cost)
+codebase-auditor  Dead code, tech debt, security scan
+```
 
 ### Exploration (5-10 agents)
 ```
@@ -148,7 +197,7 @@ Default: Claude Code with MCP servers enabled
 → test-coverage-agent
 ```
 
-### Build (4 agents)
+### Build (4+ agents)
 ```
 "Implement new feature"
 → ui-agent
@@ -159,78 +208,84 @@ Default: Claude Code with MCP servers enabled
 
 ---
 
-## MCP Priority
-
-```
-1. Supabase    → Database queries, no copy-paste
-2. GitHub      → PRs, issues, repos directly
-3. Memory      → Persistent knowledge graph
-4. Playwright  → Browser automation, screenshots
-5. Context7    → Library documentation
-6. Sosumi      → Apple developer docs
-```
-
----
-
-## Voice Stack
-
-```
-Input:   Typeless (daily dictation)
-Bridge:  Sled (mobile → Claude Code over Tailscale)
-Output:  Code changes, commits, deploys
-```
-
----
-
 ## Infrastructure
 
-### Device Mesh (Tailscale)
+### Sigmachines v2 — SigServe as Brain
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                    SIGSTACK NETWORK                           │
+│                  SIGMACHINES v2 (v3.5)                        │
 ├──────────────────────────────────────────────────────────────┤
 │                                                              │
-│  Wills-MBA (MacBook Air)              sigserve (Mac Studio)  │
-│    └─ Portable daily driver         └─ CENTRAL HUB           │
-│    └─ Claude Code sessions          └─ Memory API (8100)     │
-│    └─ Voice input (Typeless)        └─ Xcode builds          │
-│              │                       └─ Leavn development     │
-│              │                       └─ Tailscale Funnel      │
-│              └──────────┬───────────────────┘                │
-│                         │                                    │
-│                    tower (Unraid)                             │
-│                      └─ Backup storage                       │
-│                      └─ Home Assistant                       │
-│                      └─ Ollama (local LLM)                   │
-│                      └─ Tailscale: 100.119.19.61             │
-│                         │                                    │
-│              ┌──────────┼───────────────────┐                │
-│              │          │                   │                │
-│          office-pc    vt-pc              deck                │
-│          (pending)   (pending)     (Steam Deck, pending)     │
+│                    ┌─────────────────┐                       │
+│                    │    SIGSERVE      │                       │
+│                    │   Mac Studio     │                       │
+│                    │   M2 Max 32GB    │                       │
+│                    │                  │                       │
+│                    │  THE BRAIN       │                       │
+│                    │  ─────────────   │                       │
+│                    │  27 MCP servers  │                       │
+│                    │  84 skills       │                       │
+│                    │  7 agents        │                       │
+│                    │  30+ services    │                       │
+│                    │  9 Docker        │                       │
+│                    │  4 Funnels       │                       │
+│                    │  Marlin Router   │                       │
+│                    │  MCP Gateway     │                       │
+│                    └────────┬────────┘                       │
+│                             │                                │
+│              ┌──────────────┼──────────────┐                 │
+│              │              │              │                  │
+│     ┌────────┴───┐  ┌──────┴─────┐  ┌────┴──────┐          │
+│     │ SIGSTUDIO  │  │  SIGAIR    │  │  TOWER    │          │
+│     │ M4 Max     │  │ MacBook Air│  │  UNRAID   │          │
+│     │            │  │            │  │  65TB     │          │
+│     │ Will's desk│  │ Portable   │  │  Storage  │          │
+│     │ SSH+MCP GW │  │ SSH+MCP GW │  │  Docker   │          │
+│     └────────────┘  └────────────┘  └───────────┘          │
+│                                                              │
+│     Access from ANYWHERE via:                                │
+│       • Claude Web  → MCP Gateway (Tailscale Funnel)        │
+│       • Claude Desktop → mcp-remote over HTTPS              │
+│       • Claude Code → SSH + tmux (`cc` alias)               │
+│       • iMessage → Marlin Router (BlueBubbles)              │
+│       • Phone → +1 (844) 719-3335 (Twilio)                 │
 │                                                              │
 └──────────────────────────────────────────────────────────────┘
 ```
 
-### Services on Tower
+### Tailscale Funnels (Public HTTPS)
 
-| Service | Port | Purpose |
-|---------|------|---------|
-| Home Assistant | 8123 | Smart home, desk automation |
-| Hub (LLM proxy) | 3030 | OpenAI-compatible router |
-| Ollama | 11434 | Local LLM inference |
-| Sigserve Memory API | 8100 | Unified memory (on sigserve, not tower) |
+| Port | Service | URL |
+|------|---------|-----|
+| :443 | Plex | sigserve.tail7b9e1.ts.net |
+| :8443 | Rich Cards | sigserve.tail7b9e1.ts.net:8443 |
+| :9500 | MCP Gateway | sigserve.tail7b9e1.ts.net:9500/mcp |
+| :10000 | Twilio Voice | sigserve.tail7b9e1.ts.net:10000 |
+
+### Services on SigServe (30+)
+
+**Native (launchd, 16 KeepAlive daemons):**
+Plex, Sonarr, Radarr, Prowlarr, NZBGet, Bazarr, Tdarr, Tautulli, SigflixSeeker, Recyclarr, BlueBubbles, Cloudflared, Marlin/OpenClaw, marlin-recall, marlin-cards, MCP Gateway, Marlin Router, OmiClaw Bridge
+
+**Docker (9 containers, ~2.7GB RAM):**
+Home Assistant, Mosquitto, Kometa, Homey-SHS, ntfy, Calibre-Web, Audiobookshelf, FlareSolverr, Posterizarr
 
 ### Sync Architecture
 
 ```
-MBA ──rsync──→ Tower (/mnt/user/data/claude/)
-       ↕              ↕ symlinks
-  ~/.claude/      MCP Memory Server
-  tower-sync/
-
-Schedule: Auto every 5 min + manual push at 9 AM, 2 PM, 6 PM
+SigServe (source of truth)
+    │
+    ├── sigstack-sync (hourly + on boot)
+    │     ├── → SigStudio (LAN 192.168.1.163)
+    │     └── → SigAir (sigair.local / mDNS)
+    │
+    │   Syncs: rules, skills, agents, commands, prompts,
+    │          memory, mcp.json, settings, secrets,
+    │          Claude Desktop config, shell aliases
+    │
+    └── git-autopush (continuous, every 30s)
+          └── ~/Projects/marlin → GitHub (private)
 ```
 
 ### Domain: sigstack.dev
@@ -243,22 +298,76 @@ Email infrastructure via Resend:
 
 ---
 
+## MCP Servers (27 active)
+
+```
+Core:     wsiglog, filesystem, fetch, github, memory,
+          marlin-recall, sequential-thinking
+Apple:    sosumi (Apple docs), xcode
+macOS:    osascript, clipboard, notifications, calendar
+Content:  pandoc, rss, omi, youtube-transcript
+External: vercel, supabase, clay, glif, gemini-imagen
+Standard: puppeteer, sqlite, git, annas-archive
+Custom:   sigskills, n8n-mcp
+Remote:   sigserve-gateway (7 tools over HTTP/SSH)
+```
+
+### MCP Gateway (New in 3.5)
+
+Remote access to SigServe from any Claude interface:
+
+```
+Claude Web  → HTTPS → Tailscale Funnel :9500 → supergateway → mcp-gateway
+Claude Desktop → mcp-remote → same endpoint
+Claude Code → SSH → tmux → direct on SigServe
+```
+
+7 tools: execute_command, read_file, write_file, list_directory, search_files, service_status, send_notification
+
+---
+
 ## Memory Architecture
 
 ```
-┌─────────────────┐
-│ Session Memory  │ ← Current conversation
-├─────────────────┤
-│ Memory MCP      │ ← Facts, preferences, decisions
-├─────────────────┤
-│ CLAUDE.md       │ ← Project rules (auto-loaded)
-├─────────────────┤
-│ Skills          │ ← Reusable prompts
-├─────────────────┤
-│ Checkpoints     │ ← Session handoffs
-└─────────────────┘
+┌─────────────────────┐
+│ Session Memory      │ ← Current conversation
+├─────────────────────┤
+│ marlin-recall       │ ← Federated: MCP graph + contacts + logs
+├─────────────────────┤
+│ Memory MCP          │ ← Facts, preferences, decisions
+├─────────────────────┤
+│ CLAUDE.md           │ ← Project rules + Marlin identity
+├─────────────────────┤
+│ ~/.claude/memory/   │ ← Persistent topic files
+├─────────────────────┤
+│ Omi wearable        │ ← 18,300 conversations cached on Tower
+├─────────────────────┤
+│ Skills (84)         │ ← Reusable expertise
+├─────────────────────┤
+│ Contacts DB         │ ← 2,475 records
+└─────────────────────┘
 
 Never repeat context. Store once, recall forever.
+```
+
+---
+
+## Communication Stack (New in 3.5)
+
+```
+┌──────────────┬───────────────────────────────────────────────┐
+│ Channel      │ Details                                       │
+├──────────────┼───────────────────────────────────────────────┤
+│ iMessage     │ BlueBubbles, 12 group chats, 6 numbers       │
+│              │ Effects, tapbacks, threading, subject lines   │
+│              │ Rich cards via marlin-cards server             │
+│ Voice        │ Twilio +1 (844) 719-3335                     │
+│              │ OpenAI realtime STT/TTS (voice: coral)        │
+│ Push         │ ntfy (all devices, priority levels)           │
+│ Chat Router  │ Marlin Router: polls 12 chats every 15s      │
+│              │ 18 scenario types, per-contact personality    │
+│              │ Dual-LLM: Claude + OpenAI Codex              │
+└──────────────┴───────────────────────────────────────────────┘
 ```
 
 ---
@@ -272,63 +381,30 @@ Save tokens:
 - Skills over repeated prompts (95% savings)
 - Haiku over Sonnet when possible (75% savings)
 - Batch API over real-time (50% savings)
+- Token-saving hooks (auto-block wasteful reads/commands)
 
 Spend tokens:
-- Complex reasoning (use Opus)
-- Exploration (use agents)
+- Complex reasoning (use Opus when requested)
+- Exploration (use agent swarms)
 - Quality code (use Sonnet)
+- Marlin Router (dual-LLM for free via Max + ChatGPT subs)
 ```
-
----
-
-## Daily Rhythm
-
-### Morning (2 min)
-```
-"Status" → Load context
-"Today's focus: [area]" → Set priority
-```
-
-### During Work
-```
-Build → Screenshot → Vision QA → Fix → Repeat
-```
-
-### Evening (1 min)
-```
-"Checkpoint" → Save state for tomorrow
-```
-
----
-
-## Future-Proofing (2026+)
-
-### Emerging Patterns
-- **10M token context windows** — Llama 4 and beyond
-- **Native multimodal** — Video, audio, 3D in prompts
-- **Agentic workflows** — More autonomous, less supervision
-- **MCP ecosystem growth** — 1200+ servers and counting
-
-### Sigstack Adapts
-- Skills updated as APIs change
-- New plugins for emerging tools
-- Model selection stays current
-- Patterns evolve with capabilities
 
 ---
 
 ## Quick Reference
 
-### Screenshot QA
+### Remote Access
 ```bash
-# iOS Simulator
-xcrun simctl io booted screenshot screen.png
+# From any machine — SSH into SigServe
+cc                    # alias: SSH + tmux into SigServe
 
-# Android
-adb exec-out screencap -p > screen.png
+# Claude Web — add MCP connector
+# Settings > Connectors > Add custom:
+# URL: https://sigserve.tail7b9e1.ts.net:9500/mcp
 
-# Web (Playwright)
-await page.screenshot({ path: 'screen.png' });
+# Claude Desktop — auto-configured via sigstack-sync
+# Uses mcp-remote → SigServe MCP Gateway
 ```
 
 ### Session Commands
@@ -346,6 +422,15 @@ await page.screenshot({ path: 'screen.png' });
 "Build [feature]"            → Worker agents
 ```
 
+### Screenshot QA
+```bash
+# iOS Simulator
+xcrun simctl io booted screenshot screen.png
+
+# Web (Playwright)
+await page.screenshot({ path: 'screen.png' });
+```
+
 ---
 
 ## The Sigstack Promise
@@ -356,11 +441,12 @@ Screenshots verify the result.
 Agents parallelize the work.
 Memory preserves the knowledge.
 Voice captures your ideas.
+Marlin holds it all together.
 
 **Build faster. Ship more. Learn always.**
 
 ---
 
-*Sigstack is maintained at /Users/wsig/Developer/sigstack*
-*127 skills across 12 plugins*
-*Updated: February 1, 2026*
+*Sigstack is maintained at github.com/willsigmon/sigstack + ~/Projects/marlin*
+*84 skills · 27 MCP servers · 7 agents · 4 funnels*
+*Updated: February 20, 2026 — v3.5 "Marlin"*

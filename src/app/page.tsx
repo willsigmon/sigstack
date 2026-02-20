@@ -267,6 +267,11 @@ const mcpServers = [
   { name: "Glif", purpose: "AI workflows" },
   { name: "iMessage", purpose: "Messages" },
   { name: "Omi", purpose: "Wearable memory" },
+  { name: "Marlin Recall", purpose: "Federated memory" },
+  { name: "wsiglog", purpose: "Life logging" },
+  { name: "SigServe GW", purpose: "Remote access" },
+  { name: "Gemini Imagen", purpose: "Image gen" },
+  { name: "SigSkills", purpose: "Custom skills" },
 ];
 
 function StackCard({
@@ -956,7 +961,7 @@ export default function Home() {
             className="mb-12"
             style={{ color: "var(--muted)" }}
           >
-            <span className="font-medium" style={{ color: A1 }}>Jan 2026:</span> 36 plugins &middot; 84 skills &middot; 22 MCP servers &middot; Cowork-compatible
+            <span className="font-medium" style={{ color: A1 }}>Feb 2026:</span> 36 plugins &middot; 84 skills &middot; 27 MCP servers &middot; v3.5 &quot;Marlin&quot;
           </motion.p>
 
           {/* Stats */}
@@ -969,7 +974,7 @@ export default function Home() {
             {[
               { label: "Plugins", value: "36", color: A1 },
               { label: "Skills", value: "84", color: A2 },
-              { label: "MCP Servers", value: "22", color: "#d4a574" },
+              { label: "MCP Servers", value: "27", color: "#d4a574" },
             ].map((stat) => (
               <motion.div
                 key={stat.label}
@@ -1119,20 +1124,20 @@ export default function Home() {
             <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
               {[
                 {
-                  title: "Local Server (Tower)",
-                  text: "A home server running Unraid handles persistent services: n8n for workflow automation, PostgreSQL for life logging, and Home Assistant for smart home integration. All accessible via Tailscale VPN from any device.",
+                  title: "SigServe — The Brain",
+                  text: "A Mac Studio M2 Max running 30+ services is the single source of truth. All Claude interfaces (Web, Desktop, Code) route through SigServe via MCP Gateway + Tailscale Funnels. Accessible from anywhere.",
                 },
                 {
                   title: "Multi-Device Sync",
-                  text: "Code lives on GitHub. Config and memory persist on BRAIN. Syncthing keeps dotfiles synchronized across machines. Claude Code sessions can continue across any terminal with full context.",
+                  text: "sigstack-sync pushes config hourly to SigStudio and SigAir. git-autopush commits every 30s. Claude Desktop configs, shell aliases, and SSH keys are auto-deployed to all machines.",
                 },
                 {
-                  title: "Voice-First Workflow",
-                  text: "Omi captures conversations and memories throughout the day. Typeless converts natural speech directly into formatted prompts. Voice input enables hands-free coding and ideation.",
+                  title: "Voice & Chat Everywhere",
+                  text: "Omi captures conversations. Typeless converts speech to prompts. Marlin Router auto-responds in 12 iMessage group chats using dual-LLM (Claude + OpenAI). Call Marlin at +1 (844) 719-3335.",
                 },
                 {
-                  title: "Memory Persistence",
-                  text: "Letta Subconscious provides cross-session memory that survives context resets. Combined with Omi for conversation history and the memory graph, Claude maintains full continuity across sessions and devices.",
+                  title: "Federated Memory",
+                  text: "marlin-recall federates memory across MCP knowledge graph, contacts DB (2,475 records), Omi (18,300 conversations), and persistent memory files. Context survives across sessions, devices, and interfaces.",
                 },
               ].map((item) => (
                 <div key={item.title}>
@@ -1418,7 +1423,7 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
             <div className="text-center sm:text-left">
               <div className="font-black text-lg sm:text-xl mb-1" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>sigstack</div>
               <div className="text-xs sm:text-sm" style={{ color: "var(--muted)" }}>
-                Built with Claude Code and ~5,000 hours of figuring out what works.
+                v3.5 &quot;Marlin&quot; — Built with Claude Code and ~5,000 hours of figuring out what works.
               </div>
             </div>
             <div className="flex gap-4 sm:gap-6">
