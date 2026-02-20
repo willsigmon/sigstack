@@ -188,13 +188,21 @@ const terminalStack = [
 
 const agentStack = [
   {
+    name: "OpenClaw",
+    description: "AI agent gateway",
+    logo: "/icons/openclaw.svg",
+    bgColor: "bg-gradient-to-br from-violet-500/20 to-purple-600/30",
+    glowColor: "#8B5CF6",
+    url: "https://github.com/willsigmon/openclaw",
+    highlight: true,
+  },
+  {
     name: "Sled",
     description: "Voice from phone",
     logo: "https://cdn.simpleicons.org/airplayaudio/06B6D4",
     bgColor: "bg-gradient-to-br from-cyan-500/20 to-teal-500/30",
     glowColor: "#06B6D4",
     url: "https://sled.layercode.com",
-    highlight: true,
   },
   {
     name: "Plural",
@@ -1133,11 +1141,11 @@ export default function Home() {
                 },
                 {
                   title: "Voice & Chat Everywhere",
-                  text: "Omi captures conversations. Typeless converts speech to prompts. Marlin Router auto-responds in 12 iMessage group chats using dual-LLM (Claude + OpenAI). Call Marlin at +1 (844) 719-3335.",
+                  text: "Omi captures conversations. Typeless converts speech to prompts. Marlin Router auto-responds across iMessage group chats using dual-LLM (Claude + OpenAI). Voice calls via Twilio with realtime STT/TTS.",
                 },
                 {
                   title: "Federated Memory",
-                  text: "marlin-recall federates memory across MCP knowledge graph, contacts DB (2,475 records), Omi (18,300 conversations), and persistent memory files. Context survives across sessions, devices, and interfaces.",
+                  text: "marlin-recall federates memory across MCP knowledge graph, contacts DB, Omi conversation history, and persistent memory files. Context survives across sessions, devices, and interfaces.",
                 },
               ].map((item) => (
                 <div key={item.title}>
