@@ -1,0 +1,83 @@
+{
+  "env": {
+    "CLAUDE_PREFER_AGENTS": "1",
+    "CLAUDE_PARALLEL_EXECUTION": "1"
+  },
+  "permissions": {
+    "allow": [
+      "*"
+    ],
+    "deny": []
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 - <<'HOOK'\nimport json, sys, os\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    path = tool_input.get('file_path', '') if isinstance(tool_input, dict) else ''\n    if not path:\n        sys.exit(0)\n    # Block token-heavy files\n    blocked = ['package-lock.json', 'yarn.lock', '.min.js', '.min.css', '.bundle.js', '.bundle.css', '.map', '.xcodeproj/project.pbxproj']\n    if any(b in path for b in blocked) or '/Pods/' in path or '/DerivedData/' in path or '/.build/' in path:\n        print(f'❌ BLOCKED: {path} is a token-heavy file', file=sys.stderr)\n        sys.exit(2)\n    # Warn on large files (>100KB)\n    if os.path.exists(path):\n        size = os.path.getsize(path)\n        if size > 102400:\n            print(f'⚠️ WARNING: {path} is {size//1024}KB (>100KB)', file=sys.stderr)\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 - <<'HOOK'\nimport json, sys, os, re\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    cmd = tool_input.get('command', '') if isinstance(tool_input, dict) else ''\n    if not cmd:\n        sys.exit(0)\n    # Block commands touching token-wasteful directories\n    blocked = ['node_modules', '__pycache__', r'\\.git/', '/dist/', '/build/', 'DerivedData', '/Pods/', '/venv/', 'target/debug', 'target/release', r'\\.next/', r'\\.nuxt/']\n    if any(re.search(b, cmd) for b in blocked):\n        print('❌ BLOCKED: Command touches token-wasteful directory', file=sys.stderr)\n        sys.exit(2)\n    # Log command\n    os.makedirs(os.path.expanduser('~/.claude/logs'), exist_ok=True)\n    with open(os.path.expanduser('~/.claude/logs/bash-history.log'), 'a') as f:\n        from datetime import datetime\n        f.write(f\"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {cmd}\\n\")\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
+          }
+        ]
+      },
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 - <<'HOOK'\nimport json, sys\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    model = tool_input.get('model', '') if isinstance(tool_input, dict) else ''\n    if model and 'opus' in model.lower():\n        print('❌ BLOCKED: Opus usage prohibited (cost optimization). Use haiku or sonnet.', file=sys.stderr)\n        sys.exit(2)\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 - <<'HOOK'\nimport json, sys\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    content = tool_input.get('content', '') if isinstance(tool_input, dict) else ''\n    if content and len(content) > 51200:\n        print(f'⚠️ WARNING: Writing {len(content)//1024}KB file. Consider smaller chunks.', file=sys.stderr)\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
+          }
+        ]
+      },
+      {
+        "matcher": "Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 - <<'HOOK'\nimport json, sys\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    pattern = tool_input.get('pattern', '') if isinstance(tool_input, dict) else ''\n    if pattern in ['**/*', '*', '**']:\n        print(f'⚠️ WARNING: Very broad glob pattern may return thousands of files', file=sys.stderr)\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 - <<'HOOK'\nimport json, sys, os, subprocess\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    cmd = tool_input.get('command', '') if isinstance(tool_input, dict) else ''\n    if not cmd:\n        sys.exit(0)\n    # Notify on git operations\n    if cmd.startswith('git '):\n        parts = cmd.split()\n        op = parts[1] if len(parts) > 1 else 'operation'\n        if op in ['add', 'commit', 'push', 'pull', 'merge', 'rebase']:\n            subprocess.run(['osascript', '-e', f'display notification \"Git {op} completed\" with title \"Claude Code\"'], capture_output=True)\n    # Notify on xcodebuild\n    if 'xcodebuild' in cmd:\n        subprocess.run(['osascript', '-e', 'display notification \"Build completed\" with title \"Xcode\"'], capture_output=True)\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 - <<'HOOK'\nimport json, sys, os, subprocess\ntry:\n    data = json.load(sys.stdin)\n    tool_input = data.get('tool_input') or {}\n    path = tool_input.get('file_path', '') if isinstance(tool_input, dict) else ''\n    if not path:\n        sys.exit(0)\n    # Log edit\n    os.makedirs(os.path.expanduser('~/.claude/logs'), exist_ok=True)\n    with open(os.path.expanduser('~/.claude/logs/file-edits.log'), 'a') as f:\n        from datetime import datetime\n        f.write(f\"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Edited: {path}\\n\")\n    # Auto-format Swift files\n    if path.endswith('.swift'):\n        subprocess.run(['swift-format', '-i', path], capture_output=True)\nexcept Exception:\n    pass\nsys.exit(0)\nHOOK"
+          }
+        ]
+      }
+    ]
+  },
+  "alwaysThinkingEnabled": true,
+  "skipDangerousModePermissionPrompt": true
+}

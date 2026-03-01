@@ -1,0 +1,80 @@
+# === Sigmachines SSH Config ===
+# All auth via 1Password SSH agent (no local key files)
+
+Host *
+  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+  IdentitiesOnly yes
+  AddKeysToAgent yes
+  ServerAliveInterval 30
+  ServerAliveCountMax 4
+  StrictHostKeyChecking accept-new
+
+# === sigstudio (M4 Max - this machine, remote access) ===
+Host sigstudio
+  HostName 100.123.115.31
+  User wsig
+  ForwardAgent yes
+
+# === sigserve (M2 Max - bot server) ===
+Host sigserve
+  HostName 192.168.1.158
+  User wsig
+  ForwardAgent yes
+
+Host sigserve-ts
+  HostName sigserve.tail7b9e1.ts.net
+  User wsig
+  ForwardAgent yes
+
+# === sigair (MacBook Air) ===
+Host sigair
+  HostName sigair.local
+  User wsig
+  ForwardAgent yes
+  ConnectTimeout 3
+
+Host sigair-ts
+  HostName 100.84.151.34
+  User wsig
+  ForwardAgent yes
+
+# === sigtower (UNRAID) ===
+Host sigtower
+  HostName 192.168.1.139
+  User root
+  Port 2222
+  ConnectTimeout 3
+
+Host sigtower-ts
+  HostName 100.119.19.61
+  User root
+  Port 2222
+
+# === sigpc (Windows desktop) ===
+Host sigpc
+  HostName 192.168.1.107
+  User wsig
+  ConnectTimeout 5
+  ConnectionAttempts 2
+
+Host sigpc-ts
+  HostName 100.124.63.99
+  User wsig
+  ConnectTimeout 5
+
+# === hub (GCE exit node) ===
+Host hub
+  HostName 100.65.22.108
+  User root
+
+# === ally-x ===
+Host ally-x
+  HostName 100.85.136.109
+  User wsig
+
+# === Claude Code Mobile ===
+Host claude
+  HostName claude-mobile
+  User root
+  RequestTTY yes
+  RemoteCommand tmux attach -t claude || tmux new -s claude

@@ -1,0 +1,257 @@
+#!/bin/bash
+# sigstack-morning-brief — Daily brief generator
+# Aggregates calendar, weather, reminders, Omi data, and observations
+# Delivers summary via iMessage (OpenClaw) and Pushover
+# Run via launchd at 7:00 AM or on-demand
+
+set -e
+
+# PATH setup for launchd context (no login shell)
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/wsig/.local/bin:/Users/wsig/.nvm/versions/node/v22.17.1/bin"
+
+LOG=~/.claude/logs/sigstack-morning-brief.log
+QUEUE=~/.claude/memory-queue.jsonl
+BRIEF_DIR=~/.claude/briefs
+BRIEF_FILE="$BRIEF_DIR/$(date +%Y-%m-%d).md"
+
+mkdir -p ~/.claude/logs "$BRIEF_DIR"
+
+log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG"; }
+
+log "Morning brief generation starting"
+
+# Counters for summary
+EVENT_COUNT=0
+REMINDER_COUNT=0
+
+# Initialize brief
+cat > "$BRIEF_FILE" << EOF
+# Daily Brief - $(date '+%A, %B %d, %Y')
+
+Generated at $(date '+%H:%M')
+
+EOF
+
+# --- 1. Weather ---
+log "Fetching weather"
+WEATHER=$(curl -s "wttr.in/Raleigh?format=%c+%t+(feels+like+%f)" 2>/dev/null || echo "Weather unavailable")
+WEATHER_LINE=""
+if [ -n "$WEATHER" ] && [ "$WEATHER" != "Weather unavailable" ]; then
+  WEATHER_LINE="$WEATHER"
+  echo "## Weather" >> "$BRIEF_FILE"
+  echo "$WEATHER" >> "$BRIEF_FILE"
+
+  FORECAST=$(curl -s "wttr.in/Raleigh?format=%c+%t+%w" 2>/dev/null)
+  echo "" >> "$BRIEF_FILE"
+
+  if echo "$FORECAST" | grep -qi "rain\|🌧\|🌦\|⛈"; then
+    echo "Rain expected - grab an umbrella" >> "$BRIEF_FILE"
+  fi
+  echo "" >> "$BRIEF_FILE"
+else
+  echo "## Weather" >> "$BRIEF_FILE"
+  echo "Weather unavailable" >> "$BRIEF_FILE"
+  echo "" >> "$BRIEF_FILE"
+  WEATHER_LINE="Weather unavailable"
+fi
+
+# --- 2. Calendar Events (next 48 hours) ---
+log "Fetching calendar events"
+EVENTS=$(timeout 30 osascript -e '
+set output to ""
+tell application "Calendar"
+  set now to current date
+  set endDate to now + (2 * days)
+  repeat with cal in calendars
+    try
+      set evts to (every event of cal whose start date >= now and start date <= endDate)
+      repeat with e in evts
+        set eventStart to start date of e
+        set eventSummary to summary of e
+        set eventLoc to ""
+        try
+          set eventLoc to location of e
+        end try
+        set output to output & "- " & (eventStart as string) & " | " & eventSummary & " | " & eventLoc & linefeed
+      end repeat
+    end try
+  end repeat
+end tell
+return output
+' 2>/dev/null || echo "Calendar access unavailable")
+
+if [ -n "$EVENTS" ] && [ "$EVENTS" != "Calendar access unavailable" ]; then
+  EVENT_COUNT=$(echo "$EVENTS" | grep -c "^-" || true)
+  echo "## Calendar (Next 48 Hours)" >> "$BRIEF_FILE"
+  echo "" >> "$BRIEF_FILE"
+  echo "$EVENTS" | sort | while read -r line; do
+    echo "$line" >> "$BRIEF_FILE"
+  done
+  echo "" >> "$BRIEF_FILE"
+else
+  echo "## Calendar" >> "$BRIEF_FILE"
+  echo "No events in next 48 hours (or calendar unavailable)" >> "$BRIEF_FILE"
+  echo "" >> "$BRIEF_FILE"
+fi
+
+# --- 3. Reminders ---
+log "Fetching reminders"
+REMINDERS=$(timeout 30 osascript -e '
+set output to ""
+tell application "Reminders"
+  try
+    repeat with r in (reminders whose completed is false)
+      set rName to name of r
+      set rDue to ""
+      try
+        set rDue to due date of r as string
+      end try
+      set output to output & "- [ ] " & rName
+      if rDue is not "" then
+        set output to output & " (due: " & rDue & ")"
+      end if
+      set output to output & linefeed
+    end repeat
+  end try
+end tell
+return output
+' 2>/dev/null || echo "")
+
+if [ -n "$REMINDERS" ]; then
+  REMINDER_COUNT=$(echo "$REMINDERS" | grep -c "^\- \[" || true)
+  echo "## Reminders" >> "$BRIEF_FILE"
+  echo "" >> "$BRIEF_FILE"
+  echo "$REMINDERS" >> "$BRIEF_FILE"
+  echo "" >> "$BRIEF_FILE"
+fi
+
+# --- 4. Recent Observations from Memory Queue ---
+log "Checking memory queue"
+if [ -f "$QUEUE" ]; then
+  YESTERDAY=$(date -v-1d -Iseconds 2>/dev/null || date --date="yesterday" -Iseconds)
+  OBS=$(tail -100 "$QUEUE" | jq -r 'select(.timestamp >= "'"$YESTERDAY"'") | "- [\(.entity)] \(.observation)"' 2>/dev/null | sort -u | head -10)
+  if [ -n "$OBS" ]; then
+    echo "## System Observations (Last 24h)" >> "$BRIEF_FILE"
+    echo "" >> "$BRIEF_FILE"
+    echo "$OBS" >> "$BRIEF_FILE"
+    echo "" >> "$BRIEF_FILE"
+  fi
+fi
+
+# --- 5. Trash/City Services Check ---
+log "Checking city services"
+if [ -f ~/.claude/cache/trash-schedule.json ]; then
+  PICKUP_DAY=$(jq -r '.regular_day' < ~/.claude/cache/trash-schedule.json 2>/dev/null)
+  TODAY=$(date +%A)
+  TOMORROW=$(date -v+1d +%A 2>/dev/null || date --date="tomorrow" +%A)
+
+  if [ "$TODAY" = "$PICKUP_DAY" ]; then
+    echo "## Trash Day!" >> "$BRIEF_FILE"
+    echo "Today is $PICKUP_DAY - take bins to curb" >> "$BRIEF_FILE"
+    echo "" >> "$BRIEF_FILE"
+  elif [ "$TOMORROW" = "$PICKUP_DAY" ]; then
+    echo "## Trash Reminder" >> "$BRIEF_FILE"
+    echo "Tomorrow is $PICKUP_DAY - take out bins tonight" >> "$BRIEF_FILE"
+    echo "" >> "$BRIEF_FILE"
+  fi
+fi
+
+# --- 6. Omi Lifelogs (last 24 hours) ---
+log "Fetching Omi data"
+if command -v brain-omi-fetch &>/dev/null; then
+  OMI_CONVOS=$(brain-omi-fetch conversations 5 2>/dev/null | jq -r '.conversations[]? | "- **\(.structured.title)** \(.structured.emoji) - \(.structured.category)"' 2>/dev/null | head -5)
+  OMI_MEMORIES=$(brain-omi-fetch memories 5 2>/dev/null | jq -r '.memories[]? | "- \(.content)"' 2>/dev/null | head -5)
+
+  if [ -n "$OMI_CONVOS" ]; then
+    echo "## Recent Conversations (Omi)" >> "$BRIEF_FILE"
+    echo "" >> "$BRIEF_FILE"
+    echo "$OMI_CONVOS" >> "$BRIEF_FILE"
+    echo "" >> "$BRIEF_FILE"
+  fi
+
+  if [ -n "$OMI_MEMORIES" ]; then
+    echo "## Recent Memories (Omi)" >> "$BRIEF_FILE"
+    echo "" >> "$BRIEF_FILE"
+    echo "$OMI_MEMORIES" >> "$BRIEF_FILE"
+    echo "" >> "$BRIEF_FILE"
+  fi
+fi
+
+# --- 7. AI Tips & News ---
+log "Including AI tips"
+TIPS_TODAY=~/.claude/tips/$(date +%Y-%m-%d).md
+TIPS_YESTERDAY=~/.claude/tips/$(date -v-1d +%Y-%m-%d 2>/dev/null || date --date="yesterday" +%Y-%m-%d).md
+
+if [ -f "$TIPS_TODAY" ] || [ -f "$TIPS_YESTERDAY" ]; then
+  echo "## AI Tips & News" >> "$BRIEF_FILE"
+  echo "" >> "$BRIEF_FILE"
+
+  TOOL_UPDATES=""
+  if [ -f "$TIPS_TODAY" ]; then
+    TOOL_UPDATES=$(grep -A 10 "### Tool Updates" "$TIPS_TODAY" 2>/dev/null | grep "UPDATED" | head -3)
+  fi
+  if [ -z "$TOOL_UPDATES" ] && [ -f "$TIPS_YESTERDAY" ]; then
+    TOOL_UPDATES=$(grep -A 10 "### Tool Updates" "$TIPS_YESTERDAY" 2>/dev/null | grep "UPDATED" | head -3)
+  fi
+  if [ -n "$TOOL_UPDATES" ]; then
+    echo "**Recent Tool Updates:**" >> "$BRIEF_FILE"
+    echo "$TOOL_UPDATES" >> "$BRIEF_FILE"
+    echo "" >> "$BRIEF_FILE"
+  fi
+
+  if [ -f "$TIPS_TODAY" ]; then
+    VIBE_TIPS=$(grep -A 8 "Vibe Coding Tips" "$TIPS_TODAY" 2>/dev/null | grep "^\-" | head -3)
+    if [ -n "$VIBE_TIPS" ]; then
+      echo "**Vibe Coding Tips:**" >> "$BRIEF_FILE"
+      echo "$VIBE_TIPS" >> "$BRIEF_FILE"
+      echo "" >> "$BRIEF_FILE"
+    fi
+  fi
+
+  if [ -f "$TIPS_TODAY" ]; then
+    AI_NEWS=$(grep -A 5 "AI News & Announcements" "$TIPS_TODAY" 2>/dev/null | grep "^\-" | head -2)
+    if [ -n "$AI_NEWS" ]; then
+      echo "**AI News:**" >> "$BRIEF_FILE"
+      echo "$AI_NEWS" >> "$BRIEF_FILE"
+      echo "" >> "$BRIEF_FILE"
+    fi
+  fi
+
+  echo "*Full tips: ~/.claude/tips/$(date +%Y-%m-%d).md*" >> "$BRIEF_FILE"
+  echo "" >> "$BRIEF_FILE"
+fi
+
+# --- Footer ---
+echo "---" >> "$BRIEF_FILE"
+echo "*Brief generated by sigstack at $(date '+%H:%M:%S')*" >> "$BRIEF_FILE"
+
+log "Brief generated: $BRIEF_FILE"
+
+# --- Delivery ---
+
+# Build short summary for iMessage
+SUMMARY="Good morning! $(date '+%A %b %d')"
+[ -n "$WEATHER_LINE" ] && SUMMARY="$SUMMARY | $WEATHER_LINE"
+[ "$EVENT_COUNT" -gt 0 ] 2>/dev/null && SUMMARY="$SUMMARY | ${EVENT_COUNT} event(s)"
+[ "$REMINDER_COUNT" -gt 0 ] 2>/dev/null && SUMMARY="$SUMMARY | ${REMINDER_COUNT} reminder(s)"
+SUMMARY="$SUMMARY | Full brief on sigstudio"
+
+# Send iMessage via OpenClaw on sigserve (clawdbot Apple ID)
+log "Sending iMessage via OpenClaw (sigserve/bluebubbles)"
+ssh sigserve "openclaw message send \
+  --channel bluebubbles \
+  --target '+19192154255' \
+  -m '$(echo "$SUMMARY" | sed "s/'/'\\\\''/g")'" 2>>"$LOG" || log "iMessage delivery failed"
+
+# Send Pushover notification
+log "Sending Pushover notification"
+brain-notify "Morning Brief" "$SUMMARY" \
+  -o "file://$BRIEF_FILE" 2>/dev/null || log "Pushover delivery failed"
+
+# Log to memory queue
+echo '{"entity":"Daily_Brief","observation":"Morning brief generated for '"$(date +%Y-%m-%d)"'","timestamp":"'"$(date -Iseconds)"'"}' >> "$QUEUE"
+
+log "Morning brief complete"
+
+# Output location for scripts that call this
+echo "$BRIEF_FILE"

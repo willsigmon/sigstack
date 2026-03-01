@@ -11,9 +11,9 @@
 **ALWAYS use Sosumi MCP for Apple APIs** - never guess Swift/SwiftUI APIs.
 
 ## Tool Priority
-1. MCP tools first (22 connected)
-2. Plugins second (23 enabled)
-3. Skills third (84 in ~/.claude/skills/)
+1. MCP tools first (run `codex mcp list` for current set)
+2. Plugins second (check your current plugin inventory)
+3. Skills third (check `~/.claude/SKILLS_INDEX.md`)
 4. Spawn parallel agents for complex tasks
 5. Manual code last
 

@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SKILLS_DIR="$ROOT/claude/skills"
+
+if [[ ! -d "$SKILLS_DIR" ]]; then
+  echo "❌ skills directory missing: $SKILLS_DIR"
+  exit 1
+fi
+
+updated=0
+while IFS= read -r f; do
+  dir=$(basename "$(dirname "$f")")
+  canonical=${dir//_/-}
+  current=$(awk -F': ' '/^name:/ {print $2; exit}' "$f")
+
+  if [[ -z "$current" ]]; then
+    continue
+  fi
+
+  if [[ "$current" != "$canonical" ]]; then
+    perl -0777 -i -pe "s/^name:\s*.*\$/name: ${canonical}/m" "$f"
+    ((updated+=1))
+    printf 'updated %s: %s -> %s\n' "$f" "$current" "$canonical"
+  fi
+done < <(find "$SKILLS_DIR" -mindepth 2 -maxdepth 2 -name SKILL.md | sort)
+
+echo "done: updated=$updated"

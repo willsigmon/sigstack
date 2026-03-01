@@ -1,0 +1,12 @@
+# 1Password SSH Agent Configuration
+# Controls which keys are offered and in what order.
+# Keys are tried in order — put most-used first to avoid auth limit failures.
+
+[[ssh-keys]]
+item = "GitHub"
+
+[[ssh-keys]]
+item = "id_ed25519"
+
+[[ssh-keys]]
+item = "Tower Admin"

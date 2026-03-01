@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>com.wsig.sigstack-morning-brief</string>
+
+    <key>ProgramArguments</key>
+    <array>
+      <string>/Users/wsig/.local/bin/sigstack-morning-brief</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>PATH</key>
+      <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/wsig/.local/bin:/Users/wsig/.nvm/versions/node/v22.17.1/bin</string>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <!-- Daily at 07:00 local time -->
+    <key>StartCalendarInterval</key>
+    <dict>
+      <key>Hour</key>
+      <integer>9</integer>
+      <key>Minute</key>
+      <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/Users/wsig/.claude/logs/sigstack-morning-brief-stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/wsig/.claude/logs/sigstack-morning-brief-stderr.log</string>
+  </dict>
+</plist>

@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SKILLS_DIR="$ROOT/claude/skills"
+
+if [[ ! -d "$SKILLS_DIR" ]]; then
+  echo "❌ skills directory missing: $SKILLS_DIR"
+  exit 1
+fi
+
+skill_dirs=$(find "$SKILLS_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
+skill_files=$(find "$SKILLS_DIR" -mindepth 2 -maxdepth 2 -name SKILL.md | wc -l | tr -d ' ')
+
+bad_names_file="$(mktemp)"
+while IFS= read -r f; do
+  name=$(awk -F': ' '/^name:/ {print $2; exit}' "$f")
+  if [[ -z "$name" || ! "$name" =~ ^[a-z0-9-]+$ ]]; then
+    echo "$f|${name:-<missing>}" >> "$bad_names_file"
+  fi
+done < <(find "$SKILLS_DIR" -mindepth 2 -maxdepth 2 -name SKILL.md | sort)
+
+bad_names_count=$(wc -l < "$bad_names_file" | tr -d ' ')
+
+missing_new=0
+required_new=(
+  skill-authoring
+  sigmachines-fleet
+  session-manager
+  quick-commit
+  pr-reviewer
+  codebase-explorer
+  n8n-ops
+  supabase-ops
+  browser-automation
+  refactor-extract
+)
+for s in "${required_new[@]}"; do
+  [[ -d "$SKILLS_DIR/$s" ]] || ((missing_new+=1))
+done
+
+frontmatter_disable=$( (rg -l '^disable-model-invocation:' "$SKILLS_DIR" --glob '**/SKILL.md' || true) | wc -l | tr -d ' ')
+frontmatter_context=$( (rg -l '^context:\s*fork' "$SKILLS_DIR" --glob '**/SKILL.md' || true) | wc -l | tr -d ' ')
+frontmatter_user=$( (rg -l '^user-invocable:\s*true' "$SKILLS_DIR" --glob '**/SKILL.md' || true) | wc -l | tr -d ' ')
+frontmatter_hint=$( (rg -l '^argument-hint:' "$SKILLS_DIR" --glob '**/SKILL.md' || true) | wc -l | tr -d ' ')
+
+line_claude=$(wc -l < "$ROOT/claude/CLAUDE.md" | tr -d ' ')
+line_agents=$(wc -l < "$ROOT/codex/AGENTS.md" | tr -d ' ')
+
+printf "skill_dirs=%s\n" "$skill_dirs"
+printf "skill_files=%s\n" "$skill_files"
+printf "kebab_name_violations=%s\n" "$bad_names_count"
+printf "missing_new_skills=%s\n" "$missing_new"
+printf "frontmatter_disable_model=%s\n" "$frontmatter_disable"
+printf "frontmatter_context_fork=%s\n" "$frontmatter_context"
+printf "frontmatter_user_invocable_true=%s\n" "$frontmatter_user"
+printf "frontmatter_argument_hint=%s\n" "$frontmatter_hint"
+printf "claude_md_lines=%s\n" "$line_claude"
+printf "codex_agents_lines=%s\n" "$line_agents"
+
+if (( bad_names_count > 0 )); then
+  echo "--- bad skill names ---"
+  head -50 "$bad_names_file"
+fi
+
+if (( missing_new > 0 )); then
+  echo "--- missing required new skills ---"
+  for s in "${required_new[@]}"; do
+    [[ -d "$SKILLS_DIR/$s" ]] || echo "$s"
+  done
+fi
+
+rm -f "$bad_names_file"
