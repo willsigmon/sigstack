@@ -25,6 +25,17 @@ Never Guess: ❌ "~5 places" ✅ "47 refs in 12 files (LSP)"
 4. Agents (parallel)
 5. Manual code
 
+## MCP Startup Protocol (Code Sessions)
+
+Before starting code work:
+1. Run MCP preflight: `~/.codex/tools/codex-mcp-preflight.sh code`
+2. Confirm required MCP servers are enabled (`filesystem`, `memory`, `shell`, `github`)
+3. For iOS/Swift work, also require `sosumi` + `xcode`
+4. If preflight flags issues, report and fix MCP config before deep implementation
+
+Rule: MCP-first startup, shell-second discovery. Startup is strict-by-default; bypass once with `CODEX_MCP_PREFLIGHT_STRICT=0 codex ...`.
+Health check: run `codex_doctor` for a full Codex + MCP + config audit.
+
 ## 🧠 Context Engineering (Dec 2025)
 
 **Attention Budget**: Performance degrades with LENGTH, not difficulty.

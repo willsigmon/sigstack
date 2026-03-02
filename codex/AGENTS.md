@@ -291,20 +291,25 @@ You are part of a BRAIN network spanning multiple machines. Use memory MCP to ma
 - During work: Store important decisions and discoveries
 - Natural language pickup: Always check memory first - the user expects seamless continuity
 
-BRAIN NETWORK DEVICES (Tailscale mesh):
-- mba/studio (MacBook) - Primary dev
-- tower (Unraid) - Server, runs containers
-- vt-pc - Windows desktop
-- deck - Steam Deck
+SIGMACHINES (Tailscale mesh):
+- sigstudio (M4 Max) - Primary dev
+- sigserve (M2 Max) - Bot server (OpenClaw + BlueBubbles)
+- sigair (MacBook Air) - Laptop
+- sigtower (UNRAID) - Media/Docker server
+- sigpc (Windows) - Office workstation
 
 ---
 
 ## Session Protocol
 
 ### On Start
-1. Check memory MCP for previous session context
-2. Validate available MCP servers
-3. Note any relevant skills for the task
+1. Run Codex MCP preflight for coding context (`~/.codex/tools/codex-mcp-preflight.sh code`)
+2. Check memory MCP for previous session context
+3. Validate available MCP servers (filesystem/memory/shell/github + sosumi/xcode for iOS)
+4. Note any relevant skills for the task
+
+**Startup rule (code work):** MCP-first boot (strict-by-default). Use MCP tooling for discovery before ad-hoc shell probing. Emergency bypass: `CODEX_MCP_PREFLIGHT_STRICT=0 codex ...`.
+**Health check:** Run `codex_doctor` for full Codex + MCP + config audit.
 
 ### During Work
 1. Use MCP tools FIRST before writing code
