@@ -1,0 +1,41 @@
+{
+  "mcpServers": {
+    "memory": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory@latest"]
+    },
+    "sosumi": {
+      "type": "http",
+      "url": "https://sosumi.ai/mcp"
+    },
+    "github": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "xcode": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/Users/wsig/.mcp-fixed-servers/fixed-xcode.js"]
+    },
+    "time": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/Users/wsig/.mcp-fixed-servers/fixed-time.js"]
+    },
+    "clipboard": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/Users/wsig/.mcp-fixed-servers/fixed-clipboard.js"]
+    },
+    "notifications": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/Users/wsig/.mcp-fixed-servers/fixed-notifications.js"]
+    }
+  }
+}

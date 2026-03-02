@@ -1,6 +1,9 @@
 {
   "permissions": {
-    "allow": ["*"],
+    "allow": [
+      "*",
+      "mcp__microsoft_playwright_mcp__browser_snapshot"
+    ],
     "deny": []
   }
 }

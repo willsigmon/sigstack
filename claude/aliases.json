@@ -1,0 +1,8 @@
+{
+  "aliases": {
+    "clean": "find . -name '*.DS_Store' -delete",
+    "reindex": "claude --refresh-index",
+    "safe-find": "rg --ignore-file ~/.gitignore_global --files",
+    "validate": "bash ~/.claude/scripts/validate-bash.sh"
+  }
+}

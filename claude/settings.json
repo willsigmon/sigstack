@@ -1,8 +1,4 @@
 {
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/scripts/statusline-command.sh"
-  },
   "env": {
     "CLAUDE_PREFER_AGENTS": "1",
     "CLAUDE_PARALLEL_EXECUTION": "1"
@@ -82,5 +78,51 @@
       }
     ]
   },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": true,
+  "skipDangerousModePermissionPrompt": true,
+  "enabledPlugins": {
+    "claude-plugins-official:typescript-lsp": true,
+    "claude-plugins-official:pyright-lsp": true,
+    "thedotmack:claude-mem:claude-mem": true,
+    "jarrodwatts-claude-delegator:claude-delegator": true,
+    "claude-plugins-official:context7": true,
+    "claude-plugins-official:firebase": true,
+    "claude-plugins-official:stripe": true,
+    "claude-plugins-official:gitlab": true,
+    "claude-plugins-official:linear": true,
+    "claude-plugins-official:asana": true,
+    "claude-plugins-official:laravel-boost": true,
+    "claude-plugins-official:github": true,
+    "franks-claude-marketplace:codex-exec": true,
+    "claude-plugins-official:supabase": true,
+    "claude-plugins-official:playwright": true,
+    "claude-plugins-official:serena": true,
+    "claude-plugins-official:greptile": true,
+    "claude-plugins-official:skill-creator": true,
+    "claude-plugins-official:claude-md-management": true,
+    "claude-plugins-official:claude-code-setup": true,
+    "claude-plugins-official:plugin-dev": true,
+    "claude-plugins-official:hookify": true,
+    "claude-plugins-official:ralph-loop": true,
+    "claude-plugins-official:frontend-design": true,
+    "claude-plugins-official:playground": true,
+    "claude-plugins-official:learning-output-style": true,
+    "claude-plugins-official:security-guidance": true,
+    "claude-plugins-official:gopls-lsp": true,
+    "claude-plugins-official:rust-analyzer-lsp": true,
+    "claude-plugins-official:clangd-lsp": true,
+    "claude-plugins-official:php-lsp": true,
+    "claude-plugins-official:swift-lsp": true,
+    "claude-plugins-official:kotlin-lsp": true,
+    "claude-plugins-official:csharp-lsp": true,
+    "claude-plugins-official:jdtls-lsp": true,
+    "claude-plugins-official:lua-lsp": true,
+    "claude-plugins-official:agent-sdk-dev": true,
+    "claude-plugins-official:pr-review-toolkit": true,
+    "claude-plugins-official:commit-commands": true,
+    "claude-plugins-official:feature-dev": true,
+    "claude-plugins-official:code-review": true,
+    "claude-plugins-official:code-simplifier": true,
+    "claude-plugins-official:explanatory-output-style": true
+  }
 }
