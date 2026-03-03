@@ -43,7 +43,7 @@ export function Header() {
       >
         <div className="mx-auto max-w-5xl px-4 sm:px-6 flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
-          <a href="#hero" className="font-black text-lg text-[var(--text-primary)] hover:opacity-80 transition-opacity">
+          <a href="#hero" className="font-black text-lg leading-normal pb-0.5 text-[var(--text-primary)] hover:opacity-80 transition-opacity">
             {SITE.NAME}
           </a>
 
