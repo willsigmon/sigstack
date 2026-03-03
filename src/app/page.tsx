@@ -242,37 +242,35 @@ const infraStack = [
   },
 ];
 
+// 15 local MCP servers (0 npx, all direct node)
 const mcpServers = [
+  { name: "Marlin Recall", purpose: "Federated memory" },
   { name: "Sosumi", purpose: "Apple docs" },
+  { name: "Xcode", purpose: "iOS builds" },
+  { name: "osascript", purpose: "AppleScript" },
+  { name: "Calendar", purpose: "Events" },
+  { name: "Supabase", purpose: "Database" },
+  { name: "Omi", purpose: "Wearable memory" },
+  { name: "wsiglog", purpose: "Life logging" },
+  { name: "SigSkills", purpose: "Custom skills" },
+  { name: "Clay", purpose: "Contacts CRM" },
+  { name: "Glif", purpose: "AI workflows" },
+  { name: "Gemini Imagen", purpose: "Image gen" },
+  { name: "YouTube", purpose: "Transcripts" },
+  { name: "n8n", purpose: "Workflows" },
+  { name: "RSS", purpose: "Feed reader" },
+];
+
+// Deferred / cloud MCP servers (loaded on demand)
+const deferredServers = [
+  { name: "Slack", purpose: "Team chat" },
+  { name: "Gmail", purpose: "Email" },
+  { name: "Notion", purpose: "Docs & wikis" },
+  { name: "Stripe", purpose: "Payments" },
   { name: "GitHub", purpose: "PRs & issues" },
   { name: "Vercel", purpose: "Deploy" },
-  { name: "Supabase", purpose: "Database" },
-  { name: "Memory", purpose: "Knowledge graph" },
+  { name: "Playwright", purpose: "Browser" },
   { name: "Context7", purpose: "Library docs" },
-  { name: "n8n", purpose: "Workflows" },
-  { name: "Puppeteer", purpose: "Browser" },
-  { name: "Playwright", purpose: "Web automation" },
-  { name: "Xcode", purpose: "iOS builds" },
-  { name: "Calendar", purpose: "Events" },
-  { name: "Clipboard", purpose: "System clipboard" },
-  { name: "Notifications", purpose: "macOS alerts" },
-  { name: "osascript", purpose: "AppleScript" },
-  { name: "Fetch", purpose: "HTTP requests" },
-  { name: "Filesystem", purpose: "File access" },
-  { name: "Time", purpose: "Timezone" },
-  { name: "YouTube", purpose: "Transcripts" },
-  { name: "Pandoc", purpose: "Doc conversion" },
-  { name: "Greptile", purpose: "Code search" },
-  { name: "Firebase", purpose: "Backend" },
-  { name: "Stitch", purpose: "UI design" },
-  { name: "Glif", purpose: "AI workflows" },
-  { name: "iMessage", purpose: "Messages" },
-  { name: "Omi", purpose: "Wearable memory" },
-  { name: "Marlin Recall", purpose: "Federated memory" },
-  { name: "wsiglog", purpose: "Life logging" },
-  { name: "SigServe GW", purpose: "Remote access" },
-  { name: "Gemini Imagen", purpose: "Image gen" },
-  { name: "SigSkills", purpose: "Custom skills" },
 ];
 
 function StackCard({
@@ -952,7 +950,7 @@ export default function Home() {
             className="text-xl sm:text-2xl max-w-2xl mx-auto mb-4"
             style={{ color: "var(--sub)" }}
           >
-            Now built on <span className="font-semibold" style={{ color: "var(--foreground)" }}>Cowork Plugins</span> — Anthropic&apos;s official plugin architecture
+            A fully autonomous AI operating system — plugins, hooks, secrets, and home control
           </motion.p>
 
           <motion.p
@@ -962,7 +960,7 @@ export default function Home() {
             className="mb-12"
             style={{ color: "var(--muted)" }}
           >
-            <span className="font-medium" style={{ color: A1 }}>Mar 2026:</span> 4 plugins &middot; 18 skills &middot; 19 MCP servers &middot; v3.5 &quot;Marlin&quot;
+            <span className="font-medium" style={{ color: A1 }}>Mar 2026:</span> 11 plugins &middot; 18 skills &middot; 15 MCP servers &middot; 7 hooks &middot; v4.0 &quot;Baymax&quot;
           </motion.p>
 
           {/* Stats */}
@@ -973,9 +971,10 @@ export default function Home() {
             className="flex justify-center gap-6 sm:gap-10 md:gap-16 mb-10 sm:mb-14"
           >
             {[
-              { label: "Plugins", value: "4", color: A1 },
+              { label: "Plugins", value: "11", color: A1 },
               { label: "Skills", value: "18", color: A2 },
-              { label: "MCP Servers", value: "19", color: "#d4a574" },
+              { label: "MCP Servers", value: "15", color: "#d4a574" },
+              { label: "Hooks", value: "7", color: "#c2956a" },
             ].map((stat) => (
               <motion.div
                 key={stat.label}
@@ -1083,7 +1082,7 @@ export default function Home() {
         {/* MCP Servers */}
         <div className="mt-8 sm:mt-10">
           <h3 className="text-xs sm:text-sm font-medium mb-4 uppercase tracking-widest text-center" style={{ color: "var(--muted)" }}>
-            MCP Servers
+            15 Local MCP Servers <span style={{ color: "var(--muted)", opacity: 0.6 }}>(0 npx, all direct node)</span>
           </h3>
           <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
             {mcpServers.map((server, i) => (
@@ -1102,6 +1101,30 @@ export default function Home() {
               >
                 <div className="h-2 w-2 rounded-full animate-pulse-glow" style={{ backgroundColor: A1 }} />
                 <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>{server.name}</span>
+              </motion.div>
+            ))}
+          </div>
+          <h3 className="text-xs sm:text-sm font-medium mb-3 mt-6 uppercase tracking-widest text-center" style={{ color: "var(--muted)", opacity: 0.7 }}>
+            + Deferred Cloud Integrations
+          </h3>
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+            {deferredServers.map((server, i) => (
+              <motion.div
+                key={server.name}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full border"
+                style={{
+                  background: "var(--background)",
+                  borderColor: "var(--border)",
+                  opacity: 0.7,
+                }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 0.7, scale: 1 }}
+                whileHover={{ scale: 1.05, opacity: 1 }}
+                transition={{ delay: i * 0.03 }}
+                viewport={{ once: true }}
+              >
+                <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--muted)" }} />
+                <span className="text-xs font-medium" style={{ color: "var(--muted)" }}>{server.name}</span>
               </motion.div>
             ))}
           </div>
@@ -1181,19 +1204,26 @@ cp claude/CLAUDE.md ~/.claude/CLAUDE.md`}</CodeBlock>
       <section className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16" style={{ zIndex: 1 }}>
         <FadeIn>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-2 text-center" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>Plugins</h2>
-          <p className="text-xs sm:text-sm text-center mb-6 sm:mb-8" style={{ color: "var(--muted)" }}>4 installed plugins — lean, focused, no bloat</p>
+          <p className="text-xs sm:text-sm text-center mb-6 sm:mb-8" style={{ color: "var(--muted)" }}>11 plugins — development, review, security, and workflow automation</p>
         </FadeIn>
 
-        <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-2">
+        <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-3">
           {[
             { title: "superpowers", description: "Extended Claude Code capabilities and autonomy", color: A1 },
-            { title: "safety-net", description: "Guardrails for destructive operations and risky commands", color: A2 },
-            { title: "security-guidance", description: "Security best practices and vulnerability detection", color: "#d4a574" },
-            { title: "sourcekit-lsp", description: "Swift language server integration for Xcode projects", color: "#c2956a" },
+            { title: "feature-dev", description: "7-phase structured feature development with parallel architects", color: A2 },
+            { title: "pr-review-toolkit", description: "6 specialist review agents — tests, types, silent failures, comments", color: "#d4a574" },
+            { title: "commit-commands", description: "/commit, /commit-push-pr, and /clean_gone in one shot", color: "#c2956a" },
+            { title: "hookify", description: "Create hooks from natural language — /hookify 'no console.log'", color: A1 },
+            { title: "context7", description: "Version-specific library docs via MCP for any framework", color: A2 },
+            { title: "skill-creator", description: "Full skill authoring pipeline with eval and benchmarks", color: "#d4a574" },
+            { title: "claude-md-management", description: "Audit and auto-improve CLAUDE.md from session learnings", color: "#c2956a" },
+            { title: "safety-net", description: "Guardrails for destructive operations and risky commands", color: A1 },
+            { title: "security-guidance", description: "Security best practices and vulnerability detection", color: A2 },
+            { title: "sourcekit-lsp", description: "Swift language server integration for Xcode projects", color: "#d4a574" },
           ].map((item, i) => (
-            <FadeIn key={item.title} delay={i * 0.1}>
+            <FadeIn key={item.title} delay={i * 0.05}>
               <motion.div
-                className="rounded-xl sm:rounded-2xl p-4 sm:p-6 border h-full overflow-hidden"
+                className="rounded-xl sm:rounded-2xl p-4 sm:p-5 border h-full overflow-hidden"
                 style={{
                   background: "var(--surface)",
                   borderColor: "var(--border)",
@@ -1201,14 +1231,53 @@ cp claude/CLAUDE.md ~/.claude/CLAUDE.md`}</CodeBlock>
                 whileHover={{ y: -5, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 400 }}
               >
-                {/* Gradient top bar */}
-                <div className="h-1 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 mb-3 sm:mb-5" style={{ background: `linear-gradient(135deg, ${item.color}, ${A2})` }} />
-                <h3 className="text-sm sm:text-lg font-bold mb-1 sm:mb-2" style={{ color: "var(--foreground)" }}>{item.title}</h3>
-                <p className="text-[10px] sm:text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{item.description}</p>
+                <div className="h-1 -mx-4 sm:-mx-5 -mt-4 sm:-mt-5 mb-3 sm:mb-4" style={{ background: `linear-gradient(135deg, ${item.color}, ${A2})` }} />
+                <h3 className="text-sm sm:text-base font-bold mb-1" style={{ color: "var(--foreground)" }}>{item.title}</h3>
+                <p className="text-[10px] sm:text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{item.description}</p>
               </motion.div>
             </FadeIn>
           ))}
         </div>
+      </section>
+
+      {/* ═══ Hooks ═══ */}
+      <section className="mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-12" style={{ zIndex: 1 }}>
+        <FadeIn>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-2 text-center" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>Hooks</h2>
+          <p className="text-xs sm:text-sm text-center mb-6 sm:mb-8" style={{ color: "var(--muted)" }}>7 hooks — automatic guardrails and system awareness on every action</p>
+        </FadeIn>
+
+        <FadeIn delay={0.1}>
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { name: "SessionStart", description: "Injects live SigServe status — disk, Docker, 50 services, alerts, git branch", timing: "On boot" },
+              { name: "PreCompact", description: "Saves full transcript + extracts action items and decisions before context compaction", timing: "Before compact" },
+              { name: "Read Guard", description: "Blocks lockfiles, minified code, .xcodeproj, Pods/, DerivedData/. Warns on files >100KB", timing: "Before read" },
+              { name: "Bash Guard", description: "Blocks commands touching node_modules, .git/, __pycache__, dist/, build/. Logs all commands", timing: "Before bash" },
+              { name: "Write Guard", description: "Warns when writing files larger than 50KB to prevent token waste", timing: "Before write" },
+              { name: "Glob Guard", description: "Warns on overly broad glob patterns that could return thousands of files", timing: "Before glob" },
+              { name: "Swift Formatter", description: "Auto-runs swift-format on every .swift file edit. Logs all file edits", timing: "After edit" },
+            ].map((hook, i) => (
+              <motion.div
+                key={hook.name}
+                className="rounded-xl p-4 sm:p-5 border"
+                style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -3 }}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="h-2 w-2 rounded-full" style={{ backgroundColor: A1 }} />
+                  <span className="text-sm font-bold" style={{ color: "var(--foreground)" }}>{hook.name}</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full ml-auto" style={{ background: `${A1}15`, color: A1 }}>{hook.timing}</span>
+                </div>
+                <p className="text-[10px] sm:text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{hook.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </FadeIn>
       </section>
 
       {/* ═══ Philosophy / Workflow Patterns ═══ */}
@@ -1372,7 +1441,7 @@ cp claude/CLAUDE.md ~/.claude/CLAUDE.md`}</CodeBlock>
             <div className="text-center sm:text-left">
               <div className="font-black text-lg sm:text-xl mb-1" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>sigstack</div>
               <div className="text-xs sm:text-sm" style={{ color: "var(--muted)" }}>
-                v3.5 &quot;Marlin&quot; — Built with Claude Code and ~5,000 hours of figuring out what works.
+                v4.0 &quot;Baymax&quot; — Built with Claude Code and ~5,000 hours of figuring out what works.
               </div>
             </div>
             <div className="flex gap-4 sm:gap-6">
