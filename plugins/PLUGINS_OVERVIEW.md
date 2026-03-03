@@ -173,7 +173,6 @@ Persistent memory, context management.
 
 | Skill | Purpose |
 |-------|---------|
-| `letta-expert` | Stateful AI agents |
 | `mem0-expert` | Memory layer |
 | `vector-db-expert` | Vector databases |
 | `mcp-memory-expert` | MCP memory |

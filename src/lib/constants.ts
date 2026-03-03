@@ -7,8 +7,6 @@ export const URLS = {
   // Stack tools — Core
   CLAUDE_CODE: "https://claude.ai/code",
   OMI: "https://www.omi.me/?ref=WILLSIGMON", // affiliate
-  LETTA: "https://letta.com",
-
   // Stack tools — Voice
   TYPELESS: "https://www.typeless.com/?via=wsig", // affiliate
 

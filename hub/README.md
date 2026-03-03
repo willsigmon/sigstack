@@ -9,7 +9,6 @@ Central services for the Sigstack network, running on **sigserve** (Mac Studio).
 Unified memory hub that aggregates all data sources:
 
 - **Local SQLite** — Fast cache with FTS5 full-text search
-- **Letta** — Cross-session agent memories
 - **Omi** — Pendant conversations and memories
 - **Knowledge Graph** — Entity relationships
 
@@ -24,7 +23,6 @@ GET  /health        → Source status
 POST /search        → Unified search across all sources
 POST /ingest        → Store new memory
 GET  /omi/memories  → Omi memories
-GET  /letta/memories → Letta agent blocks
 ```
 
 ### LLM Proxy (Future)

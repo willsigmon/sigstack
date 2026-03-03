@@ -146,15 +146,8 @@ const coreStack = [
     glowColor: "#10B981",
     url: "https://www.omi.me/?ref=WILLSIGMON",
   },
-  {
-    name: "Letta",
-    description: "Cross-session memory",
-    logo: "/icons/letta.png",
-    bgColor: "bg-gradient-to-br from-teal-500/20 to-cyan-500/30",
-    glowColor: "#14B8A6",
-    url: "https://letta.com",
-  },
 ];
+
 
 const voiceStack = [
   {

@@ -34,14 +34,6 @@ export const coreStack: readonly StackItem[] = [
     glowColor: "#10B981",
     url: URLS.OMI,
   },
-  {
-    name: "Letta",
-    description: "Cross-session memory",
-    logo: "/icons/letta.png",
-    bgColor: "bg-gradient-to-br from-teal-500/30 to-cyan-500/40",
-    glowColor: "#14B8A6",
-    url: URLS.LETTA,
-  },
 ];
 
 export const voiceStack: readonly StackItem[] = [
@@ -142,7 +134,6 @@ export const mcpServers: readonly McpServer[] = [
   { name: "GitHub", purpose: "PRs & issues" },
   { name: "Vercel", purpose: "Deploy" },
   { name: "Supabase", purpose: "Database" },
-  { name: "Letta", purpose: "Cross-session memory" },
   { name: "Context7", purpose: "Library docs" },
   { name: "n8n", purpose: "Workflows" },
   { name: "Memory", purpose: "Knowledge graph" },

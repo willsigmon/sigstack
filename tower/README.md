@@ -33,7 +33,7 @@ MCP Memory Server → reads/writes memory.json
 | Home Assistant | 8123 | Smart home, desk automation, CI status lights |
 | Hub (LLM proxy) | 3030 | OpenAI-compatible router |
 | Ollama | 11434 | Local LLM inference |
-| Sigserve Memory API | 8100 | Unified memory hub (SQLite + Letta + Omi) |
+| Sigserve Memory API | 8100 | Unified memory hub (SQLite + Omi) |
 | Omi | — | Conversation ingestion from wearable |
 
 ## Connected Devices

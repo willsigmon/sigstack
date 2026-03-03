@@ -15,7 +15,6 @@
   "keywords": [
     "claude",
     "claude-code",
-    "letta",
     "subconscious",
     "memory",
     "multi-agent",
@@ -26,10 +25,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "scripts": {
-    "sync": "tsx scripts/sync_letta_memory.ts",
-    "send": "tsx scripts/send_messages_to_letta.ts"
-  },
+  "scripts": {},
   "dependencies": {
     "tsx": "^4.7.0"
   },

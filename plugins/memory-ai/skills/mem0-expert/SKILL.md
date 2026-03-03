@@ -197,12 +197,12 @@ volumes:
 
 ## vs Alternatives
 
-| Feature | Mem0 | Letta | Zep |
-|---------|------|-------|-----|
-| Auto-extraction | ✅ | ✅ | ✅ |
-| Self-hosted | ✅ | ✅ | ✅ |
-| Multi-user | ✅ | ✅ | ✅ |
-| Pricing | $20/mo | $20/mo | $20/mo |
-| Focus | Simple memory | Stateful agents | Enterprise |
+| Feature | Mem0 | Zep |
+|---------|------|-----|
+| Auto-extraction | ✅ | ✅ |
+| Self-hosted | ✅ | ✅ |
+| Multi-user | ✅ | ✅ |
+| Pricing | $20/mo | $20/mo |
+| Focus | Simple memory | Enterprise |
 
 Use when: User preferences, conversation history, personalization, cross-session context

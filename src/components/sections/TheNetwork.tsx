@@ -22,7 +22,7 @@ const NETWORK_ITEMS = [
   {
     title: "Memory Persistence",
     description:
-      "Letta Subconscious provides cross-session memory that survives context resets. Combined with Omi for conversation history and the memory graph, Claude maintains full continuity across sessions and devices.",
+      "Omi captures conversation history and the memory graph gives Claude full continuity across sessions and devices. Context survives resets and persists across machines.",
   },
 ] as const;
 

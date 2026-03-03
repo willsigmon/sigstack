@@ -188,7 +188,7 @@ Good: 🤔 "Better how? More iOS 26-native? Better contrast?
 
 ### 1. **MCP Tools = First Choice (ALWAYS CHECK FIRST)**
    **Active MCP servers (verify with `codex mcp list`) are your primary tools:**
-   - Memory/Letta MCP for continuity and long-term context
+   - Memory MCP for continuity and long-term context
    - Notion/Figma/Supabase/SQLite MCPs for workspace and data operations
    - Playwright MCP for browser automation and UI checks
    - OSA Script MCP for macOS automation

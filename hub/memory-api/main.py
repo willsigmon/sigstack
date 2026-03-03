@@ -3,7 +3,6 @@ Sigserve Unified Memory API
 
 Central hub for querying all memory sources:
 - Omi (conversations, memories from pendant)
-- Letta (agent memories, cross-session context)
 - Knowledge Graph (MCP memory server)
 - Local SQLite (fast cache + full-text search)
 
@@ -20,7 +19,7 @@ import asyncio
 import sqlite3
 import json
 
-from sources import omi, letta, knowledge_graph, local_db, wsiglog
+from sources import omi, knowledge_graph, local_db, wsiglog
 
 # Extended DB path for SIGSERVE
 SIGSERVE_DB = Path.home() / ".sigserve" / "memory.db"
@@ -42,7 +41,7 @@ app.add_middleware(
 
 class SearchRequest(BaseModel):
     query: str
-    sources: list[str] = ["all"]  # omi, letta, graph, local, all
+    sources: list[str] = ["all"]  # omi, graph, local, all
     limit: int = 20
     days_back: Optional[int] = None
 
@@ -86,10 +85,6 @@ async def root():
             "/omi/memories": "Omi pendant memories",
             "/omi/conversations": "Omi conversations",
 
-            # Letta
-            "/letta/memories": "Letta agent memories",
-            "/letta/search": "Search Letta history",
-
             # Knowledge Graph
             "/graph/search": "Knowledge graph search",
             "/graph/entities": "Get entities",
@@ -110,13 +105,12 @@ async def health():
     """Check health of all memory sources"""
     statuses = await asyncio.gather(
         omi.health_check(),
-        letta.health_check(),
         knowledge_graph.health_check(),
         local_db.health_check(),
         return_exceptions=True
     )
 
-    sources = ["omi", "letta", "graph", "local"]
+    sources = ["omi", "graph", "local"]
     health_status = {}
 
     for source, status in zip(sources, statuses):
@@ -148,11 +142,6 @@ async def list_sources():
                 "capabilities": ["conversations", "memories", "search"],
             },
             {
-                "name": "letta",
-                "description": "Letta agents - cross-session context and guidance",
-                "capabilities": ["memories", "search", "agents"],
-            },
-            {
                 "name": "graph",
                 "description": "Knowledge graph - entities and relationships",
                 "capabilities": ["entities", "relations", "search"],
@@ -178,15 +167,13 @@ async def unified_search(request: SearchRequest):
 
     sources_to_query = request.sources
     if "all" in sources_to_query:
-        sources_to_query = ["omi", "letta", "graph", "local"]
+        sources_to_query = ["omi", "graph", "local"]
 
     # Query all sources in parallel
     tasks = []
     for source in sources_to_query:
         if source == "omi":
             tasks.append(omi.search(request.query, request.limit, request.days_back))
-        elif source == "letta":
-            tasks.append(letta.search(request.query, request.limit))
         elif source == "graph":
             tasks.append(knowledge_graph.search(request.query, request.limit))
         elif source == "local":
@@ -242,23 +229,6 @@ async def get_omi_conversations(
 ):
     """Get recent conversations from Omi"""
     return await omi.get_conversations(limit=limit, days_back=days_back)
-
-
-# === Letta endpoints ===
-
-@app.get("/letta/memories")
-async def get_letta_memories():
-    """Get memories from Letta agent"""
-    return await letta.get_memories()
-
-
-@app.get("/letta/search")
-async def search_letta(
-    query: str,
-    limit: int = Query(default=10, le=50)
-):
-    """Search Letta conversation history"""
-    return await letta.search(query, limit)
 
 
 # === Knowledge Graph endpoints ===
@@ -363,7 +333,7 @@ async def watcher_status():
 
 class OracleRequest(BaseModel):
     question: str
-    sources: list[str] = ["all"]  # screens, browser, git, memories, omi, letta, all
+    sources: list[str] = ["all"]  # screens, browser, git, memories, omi, all
     limit: int = 20
     days_back: Optional[int] = 7
 
@@ -392,7 +362,7 @@ async def oracle(request: OracleRequest):
     # Determine sources to query
     sources_to_query = request.sources
     if "all" in sources_to_query:
-        sources_to_query = ["screens", "browser", "git", "memories", "omi", "letta"]
+        sources_to_query = ["screens", "browser", "git", "memories", "omi"]
 
     evidence = []
 
@@ -513,15 +483,6 @@ async def oracle(request: OracleRequest):
         for r in omi_results:
             evidence.append({
                 "source": "omi",
-                "content": r.get("content", "")[:500],
-                "metadata": r.get("metadata", {})
-            })
-
-    if "letta" in sources_to_query:
-        letta_results = await letta.search(request.question, limit=request.limit // 2)
-        for r in letta_results:
-            evidence.append({
-                "source": "letta",
                 "content": r.get("content", "")[:500],
                 "metadata": r.get("metadata", {})
             })

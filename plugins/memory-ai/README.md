@@ -6,7 +6,6 @@
 
 | Skill | Description | Pricing |
 |-------|-------------|---------|
-| `letta-expert` | Stateful AI agents with MemGPT | Free + $20/mo |
 | `vector-db-expert` | Pinecone, Weaviate, Chroma for RAG | $25-150/mo |
 | `mcp-memory-expert` | MCP memory servers for Claude | Free |
 | `knowledge-graph-expert` | Entity-relation storage | Free (local) |
