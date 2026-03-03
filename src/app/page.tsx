@@ -962,7 +962,7 @@ export default function Home() {
             className="mb-12"
             style={{ color: "var(--muted)" }}
           >
-            <span className="font-medium" style={{ color: A1 }}>Feb 2026:</span> 36 plugins &middot; 84 skills &middot; 27 MCP servers &middot; v3.5 &quot;Marlin&quot;
+            <span className="font-medium" style={{ color: A1 }}>Mar 2026:</span> 4 plugins &middot; 18 skills &middot; 19 MCP servers &middot; v3.5 &quot;Marlin&quot;
           </motion.p>
 
           {/* Stats */}
@@ -973,9 +973,9 @@ export default function Home() {
             className="flex justify-center gap-6 sm:gap-10 md:gap-16 mb-10 sm:mb-14"
           >
             {[
-              { label: "Plugins", value: "36", color: A1 },
-              { label: "Skills", value: "84", color: A2 },
-              { label: "MCP Servers", value: "27", color: "#d4a574" },
+              { label: "Plugins", value: "4", color: A1 },
+              { label: "Skills", value: "18", color: A2 },
+              { label: "MCP Servers", value: "19", color: "#d4a574" },
             ].map((stat) => (
               <motion.div
                 key={stat.label}
@@ -1162,14 +1162,16 @@ export default function Home() {
 
         <FadeIn delay={0.1}>
           <div className="max-w-3xl mx-auto space-y-4">
-            <CodeBlock>{`# Install via Claude Code CLI
-claude plugins install sigstack
-
-# Or clone and symlink manually
+            <CodeBlock>{`# Clone the stack
 git clone https://github.com/willsigmon/sigstack.git
-ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
+cd sigstack
+
+# Symlink rules, skills, and config into Claude Code
+ln -s $(pwd)/claude/rules ~/.claude/rules
+ln -s $(pwd)/claude/skills ~/.claude/skills
+cp claude/CLAUDE.md ~/.claude/CLAUDE.md`}</CodeBlock>
             <p className="text-xs text-center" style={{ color: "var(--muted)" }}>
-              Built on the official <a href="https://claude.com/blog/cowork-plugins" target="_blank" style={{ color: A1 }} className="hover:opacity-80">Cowork Plugins</a> architecture
+              Rules, skills, hooks, and MCP config — everything Claude Code needs to operate like Marlin
             </p>
           </div>
         </FadeIn>
@@ -1178,18 +1180,16 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
       {/* ═══ Core Plugins ═══ */}
       <section className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-16" style={{ zIndex: 1 }}>
         <FadeIn>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-2 text-center" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>Core Plugins</h2>
-          <p className="text-xs sm:text-sm text-center mb-6 sm:mb-8" style={{ color: "var(--muted)" }}>6 domain plugins + 17 from community marketplaces — organized by context</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-2 text-center" style={{ color: "var(--foreground)", fontFamily: "var(--font-instrument-serif), Georgia, serif", fontStyle: "italic" }}>Plugins</h2>
+          <p className="text-xs sm:text-sm text-center mb-6 sm:mb-8" style={{ color: "var(--muted)" }}>4 installed plugins — lean, focused, no bloat</p>
         </FadeIn>
 
-        <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:gap-5 grid-cols-2 lg:grid-cols-2">
           {[
-            { title: "ios-dev", description: "Swift, SwiftUI, Xcode, CloudKit, SwiftData", color: A1 },
-            { title: "app-dev", description: "Features, audio, sync, ops, preferences", color: "#d4a574" },
-            { title: "dev-essentials", description: "Glif, Resend, performance, multi-agent coordination", color: A2 },
-            { title: "superclaude", description: "Meta-orchestration, agents, /spawn, /analyze", color: "#c2956a" },
-            { title: "work", description: "Enterprise apps, databases, dashboards", color: A1 },
-            { title: "media", description: "Podcasts, audio, RSS, streaming", color: "#b8956a" },
+            { title: "superpowers", description: "Extended Claude Code capabilities and autonomy", color: A1 },
+            { title: "safety-net", description: "Guardrails for destructive operations and risky commands", color: A2 },
+            { title: "security-guidance", description: "Security best practices and vulnerability detection", color: "#d4a574" },
+            { title: "sourcekit-lsp", description: "Swift language server integration for Xcode projects", color: "#c2956a" },
           ].map((item, i) => (
             <FadeIn key={item.title} delay={i * 0.1}>
               <motion.div
@@ -1262,58 +1262,6 @@ ln -s $(pwd)/sigstack/plugins/* ~/.claude/plugins/cache/sigstack/`}</CodeBlock>
               ))}
             </div>
           </motion.div>
-        </FadeIn>
-      </section>
-
-      {/* ═══ Showcase — Leavn ═══ */}
-      <section className="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-12" style={{ zIndex: 1 }}>
-        <FadeIn>
-          <div className="rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border overflow-hidden" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-            {/* Gradient top bar */}
-            <div className="h-1 -mx-4 sm:-mx-6 md:-mx-8 -mt-4 sm:-mt-6 md:-mt-8 mb-4 sm:mb-6 md:mb-8" style={{ background: GRAD }} />
-
-            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-              <motion.div
-                className="flex-shrink-0"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <Image
-                  src="/leavn-icon.png"
-                  alt="Leavn App Icon"
-                  width={64}
-                  height={64}
-                  className="rounded-[14px] shadow-lg w-14 h-14 sm:w-16 sm:h-16"
-                />
-              </motion.div>
-
-              <div className="flex-1 text-center sm:text-left">
-                <p className="text-[10px] sm:text-xs mb-0.5 sm:mb-1" style={{ color: "var(--muted)" }}>Built with this stack</p>
-                <h3 className="text-base sm:text-lg font-bold mb-0.5 sm:mb-1" style={{ color: "var(--foreground)" }}>Leavn.app</h3>
-                <p className="text-xs sm:text-sm max-w-md" style={{ color: "var(--muted)" }}>
-                  A Bible study app built ~90% with Claude Code using this stack.
-                </p>
-              </div>
-
-              <motion.a
-                href="https://leavn.app"
-                target="_blank"
-                className="inline-flex items-center gap-2 rounded-full px-4 sm:px-5 py-2 sm:py-2.5 border text-xs sm:text-sm font-medium transition-colors"
-                style={{
-                  background: "var(--background)",
-                  borderColor: "var(--border)",
-                  color: "var(--foreground)",
-                }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                View App
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </motion.a>
-            </div>
-          </div>
         </FadeIn>
       </section>
 
