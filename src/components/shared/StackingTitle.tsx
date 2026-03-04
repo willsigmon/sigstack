@@ -10,20 +10,21 @@ interface StackingTitleProps {
   readonly skipAnimation?: boolean;
 }
 
+const LETTERS = "sigstack".split("");
+
 export function StackingTitle({ onComplete, onReplay, skipAnimation = false }: StackingTitleProps) {
-  const letters = "sigstack".split("");
   const [phase, setPhase] = useState<"falling" | "stacking" | "shuffling" | "done">(skipAnimation ? "done" : "falling");
   const containerRef = useRef<HTMLDivElement>(null);
   const [letterOffsets, setLetterOffsets] = useState<number[]>([]);
 
-  const stackedPositions = useMemo(() => letters.map((_, i) => ({
+  const stackedPositions = useMemo(() => LETTERS.map((_, i) => ({
     x: (Math.random() - 0.5) * 20,
     y: -i * 18,
     rotate: (Math.random() - 0.5) * 25,
     scale: 1,
   })), []);
 
-  const initialPositions = useMemo(() => letters.map(() => ({
+  const initialPositions = useMemo(() => LETTERS.map(() => ({
     y: -300 - (Math.random() * 60),
     x: (Math.random() - 0.5) * 200,
     rotate: Math.random() * 180 - 90,
@@ -33,10 +34,10 @@ export function StackingTitle({ onComplete, onReplay, skipAnimation = false }: S
     const measureLetters = () => {
       const measurements: number[] = [];
       const tempSpan = document.createElement("span");
-      tempSpan.style.cssText = "position:absolute;visibility:hidden;font-size:clamp(4.5rem,12vw+1rem,9rem);font-weight:900;letter-spacing:-0.025em;font-family:var(--font-instrument-serif),Georgia,serif;font-style:italic;";
+      tempSpan.style.cssText = "position:absolute;visibility:hidden;font-size:clamp(4.5rem, 12vw + 1rem, 9rem);font-weight:900;letter-spacing:-0.025em;font-family:var(--font-instrument-serif),Georgia,serif;font-style:italic;";
       document.body.appendChild(tempSpan);
 
-      letters.forEach(letter => {
+      LETTERS.forEach(letter => {
         tempSpan.textContent = letter;
         measurements.push(tempSpan.getBoundingClientRect().width);
       });
@@ -58,7 +59,7 @@ export function StackingTitle({ onComplete, onReplay, skipAnimation = false }: S
     measureLetters();
     window.addEventListener("resize", measureLetters);
     return () => window.removeEventListener("resize", measureLetters);
-  }, [letters]);
+  }, []);
 
   useEffect(() => {
     if (skipAnimation) {
@@ -77,8 +78,9 @@ export function StackingTitle({ onComplete, onReplay, skipAnimation = false }: S
 
   const getOffset = (i: number) => {
     if (letterOffsets.length > 0) return letterOffsets[i];
-    const avgWidth = 48;
-    const totalWidth = letters.length * avgWidth;
+    // Fallback: estimate ~65px per letter at typical viewport widths
+    const avgWidth = 65;
+    const totalWidth = LETTERS.length * avgWidth;
     return (i * avgWidth) - (totalWidth / 2) + (avgWidth / 2);
   };
 
@@ -93,7 +95,7 @@ export function StackingTitle({ onComplete, onReplay, skipAnimation = false }: S
       title={phase === "done" ? "Click to replay animation" : undefined}
     >
       <div className={`relative flex items-center justify-center ${phase === "done" ? "cursor-pointer" : ""}`} style={{ overflow: "visible" }}>
-        {letters.map((letter, i) => {
+        {LETTERS.map((letter, i) => {
           const finalX = getOffset(i);
           return (
             <motion.span
@@ -117,7 +119,7 @@ export function StackingTitle({ onComplete, onReplay, skipAnimation = false }: S
                 phase === "falling"
                   ? { y: 0, x: 0, opacity: 1, rotate: (Math.random() - 0.5) * 30, scale: 1 }
                   : phase === "stacking"
-                  ? { y: stackedPositions[letters.length - 1 - i].y - 20, x: stackedPositions[letters.length - 1 - i].x, opacity: 1, rotate: stackedPositions[letters.length - 1 - i].rotate, scale: 1 }
+                  ? { y: stackedPositions[LETTERS.length - 1 - i].y - 20, x: stackedPositions[LETTERS.length - 1 - i].x, opacity: 1, rotate: stackedPositions[LETTERS.length - 1 - i].rotate, scale: 1 }
                   : { y: 0, x: finalX, opacity: 1, rotate: 0, scale: 1 }
               }
               transition={
