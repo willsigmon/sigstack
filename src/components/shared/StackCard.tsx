@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { FadeIn } from "@/components/ui/FadeIn";
+import { A1, GRAD } from "@/lib/palette";
 import type { StackItem } from "@/data/stack";
 
 interface StackCardProps extends StackItem {
@@ -26,27 +27,29 @@ export function StackCard({
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className={`group relative block rounded-2xl p-5 sm:p-6 bg-white/[0.05] backdrop-blur-md border border-white/[0.1] overflow-hidden ${
+        className={`group relative block rounded-2xl p-5 sm:p-6 border overflow-hidden ${
           highlight ? "ring-2 ring-[#D4A574]/50" : ""
         }`}
+        style={{
+          background: "var(--surface)",
+          borderColor: "var(--border)",
+          boxShadow: highlight ? `0 10px 40px ${glowColor}30` : undefined,
+        }}
         whileHover={{ scale: 1.05, y: -6 }}
         whileTap={{ scale: 0.97 }}
         transition={{ type: "spring", stiffness: 400, damping: 15 }}
-        style={{
-          boxShadow: highlight ? `0 10px 40px ${glowColor}40` : undefined,
-        }}
       >
-        {/* Brand-colored hover glow */}
+        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: GRAD }} />
+
         <motion.div
           className="absolute inset-0 opacity-0 group-hover:opacity-100 blur-2xl -z-10 transition-opacity duration-300"
-          style={{ backgroundColor: glowColor || "#8B5CF6" }}
+          style={{ backgroundColor: glowColor || A1 }}
         />
 
-        {/* Icon-first layout */}
         <div className="flex flex-col items-center text-center gap-3">
-          {/* Big bold icon */}
           <motion.div
-            className={`h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 rounded-2xl ${bgColor} flex items-center justify-center shadow-lg border border-white/[0.1]`}
+            className={`h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 rounded-2xl ${bgColor} flex items-center justify-center shadow-lg border`}
+            style={{ borderColor: "var(--border)" }}
             whileHover={{ scale: 1.15, rotate: 5 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
@@ -58,21 +61,21 @@ export function StackCard({
                 height={48}
                 className="object-contain w-10 h-10 sm:w-12 sm:h-12"
                 style={{ maxWidth: 48, maxHeight: 48 }}
+                unoptimized
               />
             ) : fallbackLetter ? (
-              <span className="text-white font-black text-2xl sm:text-3xl">{fallbackLetter}</span>
+              <span className="font-black text-2xl sm:text-3xl" style={{ color: "var(--foreground)" }}>{fallbackLetter}</span>
             ) : null}
           </motion.div>
 
-          {/* Text */}
           <div>
             <h3
-              className="font-bold text-white text-sm sm:text-base transition-colors leading-tight"
-              style={{ color: highlight ? glowColor : undefined }}
+              className="font-bold text-sm sm:text-base transition-colors leading-tight"
+              style={{ color: highlight ? glowColor : "var(--foreground)" }}
             >
               {name}
             </h3>
-            <p className="text-xs sm:text-sm text-zinc-400 mt-1">{description}</p>
+            <p className="text-xs sm:text-sm mt-1" style={{ color: "var(--muted)" }}>{description}</p>
           </div>
         </div>
       </motion.a>

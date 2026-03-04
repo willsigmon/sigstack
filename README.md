@@ -2,7 +2,7 @@
 
 > **Your buddy's complete guide to my AI-assisted development setup**
 >
-> Last Updated: February 2026 — v3.5 "Marlin"
+> Last Updated: March 2026 — v4.1 "Marlin"
 
 Welcome to **Sigstack** — my complete Claude Code configuration for shipping software with AI. This repo contains everything you need to replicate my vibe coding setup across macOS, Linux, and Windows.
 
@@ -41,7 +41,7 @@ sigstack/
 
 All development happens through **Claude Code** in iTerm2/Ghostty. On the Sigmachines network, every Claude Code session runs on **SigServe** (Mac Studio M2 Max) as the central brain.
 
-**Remote access (new in v3.5):**
+**Remote access (new in v4.1):**
 - **Claude Web** → MCP Gateway connector (Tailscale Funnel)
 - **Claude Desktop** → mcp-remote over HTTPS (auto-configured)
 - **Claude Code** → SSH + tmux (`cc` alias from any machine)

@@ -1,3 +1,5 @@
+import { A1 } from "@/lib/palette";
+
 type IconType = "brain" | "voice" | "terminal" | "cloud" | "plug" | "server";
 
 const ICON_PATHS: Record<IconType, string> = {
@@ -11,7 +13,7 @@ const ICON_PATHS: Record<IconType, string> = {
 
 export function SectionIcon({ type }: { type: IconType }) {
   return (
-    <span className="text-purple-300">
+    <span style={{ color: A1 }}>
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={ICON_PATHS[type]} />
       </svg>

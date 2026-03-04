@@ -2,32 +2,22 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { URLS } from "@/lib/constants";
+import { GRAD } from "@/lib/palette";
 
 interface NewsletterCardProps {
   readonly title: string;
   readonly description: string;
   readonly emoji: string;
-  readonly gradient: string;
   readonly borderColor: string;
-  readonly accentColor: "purple" | "orange";
+  readonly accentColor: "orange" | "pink";
   readonly newsletterType: string;
 }
-
-const BUTTON_COLORS = {
-  purple: "from-purple-500 to-blue-500 hover:from-purple-400 hover:to-blue-400",
-  orange: "from-orange-500 to-pink-500 hover:from-orange-400 hover:to-pink-400",
-} as const;
-
-const RESET_DELAY_MS = 3000;
 
 export function NewsletterCard({
   title,
   description,
   emoji,
-  gradient,
   borderColor,
-  accentColor,
   newsletterType,
 }: NewsletterCardProps) {
   const [email, setEmail] = useState("");
@@ -41,7 +31,7 @@ export function NewsletterCard({
     setStatus("loading");
 
     try {
-      const response = await fetch(URLS.SUBSCRIBE_API, {
+      const response = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, newsletter: newsletterType }),
@@ -63,46 +53,49 @@ export function NewsletterCard({
     setTimeout(() => {
       setStatus("idle");
       setMessage("");
-    }, RESET_DELAY_MS);
+    }, 3000);
   };
 
   return (
     <motion.div
-      className={`rounded-xl sm:rounded-2xl p-5 sm:p-6 bg-gradient-to-br ${gradient} backdrop-blur-md border ${borderColor}`}
+      className="rounded-xl sm:rounded-2xl p-5 sm:p-6 border"
+      style={{ background: "var(--surface)", borderColor }}
       whileHover={{ y: -4, scale: 1.02 }}
       transition={{ type: "spring", stiffness: 400 }}
     >
+      <div className="h-1 -mx-5 sm:-mx-6 -mt-5 sm:-mt-6 mb-4 sm:mb-5 rounded-t-xl sm:rounded-t-2xl" style={{ background: GRAD }} />
+
       <div className="flex items-start gap-3 mb-4">
         <span className="text-2xl sm:text-3xl">{emoji}</span>
         <div>
-          <h3 className="text-base sm:text-lg font-bold text-white">{title}</h3>
-          <p className="text-xs sm:text-sm text-zinc-400 mt-1 leading-relaxed">{description}</p>
+          <h3 className="text-base sm:text-lg font-bold" style={{ color: "var(--foreground)" }}>{title}</h3>
+          <p className="text-xs sm:text-sm mt-1 leading-relaxed" style={{ color: "var(--muted)" }}>{description}</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="flex gap-2">
-        <label htmlFor={`email-${newsletterType}`} className="sr-only">
-          Email address for {title}
-        </label>
         <input
-          id={`email-${newsletterType}`}
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
-          aria-label={`Email address for ${title}`}
-          aria-required="true"
-          className="flex-1 rounded-lg px-3 py-2 text-sm bg-white/10 border border-white/20 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/30"
+          className="flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2"
+          style={{
+            background: "var(--background)",
+            border: "1px solid var(--border)",
+            color: "var(--foreground)",
+          }}
           disabled={status === "loading" || status === "success"}
         />
         <motion.button
           type="submit"
           disabled={status === "loading" || status === "success"}
-          className={`rounded-lg px-5 py-3 text-sm font-semibold text-white bg-gradient-to-r ${BUTTON_COLORS[accentColor]} transition-all disabled:opacity-50 cursor-pointer min-h-[44px]`}
+          className="rounded-full px-4 py-2 text-sm font-semibold text-white transition-all disabled:opacity-50"
+          style={{ background: GRAD }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          {status === "loading" ? "..." : status === "success" ? "✓" : "Subscribe"}
+          {status === "loading" ? "..." : status === "success" ? "Done" : "Subscribe"}
         </motion.button>
       </form>
 
@@ -112,7 +105,7 @@ export function NewsletterCard({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className={`text-xs mt-2 ${status === "success" ? "text-green-400" : "text-red-400"}`}
+            className={`text-xs mt-2 ${status === "success" ? "text-green-600 dark:text-green-400" : "text-red-500"}`}
           >
             {message}
           </motion.p>

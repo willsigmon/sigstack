@@ -2,18 +2,13 @@
 
 import { useEffect, useState } from "react";
 
-type AccentColor = "purple" | "blue" | "pink" | "cyan";
-
-interface FloatingAccentsProps {
-  readonly count?: number;
-  readonly color?: AccentColor;
-}
+type AccentColor = "orange" | "pink" | "warm" | "amber";
 
 const COLOR_MAP: Record<AccentColor, string> = {
-  purple: "bg-purple-400",
-  blue: "bg-blue-400",
+  orange: "bg-orange-400",
   pink: "bg-pink-400",
-  cyan: "bg-cyan-400",
+  warm: "bg-amber-400",
+  amber: "bg-amber-500",
 };
 
 interface Accent {
@@ -23,11 +18,10 @@ interface Accent {
   readonly delay: number;
 }
 
-export function FloatingAccents({ count = 6, color = "purple" }: FloatingAccentsProps) {
+export function FloatingAccents({ count = 6, color = "orange" }: { count?: number; color?: AccentColor }) {
   const [accents, setAccents] = useState<readonly Accent[]>([]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: generate random positions client-side to avoid hydration mismatch
     setAccents(
       Array.from({ length: count }, () => ({
         left: Math.random() * 100,
@@ -45,7 +39,7 @@ export function FloatingAccents({ count = 6, color = "purple" }: FloatingAccents
       {accents.map((accent, i) => (
         <div
           key={i}
-          className={`absolute ${COLOR_MAP[color]} rounded-full animate-float opacity-30`}
+          className={`absolute ${COLOR_MAP[color]} rounded-full animate-float opacity-20`}
           style={{
             left: `${accent.left}%`,
             top: `${accent.top}%`,

@@ -206,7 +206,7 @@ async function example5_AutoSync() {
   syncEngine.on('sync:complete', (progress) => {
     console.log('\nSync complete!');
     console.log('Results:');
-    progress.forEach((p) => {
+    progress.forEach((p: any) => {
       console.log(`  ${p.sourceName}: ${p.status}`);
     });
   });

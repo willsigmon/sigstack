@@ -9,12 +9,16 @@ interface CodeBlockProps {
 export function CodeBlock({ children }: CodeBlockProps) {
   return (
     <motion.pre
-      className="rounded-xl sm:rounded-2xl p-4 sm:p-6 overflow-x-auto text-[11px] sm:text-sm bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-md border border-white/[0.1] shadow-2xl"
+      className="rounded-xl sm:rounded-2xl p-4 sm:p-6 overflow-x-auto text-[11px] sm:text-sm shadow-lg border"
+      style={{
+        background: "linear-gradient(135deg, #3a3530 0%, #2e2a26 100%)",
+        borderColor: "var(--border)",
+      }}
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
     >
-      <code className="text-emerald-300">{children}</code>
+      <code style={{ color: "#d4a574" }}>{children}</code>
     </motion.pre>
   );
 }

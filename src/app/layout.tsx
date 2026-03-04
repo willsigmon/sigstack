@@ -22,21 +22,21 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://sigstack.dev"),
-  title: "sigstack - Claude Code Stack for AI-Powered Development",
-  description: "89 skills, 24 commands, iOS bundle + Apple's hidden docs. My personal Claude Code stack for shipping software with AI. Ready to clone.",
-  keywords: ["Claude Code", "AI coding", "developer tools", "MCP servers", "Claude AI", "Opus 4.5"],
+  title: "sigstack — Claude Code Stack for AI-Powered Development",
+  description: "84 skills, 36 plugins, 27 MCP servers. Built on Cowork Plugins architecture. My personal Claude Code stack for shipping software with AI. Ready to clone.",
+  keywords: ["Claude Code", "AI coding", "developer tools", "MCP servers", "Claude AI", "Cowork Plugins", "sigstack"],
   authors: [{ name: "Will Sigmon", url: "https://willsigmon.media" }],
   openGraph: {
-    title: "sigstack - Claude Code Stack for AI-Powered Development",
-    description: "89 skills, 24 commands, iOS bundle + Apple's hidden docs. Ready to clone.",
+    title: "sigstack — Claude Code Stack for AI-Powered Development",
+    description: "84 skills, 36 plugins, 27 MCP servers. Built on Cowork Plugins. Ready to clone.",
     url: "https://sigstack.dev",
     siteName: "sigstack",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "sigstack - Claude Code Stack",
-    description: "89 skills, 24 commands, iOS bundle + Apple's hidden docs. Ready to clone.",
+    title: "sigstack — Claude Code Stack",
+    description: "84 skills, 36 plugins, 27 MCP servers. Built on Cowork Plugins. Ready to clone.",
     creator: "@willsigmon",
   },
 };
@@ -47,10 +47,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
-        className={`${inter.variable} ${instrumentSerif.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} ${instrumentSerif.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
+        {/* WSM Atmospheric Overlays */}
+        <div className="paper-grain" aria-hidden="true" />
+        <div className="vignette" aria-hidden="true" />
         {children}
       </body>
     </html>

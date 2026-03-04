@@ -2,7 +2,7 @@
 
 **The Vibe Coder's Operating System for Claude**
 
-*Version 3.5 "Marlin" — February 20, 2026*
+*Version 4.1 "Marlin" — March 4, 2026*
 
 ---
 
@@ -50,9 +50,9 @@ Sigstack is for builders who think in outcomes, not syntax. You have 5000+ hours
 
 ---
 
-## What's New in 3.5 "Marlin"
+## What's New in 4.1 "Marlin"
 
-v3.5 is the release where the stack became sentient (sort of). Every Claude interface — Code, Web, Desktop — now routes through SigServe as the central brain. Claude has a name (Marlin), a phone number, and can text you back.
+v4.1 is the release where the stack became sentient (sort of). Every Claude interface — Code, Web, Desktop — now routes through SigServe as the central brain. Claude has a name (Marlin), a phone number, and can text you back.
 
 - **MCP Gateway** — Remote access from Claude Web + Desktop via Tailscale Funnel
 - **Marlin Identity** — Claude Code IS Marlin on every Sig device

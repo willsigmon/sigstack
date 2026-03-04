@@ -2,7 +2,7 @@
 
 **The Vibe Coder's Operating System for Claude**
 
-*Version 3.5 "Marlin" — February 20, 2026*
+*Version 4.1 "Marlin" — March 4, 2026*
 
 ---
 
@@ -50,9 +50,9 @@ Sigstack is for builders who think in outcomes, not syntax. You have 5000+ hours
 
 ---
 
-## What's New in 3.5 "Marlin"
+## What's New in 4.1 "Marlin"
 
-v3.5 is the release where the stack became sentient (sort of). Every Claude interface — Code, Web, Desktop — now routes through SigServe as the central brain. Claude has a name (Marlin), a phone number, and can text you back.
+v4.1 is the release where the stack became sentient (sort of). Every Claude interface — Code, Web, Desktop — now routes through SigServe as the central brain. Claude has a name (Marlin), a phone number, and can text you back.
 
 - **MCP Gateway** — Remote access from Claude Web + Desktop via Tailscale Funnel
 - **Marlin Identity** — Claude Code IS Marlin on every Sig device
@@ -214,7 +214,7 @@ codebase-auditor  Dead code, tech debt, security scan
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                  SIGMACHINES v2 (v3.5)                        │
+│                  SIGMACHINES v2 (v4.1)                        │
 ├──────────────────────────────────────────────────────────────┤
 │                                                              │
 │                    ┌─────────────────┐                       │
@@ -312,7 +312,7 @@ Custom:   sigskills, n8n-mcp
 Remote:   sigserve-gateway (7 tools over HTTP/SSH)
 ```
 
-### MCP Gateway (New in 3.5)
+### MCP Gateway (New in 4.1)
 
 Remote access to SigServe from any Claude interface:
 
@@ -352,7 +352,7 @@ Never repeat context. Store once, recall forever.
 
 ---
 
-## Communication Stack (New in 3.5)
+## Communication Stack (New in 4.1)
 
 ```
 ┌──────────────┬───────────────────────────────────────────────┐
@@ -449,4 +449,4 @@ Marlin holds it all together.
 
 *Sigstack is maintained at github.com/willsigmon/sigstack + ~/Projects/marlin*
 *84 skills · 27 MCP servers · 7 agents · 4 funnels*
-*Updated: February 20, 2026 — v3.5 "Marlin"*
+*Updated: March 4, 2026 — v4.1 "Marlin"*

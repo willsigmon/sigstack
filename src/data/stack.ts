@@ -1,5 +1,3 @@
-import { URLS } from "@/lib/constants";
-
 export interface StackItem {
   readonly name: string;
   readonly description: string;
@@ -20,30 +18,63 @@ export const coreStack: readonly StackItem[] = [
   {
     name: "Claude Code",
     description: "CLI-first AI coding",
-    logo: "/icons/anthropic.svg",
-    bgColor: "bg-gradient-to-br from-[#D4A574]/30 to-[#B8956A]/40",
+    logo: "https://cdn.simpleicons.org/anthropic/D4A574",
+    bgColor: "bg-gradient-to-br from-[#D4A574]/20 to-[#B8956A]/30",
     glowColor: "#D4A574",
-    url: URLS.CLAUDE_CODE,
+    url: "https://claude.ai/code",
     highlight: true,
   },
   {
     name: "Omi",
     description: "AI wearable memory",
     logo: "/icons/omi.png",
-    bgColor: "bg-gradient-to-br from-emerald-500/30 to-teal-500/40",
+    bgColor: "bg-gradient-to-br from-emerald-500/20 to-teal-500/30",
     glowColor: "#10B981",
-    url: URLS.OMI,
+    url: "https://www.omi.me/?ref=WILLSIGMON",
+  },
+  {
+    name: "Letta",
+    description: "Cross-session memory",
+    logo: "/icons/letta.png",
+    bgColor: "bg-gradient-to-br from-teal-500/20 to-cyan-500/30",
+    glowColor: "#14B8A6",
+    url: "https://letta.com",
   },
 ];
 
-export const voiceStack: readonly StackItem[] = [
+export const agentStack: readonly StackItem[] = [
   {
-    name: "Typeless",
-    description: "Speech to prompts",
-    logo: "https://www.typeless.com/favicon.ico",
-    bgColor: "bg-gradient-to-br from-blue-500/30 to-indigo-500/40",
-    glowColor: "#3B82F6",
-    url: URLS.TYPELESS,
+    name: "OpenClaw",
+    description: "AI agent gateway",
+    logo: "/icons/openclaw.svg",
+    bgColor: "bg-gradient-to-br from-violet-500/20 to-purple-600/30",
+    glowColor: "#8B5CF6",
+    url: "https://github.com/willsigmon/openclaw",
+    highlight: true,
+  },
+  {
+    name: "Sled",
+    description: "Voice from phone",
+    logo: "https://cdn.simpleicons.org/airplayaudio/06B6D4",
+    bgColor: "bg-gradient-to-br from-cyan-500/20 to-teal-500/30",
+    glowColor: "#06B6D4",
+    url: "https://sled.layercode.com",
+  },
+  {
+    name: "Plural",
+    description: "Parallel branches",
+    logo: "https://cdn.simpleicons.org/git/F05032",
+    bgColor: "bg-gradient-to-br from-orange-500/20 to-red-500/30",
+    glowColor: "#F05032",
+    url: "https://github.com/zhubert/plural",
+  },
+  {
+    name: "Agor",
+    description: "Agent canvas",
+    logo: "https://cdn.simpleicons.org/figma/F24E1E",
+    bgColor: "bg-gradient-to-br from-pink-500/20 to-rose-500/30",
+    glowColor: "#F24E1E",
+    url: "https://github.com/preset-io/agor",
   },
 ];
 
@@ -51,45 +82,18 @@ export const terminalStack: readonly StackItem[] = [
   {
     name: "iTerm2",
     description: "macOS terminal",
-    logo: "/icons/iterm2.svg",
-    bgColor: "bg-gradient-to-br from-[#10B981]/30 to-[#059669]/40",
+    logo: "https://cdn.simpleicons.org/iterm2/10B981",
+    bgColor: "bg-gradient-to-br from-[#10B981]/20 to-[#059669]/30",
     glowColor: "#10B981",
-    url: URLS.ITERM2,
+    url: "https://iterm2.com",
   },
   {
     name: "CleanShot X",
     description: "Screenshots",
     logo: "/icons/cleanshot.png",
-    bgColor: "bg-gradient-to-br from-[#5B9BD5]/30 to-[#2B6CB0]/40",
+    bgColor: "bg-gradient-to-br from-[#5B9BD5]/20 to-[#2B6CB0]/30",
     glowColor: "#5B9BD5",
-    url: URLS.CLEANSHOT,
-  },
-];
-
-export const agentStack: readonly StackItem[] = [
-  {
-    name: "Plural",
-    description: "Parallel branches",
-    logo: "/icons/git.svg",
-    bgColor: "bg-gradient-to-br from-orange-500/30 to-red-500/40",
-    glowColor: "#F05032",
-    url: URLS.PLURAL,
-  },
-  {
-    name: "Agor",
-    description: "Agent canvas",
-    logo: "/icons/figma.svg",
-    bgColor: "bg-gradient-to-br from-pink-500/30 to-rose-500/40",
-    glowColor: "#F24E1E",
-    url: URLS.AGOR,
-  },
-  {
-    name: "Sled",
-    description: "Mobile voice",
-    logo: "/icons/airplay.svg",
-    bgColor: "bg-gradient-to-br from-cyan-500/30 to-teal-500/40",
-    glowColor: "#06B6D4",
-    url: URLS.SLED,
+    url: "https://cleanshot.sjv.io/5520D3",
   },
 ];
 
@@ -97,36 +101,34 @@ export const infraStack: readonly StackItem[] = [
   {
     name: "GitHub",
     description: "Code & PRs",
-    logo: "/icons/github.svg",
-    bgColor: "bg-gradient-to-br from-zinc-400/30 to-zinc-600/40",
-    glowColor: "#A1A1AA",
-    url: URLS.GITHUB,
+    logo: "https://cdn.simpleicons.org/github/1a1814",
+    bgColor: "bg-gradient-to-br from-stone-400/20 to-stone-600/30",
+    glowColor: "#78716c",
+    url: "https://github.com",
   },
   {
     name: "Vercel",
     description: "Deploy",
-    logo: "/icons/vercel.svg",
-    bgColor: "bg-gradient-to-br from-zinc-300/30 to-zinc-500/40",
-    glowColor: "#FFFFFF",
-    url: URLS.VERCEL,
+    logo: "https://cdn.simpleicons.org/vercel/1a1814",
+    bgColor: "bg-gradient-to-br from-stone-300/20 to-stone-500/30",
+    glowColor: "#78716c",
+    url: "https://vercel.com",
   },
   {
     name: "Supabase",
     description: "Postgres & Auth",
-    logo: "/icons/supabase.svg",
-    bgColor: "bg-gradient-to-br from-[#3FCF8E]/30 to-[#22C55E]/40",
+    logo: "https://cdn.simpleicons.org/supabase/3FCF8E",
+    bgColor: "bg-gradient-to-br from-[#3FCF8E]/20 to-[#22C55E]/30",
     glowColor: "#3FCF8E",
-    url: URLS.SUPABASE,
+    url: "https://supabase.com",
   },
 ];
 
-// All stacks combined for unified grid rendering
 export const allStackItems: readonly StackItem[] = [
   ...coreStack,
-  ...voiceStack,
   ...agentStack,
-  ...terminalStack,
   ...infraStack,
+  ...terminalStack,
 ];
 
 export const mcpServers: readonly McpServer[] = [
@@ -134,15 +136,30 @@ export const mcpServers: readonly McpServer[] = [
   { name: "GitHub", purpose: "PRs & issues" },
   { name: "Vercel", purpose: "Deploy" },
   { name: "Supabase", purpose: "Database" },
+  { name: "Memory", purpose: "Knowledge graph" },
   { name: "Context7", purpose: "Library docs" },
   { name: "n8n", purpose: "Workflows" },
-  { name: "Memory", purpose: "Knowledge graph" },
   { name: "Puppeteer", purpose: "Browser" },
   { name: "Playwright", purpose: "Web automation" },
-  { name: "Chrome DevTools", purpose: "Browser debug" },
-  { name: "Repomix", purpose: "Codebase analysis" },
   { name: "Xcode", purpose: "iOS builds" },
   { name: "Calendar", purpose: "Events" },
-  { name: "SQLite", purpose: "Local database" },
+  { name: "Clipboard", purpose: "System clipboard" },
+  { name: "Notifications", purpose: "macOS alerts" },
+  { name: "osascript", purpose: "AppleScript" },
+  { name: "Fetch", purpose: "HTTP requests" },
+  { name: "Filesystem", purpose: "File access" },
+  { name: "Time", purpose: "Timezone" },
+  { name: "YouTube", purpose: "Transcripts" },
+  { name: "Pandoc", purpose: "Doc conversion" },
+  { name: "Greptile", purpose: "Code search" },
+  { name: "Firebase", purpose: "Backend" },
+  { name: "Stitch", purpose: "UI design" },
+  { name: "Glif", purpose: "AI workflows" },
+  { name: "iMessage", purpose: "Messages" },
   { name: "Omi", purpose: "Wearable memory" },
+  { name: "Marlin Recall", purpose: "Federated memory" },
+  { name: "wsiglog", purpose: "Life logging" },
+  { name: "SigServe GW", purpose: "Remote access" },
+  { name: "Gemini Imagen", purpose: "Image gen" },
+  { name: "SigSkills", purpose: "Custom skills" },
 ];

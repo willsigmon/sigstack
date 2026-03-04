@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-
-const PARTICLE_COUNT = 20;
+import { A1, A2 } from "@/lib/palette";
 
 interface Particle {
   readonly left: number;
@@ -16,9 +15,8 @@ export function FloatingParticles() {
   const [particles, setParticles] = useState<readonly Particle[]>([]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: generate random positions client-side to avoid hydration mismatch
     setParticles(
-      Array.from({ length: PARTICLE_COUNT }, () => ({
+      Array.from({ length: 15 }, () => ({
         left: Math.random() * 100,
         top: Math.random() * 100,
         duration: 3 + Math.random() * 2,
@@ -34,9 +32,14 @@ export function FloatingParticles() {
       {particles.map((particle, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 bg-white/20 rounded-full"
-          style={{ left: `${particle.left}%`, top: `${particle.top}%` }}
-          animate={{ y: [0, -30, 0], opacity: [0.2, 0.5, 0.2] }}
+          className="absolute w-1 h-1 rounded-full"
+          style={{
+            left: `${particle.left}%`,
+            top: `${particle.top}%`,
+            backgroundColor: i % 2 === 0 ? A1 : A2,
+            opacity: 0.15,
+          }}
+          animate={{ y: [0, -30, 0], opacity: [0.1, 0.25, 0.1] }}
           transition={{
             duration: particle.duration,
             repeat: Infinity,

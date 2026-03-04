@@ -45,19 +45,20 @@ export const SITE = {
   NAME: "sigstack",
   DOMAIN: "sigstack.dev",
   URL: "https://sigstack.dev",
-  VERSION: "3.1",
-  LAST_UPDATED: "Feb 11, 2026",
+  VERSION: "4.1",
+  CODENAME: "Marlin",
+  LAST_UPDATED: "Mar 2026",
   TAGLINE: "My personal Claude Code stack for shipping software with AI",
-  STATS_TAGLINE: "127 skills · 12 plugins · 16 MCP servers · AI Vision QA workflow · Ready to clone",
+  STATS_TAGLINE: "84 skills · 36 plugins · 27 MCP servers · Cowork Plugins architecture · Ready to clone",
   LICENSE: "MIT License — Use it, modify it, make it yours.",
   BUILT_WITH: "Built with Claude Code and ~5,000 hours of figuring out what works.",
 } as const;
 
 // Hero stats
 export const HERO_STATS = [
-  { label: "Skills", value: "127", gradient: "from-blue-400 to-cyan-300" },
-  { label: "Plugins", value: "12", gradient: "from-green-400 to-emerald-300" },
-  { label: "MCP Servers", value: "16", gradient: "from-purple-400 to-pink-300" },
+  { label: "Plugins", value: "36", color: "#f97316" },
+  { label: "Skills", value: "84", color: "#ec4899" },
+  { label: "MCP Servers", value: "27", color: "#d4a574" },
 ] as const;
 
 // Quick start code snippet
@@ -70,39 +71,42 @@ cd ~/.sigstack && ./setup.sh
 # Start Claude Code
 claude`;
 
-// What's Inside cards
-export const WHATS_INSIDE_ITEMS = [
-  {
-    title: "127 Skills",
-    description: "iOS, SwiftUI, AI design, testing, voice, automation",
-    gradient: "from-blue-500/30 to-cyan-500/30",
-  },
-  {
-    title: "12 Plugins",
-    description: "sigstack-core, ios-dev, design-tools, testing, memory-ai",
-    gradient: "from-green-500/30 to-emerald-500/30",
-  },
-  {
-    title: "Model Strategy",
-    description: "Haiku for search, Sonnet for code, Opus for architecture",
-    gradient: "from-pink-500/30 to-rose-500/30",
-  },
-  {
-    title: "AI Vision QA",
-    description: "Screenshot → Claude reviews → Fix → Repeat until perfect",
-    gradient: "from-purple-500/30 to-violet-500/30",
-  },
+// Core plugins
+export const CORE_PLUGINS = [
+  { title: "ios-dev", description: "Swift, SwiftUI, Xcode, CloudKit, SwiftData", color: "#f97316" },
+  { title: "app-dev", description: "Features, audio, sync, ops, preferences", color: "#d4a574" },
+  { title: "dev-essentials", description: "Glif, Resend, performance, multi-agent coordination", color: "#ec4899" },
+  { title: "superclaude", description: "Meta-orchestration, agents, /spawn, /analyze", color: "#c2956a" },
+  { title: "work", description: "Enterprise apps, databases, dashboards", color: "#f97316" },
+  { title: "media", description: "Podcasts, audio, RSS, streaming", color: "#b8956a" },
 ] as const;
 
-// Philosophy loop steps
-export const LOOP_STEPS = ["DESCRIBE", "BUILD", "SCREENSHOT", "VISION QA", "FIX"] as const;
+// Workflow patterns
+export const WORKFLOW_PATTERNS = [
+  { principle: "Plan first", meaning: "Complex tasks -> plan mode, then one-shot implement" },
+  { principle: "Self-improving docs", meaning: "After corrections: update docs to prevent repeats" },
+  { principle: "Autonomous fixing", meaning: "Paste error + 'fix' -- minimal micromanagement" },
+  { principle: "Subagents", meaning: "Offload subtasks, keep main context clean" },
+] as const;
 
-// Philosophy superpowers
-export const SUPERPOWERS = [
-  { principle: "Decision Phase", meaning: "Clarify requirements, surface tradeoffs" },
-  { principle: "Execution Phase", meaning: "Spawn 5-20 agents, ship to 100%" },
-  { principle: "Screenshots > Text", meaning: "80% token savings with visual QA" },
-  { principle: "Memory Persistence", meaning: "Never explain the same thing twice" },
+// Network cards
+export const NETWORK_CARDS = [
+  {
+    title: "SigServe — The Brain",
+    text: "A Mac Studio M2 Max running 30+ services is the single source of truth. All Claude interfaces (Web, Desktop, Code) route through SigServe via MCP Gateway + Tailscale Funnels. Accessible from anywhere.",
+  },
+  {
+    title: "Multi-Device Sync",
+    text: "sigstack-sync pushes config hourly to SigStudio and SigAir. git-autopush commits every 30s. Claude Desktop configs, shell aliases, and SSH keys are auto-deployed to all machines.",
+  },
+  {
+    title: "Voice & Chat Everywhere",
+    text: "Omi captures conversations. Typeless converts speech to prompts. Marlin Router auto-responds across iMessage group chats using dual-LLM (Claude + OpenAI). Voice calls via Twilio with realtime STT/TTS.",
+  },
+  {
+    title: "Federated Memory",
+    text: "marlin-recall federates memory across MCP knowledge graph, contacts DB, Omi conversation history, and persistent memory files. Context survives across sessions, devices, and interfaces.",
+  },
 ] as const;
 
 // Support links
