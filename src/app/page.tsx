@@ -42,7 +42,7 @@ export default function Home() {
   const allStack = [...coreStack, ...agentStack, ...infraStack, ...terminalStack];
 
   return (
-    <div className="min-h-screen overflow-hidden" style={{ background: "var(--background)", color: "var(--foreground)" }}>
+    <div className="min-h-screen" style={{ background: "var(--background)", color: "var(--foreground)" }}>
       {/* Paper texture + vignette */}
       <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 2 }}>
         <svg style={{ position: "absolute", width: 0, height: 0 }}>
