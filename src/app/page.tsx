@@ -75,7 +75,7 @@ export default function Home() {
       {/* ═══ Hero ═══ */}
       <section ref={heroRef} className="relative min-h-screen flex items-center justify-center" style={{ zIndex: 1 }}>
         <motion.div className="relative z-10 mx-auto max-w-5xl px-6 text-center" style={{ opacity: heroOpacity, scale: heroScale }}>
-          <div className="mb-6 h-[200px] sm:h-[280px] flex items-center justify-center" style={{ overflow: "visible" }}>
+          <div className="mb-6 h-[240px] sm:h-[320px] flex items-center justify-center" style={{ overflow: "visible" }}>
             {isClient ? (
               <StackingTitle key={animationKey} onComplete={() => {}} onReplay={replayAnimation} skipAnimation={shouldSkipAnimation && animationKey === 0} />
             ) : (

@@ -85,7 +85,7 @@ export function StackingTitle({ onComplete, onReplay, skipAnimation = false }: S
   return (
     <motion.div
       ref={containerRef}
-      className="relative h-[200px] sm:h-[280px] flex items-center justify-center"
+      className="relative h-[240px] sm:h-[320px] flex items-center justify-center"
       style={{ overflow: "visible" }}
       onClick={handleClick}
       whileHover={phase === "done" ? { scale: 1.02 } : undefined}
