@@ -32,3 +32,4 @@ pnpm-debug.log*
 # misc
 *.pem
 coverage/
+.vercel
