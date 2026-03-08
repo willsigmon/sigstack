@@ -18,7 +18,7 @@
 | **n8n** | 🔄 | 28, 20, 15 | `#1c140f` | Workflow brown - automation |
 | **BRAIN** | 🧠 | 20, 28, 35 | `#141c23` | Neural blue - memory, data |
 | **Client** | 🤝 | 38, 35, 15 | `#26230f` | Client gold - professional |
-| **Catalyst** | 🚀 | 18, 28, 41 | `#121c29` | Navy blue - launch, momentum |
+| **Contacts** | 🚀 | 18, 28, 41 | `#121c29` | Navy blue - relationships, momentum |
 
 ## Accent Colors
 

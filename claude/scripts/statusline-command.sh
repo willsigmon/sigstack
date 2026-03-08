@@ -32,7 +32,7 @@ case "$cwd" in
     */GitHub\ MBA*) display_path="📦 GitHub" ;;
     */n8n*|*/workflows*) display_path="🔄 n8n" ;;
     */brain*|*/BRAIN*) display_path="🧠 BRAIN" ;;
-    */catalyst*) display_path="🚀 Catalyst" ;;
+    */contacts*) display_path="🚀 Contacts" ;;
     */carterhelms*|*/TwoTwelve*) display_path="🤝 Client" ;;
     */iswcpssclosed*) display_path="🏫 ISWCPSS" ;;
     *)

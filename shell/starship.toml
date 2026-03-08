@@ -57,7 +57,7 @@ read_only_style = "red"
 "workflows" = "🔄 Workflows"
 "brain" = "🧠 BRAIN"
 "BRAIN" = "🧠 BRAIN"
-"catalyst" = "🚀 Catalyst"
+"contacts" = "🚀 Contacts"
 "carterhelms" = "🤝 Client"
 "TwoTwelve" = "🤝 Client"
 "iswcpssclosed" = "🏫 ISWCPSS"
@@ -187,7 +187,7 @@ shell = ["bash", "--noprofile", "--norc"]
 # 🤖 Claude     = #1f170f (terracotta)
 # 🔄 n8n        = #1c140f (workflow brown)
 # 🧠 BRAIN      = #141c23 (neural blue)
-# 🚀 Catalyst   = #121c29 (navy)
+# 🚀 Contacts   = #121c29 (navy)
 #
 # Accent colors (bright, for text/highlights)
 # Primary      = #e08151 (terracotta accent)
